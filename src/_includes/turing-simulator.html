@@ -92,11 +92,7 @@
       margin-top:3em;
   }
 
-  .table-tape .pointer{
-      transform: translate(-.4em,-.3em);
-      top:unset;
-      left:unset;
-  }
+
   .table-tape .past-tape{
       text-align:right;
       width: 50%;
@@ -118,8 +114,6 @@
       font-weight : bold;
   }
 
-  .simulator-frame-alt{
-  }
 
   .table-tape .current-tape.empty{
       color:transparent;
@@ -154,47 +148,38 @@
       width: fit-content;
       margin:auto;
   }
-  .pointer{
+  .table-tape .pointer{
+      transform: translate(-.4em,-.3em);
       background-image:url("./assets/images/pointer.png");
       background-size:contain;
       display:block;
       width:1.5em;
       height:1.5em;
       position:absolute;
-      top:0;
-      left:50%;
-      transform:translate(-50%,0);
       z-index:3;
   }
-  .tape{
-      position:relative;
-      height: 2.8em
-  }
-  #simulator-frame .past-tape{
-      position:absolute;
-      top:.8em;
-      left:0;
-      width: calc(50% - 1.05em);
-      height: 2em;
-      text-align:right;
-  }
-  #simulator-frame .current-tape{
-      position:absolute;
-      top:.8em;
-      left:50%;
-      transform:translate(-50%,0);
-  }
-  #simulator-frame .future-tape{
-      position:absolute;
-      top:.8em;
-      right:0;
-      width:calc(50% - 1.05em);
-      height: 2em;
-  }
 
-  .section{
-      padding:.5em
-  }
+  /* #simulator-frame .past-tape{ */
+  /*     position:absolute; */
+  /*     top:.8em; */
+  /*     left:0; */
+  /*     width: calc(50% - 1.05em); */
+  /*     height: 2em; */
+  /*     text-align:right; */
+  /* } */
+  /* #simulator-frame .current-tape{ */
+  /*     position:absolute; */
+  /*     top:.8em; */
+  /*     left:50%; */
+  /*     transform:translate(-50%,0); */
+  /* } */
+  /* #simulator-frame .future-tape{ */
+  /*     position:absolute; */
+  /*     top:.8em; */
+  /*     right:0; */
+  /*     width:calc(50% - 1.05em); */
+  /*     height: 2em; */
+  /* } */
 
   #editor .panel{
       display: inline-block;
@@ -260,7 +245,7 @@
   }
 
   .editor .line .tm-int{
-      color:purple;
+      color:violet;
   }
   .editor .line .tm-dir{
       color:orange;
@@ -335,7 +320,7 @@
   }
 
   
-  .line-numbers .alert.line-nb {
+  .line-numbers .alert.line-idx {
       color: pink;
       font-weight:bold;
       background:transparent;
@@ -531,35 +516,19 @@
     <p id="compilation-msg"></p>
   </div>
   <div class="control-panel panel">
-    <button class="btn btn--primary" onclick="compile()"><i class="fa fa-cog"></i> Compiler</button>
+    <button class="btn btn--primary" onclick="compile()"><i class="fa fa-cog"></i>Charger la machine</button>
   </div><!-- -->
 </div>
+
+<script src="./assets/js/turing.js"></script>
 
 
 <script>
   const textarea = document.getElementById('src')
   const lineNumbers = document.querySelector('.line-numbers')
+  var mytm = false
 
-  function innerWidth(elt){
-      const style = getComputedStyle(elt);
-      var width = elt.clientWidth
-      width = width - (parseInt(style.paddingLeft) || 0)
-      width = width - (parseInt(style.paddingRight) || 0)
-      return width
-  }
-
-  // function resize_input(){
-  //     let editor = document.getElementById("editor-panel")
-  //     let style = getComputedStyle(editor)
-  //     let scrollBarWidth = editor.offsetWidth - editor.clientWidth;
-  //     let left = (parseInt(style.paddingLeft) || 0)
-  //     let right = Math.max(parseInt(style.paddingRight) || 0,scrollBarWidth)
-  //     let editor_width = editor.clientWidth - left - right
-  //     textarea.style.width = `${editor_width - 20}px`
-  // }
-  // resize_input()
-
-  function parseComment(line, spec){
+  function parseComment(idx, line, spec){
       let m = line.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
 
       if (m){
@@ -578,8 +547,8 @@
       }
   }
 
-  function parseOptLn(line, spec){
-      let m = line.match(/^([^:]*):(.*)/)
+  function parseOptLn(idx, line, spec){
+      let m = line.match(/^([^:,]*):(.*)/)
       if (m){
           const ppt = {
               css : "ppt",
@@ -607,10 +576,29 @@
               //     break;     //
               
           case "sortie":
-          case "ouput":
-              val.css = "int"
-              val.value = parseInt(val.value)
-              spec.output = val.value
+          case "output":
+              if (val.value.match(/^[0-9]*$/)){
+                  val.value = parseInt(val.value)
+                  if (val.value > 0 ){
+                      val.css = "int"
+                      spec.output = val.value
+                      spec.outputLn = idx
+                  } else {
+                      val.css = "err"
+                      spec.errors.push({
+                          type: 'bad tape index for output',
+                          line: idx,
+                          txt: "La valeur de cet attribut doit être un entier strictement positif."        
+                      })
+                  }
+              } else {
+                  val.css = "err"
+                  spec.errors.push({
+                      type: 'bad tape index for output',
+                      line: idx,
+                      txt: "La valeur de cet attribut doit être un entier strictement positif."        
+                  })
+              }
               break;
           case "name":
           case "nom":
@@ -618,6 +606,7 @@
               spec.name = val.value
               break;
           default:
+              ppt.css = "plain-txt"
               break;
           }
           return [ppt,{css : "colon", src : ':' }, val]
@@ -631,21 +620,31 @@
           switch (elt.css){
           case "":
           case "plain-txt":
-              container.innerHTML += elt.src
+              container.innerHTML += elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
               break;
           default:
               let span = document.createElement("span")
               span.className = `tm-${elt.css}`
-              span.innerHTML = elt.src
+              span.innerHTML = elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
+              if (elt.txt){
+                  span.title = elt.txt
+              }
               container.appendChild(span)
           }
       }
   }
 
-  let comma = { css : "comma", src : "," }
-  let commaErr = { css : "comma-err", src : "," }
+  let comma = {
+      css : "comma",
+      src : ","
+  }
+  let commaErr = { css : "comma-err",
+                   src : "," ,
+                   title: "Cette ligne de transition est trop longue."}
 
-  function parseTail(tail, nb) {
+  function parseTail(idx, tail, spec, q) {
+      let nb = spec.nb
+      var errors = new Array ()
       var result = new Array ()
       var i = 0
       for (var elt of tail){
@@ -665,11 +664,17 @@
                   break;
               case 0 :
               default:
+                  errors.push({
+                      type: 'bad symbol',
+                      line: idx,
+                      txt: `'${val}' n'est pas un symbole valide.`
+                  })
                   result.push(
                       comma,
                       {
                           css : "err err-wdth",
-                          src : elt
+                          src : elt,
+                          txt: `'${val}' n'est pas un symbole valide.`
                       }
                   )
               }
@@ -684,29 +689,95 @@
                   )
                   break;
               default:
+                  errors.push({
+                      type: 'bad dir',
+                      line: idx,
+                      txt: `'${val}' n'est pas une direction valide.`
+                  })
                   result.push(
                       comma,
                       {
                           css : "err err-dir",
-                          src : elt
+                          src : elt,
+                          txt: `'${val}' n'est pas un symbole valide.`
                       }
                   )
               }
           } else {
+              errors.push({
+                  type: 'trans line too long',
+                  line: idx,
+                  txt : "Cette ligne de transition est trop longue."
+              })
               result.push(
                   commaErr,
                   {
                       css : "err err-idx",
-                      src : elt
+                      src : elt,
+                      txt : "Cette ligne de transition est trop longue."
                   }
               )
           }
       }
-      // alert(`${tail.join(',')}${tail.length} ${result.length}`) 
+      if (errors.length > 0 ){
+          spec.errors = spec.errors.concat(errors)
+          spec.input_trans = false
+      } else if (spec.input_trans){
+          let i1 = spec.input_trans.ln
+          let q1 = spec.input_trans.etat
+          let reads = spec.input_trans.reads
+          spec.input_trans = false
+          if (tail.length == 2 * nb){
+              let writes = tail.slice(0, nb)
+              let moves = tail.splice(nb)
+              let actions = new Array(nb)
+              for (var i = 0; i < nb; i++){
+                  actions[i]=[writes[i].trim(),moves[i].trim()]
+              }
+              spec.trans.push(new Transition(i1,
+                                             idx,
+                                             q1,
+                                             q,
+                                             reads,
+                                             actions))
+          } else if (tail.length < 2 * nb){
+              spec.errors.push({
+                  type: 'trans line too short',
+                  line: idx,
+                  txt : "Cette ligne de transition est trop courte."
+              })
+          } else {
+              spec.errors.push({
+                  type: 'unknown, should not happen',
+                  line: idx,
+                  txt: '??'
+              })
+          }
+      } else {
+          if (tail.length == nb){
+              spec.input_trans = {
+                  ln : idx,
+                  etat : q,
+                  reads : tail.map(function(s){return s.trim()})
+              }
+          } else if (tail.length < nb){
+              spec.errors.push({
+                  type: 'trans line short',
+                  line: idx,
+                  txt: "Cette ligne de transition est trop courte."
+              })
+          } else {
+              spec.errors.push({
+                  type: 'too many symbols for input',
+                  line: idx,
+                  txt: "Cette ligne de transition est trop longue."
+              })
+          }
+      }
       return result
   }
   
-  function parseTrans(line, spec){
+  function parseTrans(idx, line, spec){
       let m = line.match(/^([^,]*),(.*)/)
       if (m){
           let state = { css : "state", src : m[1], value : m[1].trim() }
@@ -714,40 +785,30 @@
           if (spec.nb == 0){
               spec.nb = tail.length
           }
-          return [state].concat(parseTail(tail, spec.nb))
+          return [state].concat(parseTail(idx, tail, spec, state.value))
       } else {
+          if (line.trim().length > 0){
+              spec.errors.push({
+                  type: 'not recognized',
+                  line: idx,
+                  txt: "Cette ligne est incompréhensible."
+              })
+          }
           return [ {css : "", src : line} ]
       }
   }
 
 
-  function parseLine(line, spec, container){
-      let parts = parseComment(line,spec)
-      let optln = parseOptLn(parts.content, spec)
+  function parseLine(idx, line, spec, container){
+      let parts = parseComment(idx, line,spec)
+      let optln = parseOptLn(idx, parts.content, spec)
       if (optln){
           insertLine(optln.concat(parts.comment), container)
       } else {
-          let trln = parseTrans(parts.content,spec)
+          let trln = parseTrans(idx, parts.content,spec)
           insertLine(trln.concat(parts.comment), container)
       }
   }
-  // function styleLn(line, spec){
-  //     var remaining = line
-  //     var comments = "", prefix = ""
-  //     var m = remaining.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
-  //     if (m){
-  //         comments = `<span class="comment">${m[2]}</span>`
-  //         remaining = m[1]
-  //     }
-  //     m = remaining.match(/^([^:]*):(.*)/)
-  //     if (m){
-  //         prefix = `<span class="prefix">${m[1]}</span><span class="colon">:</span>`
-  //         remaining = m[2]
-  //     } else {
-  //         remaining = remaining.replaceAll(',', '<span class="comma">,</span>')
-  //     }
-  //     return `${prefix}${remaining}${comments}`
-  // }
   
   function createLine(i, str, spec){
       const div = document.createElement("pre")
@@ -765,16 +826,70 @@
       line.className = "line"
       line.id = `line-${i}`
 
-      parseLine(str, spec, line)
+      parseLine(i, str, spec, line)
       
       return div
   }
 
-  function genLineNbs(){
+  function prtset(s){
+      let out = "{"
+      let init = true
+      for (const i of s){
+          if (init){
+              init = false
+          } else {
+              out += ','
+          }
+          out += i
+      }
+      return (out+"}")
+  }
+  function summary(tm){
+      return `${tm.nb_tapes} rubans<br/>états : ${prtset(tm.states)}<br/>transitions : { ${tm.transList.join(',<br/>')} }<br/>état initial : ${tm.init}, état final : ${tm.finalState}<br/> alphabet : ${prtset(tm.alphabet)}`
+  }
+
+
+  function transitionToEdge(tr){
+      let src = textarea.value.split('\n').slice(tr.ln1-1, tr.ln2 + 1).join('\n')
+      return {
+          id: tr.id,
+          from : `q_${tr.etat_read}`,
+          to: `q_${tr.etat_write}`,
+          arrows: "to",
+          label: `${tr.test}/${tr.action}`,
+          title: `lignes ${tr.ln1}-${tr.ln2}:\n${src}`
+      }
+  }
+
+  function genGraph(tm){
+      var nodes = new Array(), edges = new Array()
+      for (let q of tm.states){
+          nodes.push({id: `q_${q}`, label:q})
+      }
+      nodes.push({id: "initial", shape:"dot", size:1}, {id: "final", shape:"dot", size:1})
+      edges.push({id: "e_init", from: "initial", to: `q_${tm.init}`, arrows: "to"},
+                 {id: "e_final", from: `q_${tm.finalState}`, to: "final", arrows: "to"})
+      for (const t of tm.transList){
+          edges.push(transitionToEdge(t))
+      }
+      return {
+          nodes: nodes,
+          edges: edges
+      }
+  }
+  
+  function parseTM(){
       const lines = textarea.value.split('\n')
       const nbLines = lines.length;
       var maxW = 0
-      const spec = { nb : 0 }
+      const spec = {
+          nb : 0,
+          trans : new Array(),
+          output: 0,
+          outputLn: 0,
+          name: "",
+          errors : new Array()
+      }
       
       
       lineNumbers.innerHTML = ""
@@ -785,17 +900,56 @@
           maxW = Math.max(maxW,  l.clientWidth)
       }
       textarea.style.width = `${maxW}px`
+
+      if (spec.output > spec.nb){
+          spec.errors.push({
+              type : 'output tape index is larger than nb of tapes',
+              line : spec.errors.outputLn,
+              txt : `Le ruban de sortie ${spec.output} n'existe pas, cette machine a ${spec.nb} rubans`
+          })
+      }
+      if (spec.errors.length > 0){
+          mytm = false
+          document.getElementById("compilation-panel").classList.add("alert")
+          errElt = document.getElementById("compilation-msg")
+          errElt.innerHTML = "Spécification incorrecte : <br/>"
+          for (const e of spec.errors){
+              let ln = document.getElementById(`idx-${e.line}`)
+              ln.classList.add('alert')
+              if(ln.title){
+                  ln.title += `\n${e.txt}`
+              } else {
+                  ln.title = e.txt
+              }
+              errElt.innerHTML += `<br/>ligne ${e.line}: ${e.txt.replaceAll('<','&lt').replaceAll('<','&gt')}`
+          }
+      } else if (spec.q0 && spec.qf && spec.trans.length > 0) {
+          mytm = new TuringMachine(spec.nb, spec.q0, spec.qf, spec.trans, spec.output, spec.name)
+          document.getElementById("compilation-panel").classList.remove("alert")
+          document.getElementById("compilation-msg").innerHTML = `Compilation réussie ! <br/> ${summary(mytm)}`
+      } else {
+          mytm = false
+          document.getElementById("compilation-panel").classList.add("alert")
+          errElt = document.getElementById("compilation-msg")
+          errElt.innerHTML = "Spécification incomplète : <br/>"
+          if (! spec.q0){
+              errElt.innerHTML += "<br/> état initial manquant."
+          }
+          if (! spec.qf){
+              errElt.innerHTML += "<br/> état final manquant."
+          }
+          if (spec.trans.length == 0){
+              errElt.innerHTML += "<br/> transitions manquantes."
+          }
+      }
   }
   
-  // textarea.addEventListener('keyup', event => genLineNbs())
-
-  textarea.addEventListener('input', event => genLineNbs())
+  textarea.addEventListener('input', event => parseTM())
   
-  genLineNbs()
-  // resize_input()
-
+  parseTM()
+  
   textarea.style.height = textarea.scrollHeight + "px"
-  
+    
   textarea.addEventListener('keydown', event => {
       if (event.key === 'Tab') {
           const start = textarea.selectionStart
@@ -805,8 +959,7 @@
 
           event.preventDefault()
       } else if (event.key === 'Enter' && event.ctrlKey) {
-          const success = compile()
-          if (success){
+          if (mytm){
               document.getElementById("simulator").scrollIntoView()
               document.getElementById("input-str").focus()
           }
@@ -889,11 +1042,11 @@
         </div>
       </div>
     </div>
-    <div id="simulator-frame" class="section hidden" ></div>
+    <!-- <div id="simulator-frame" class="section hidden" ></div> -->
     <div class="table-tape section" id="table-tape-section">
       <div class="table-tape" id="table-tape">
         <table>
-          <tbody id="simulator-frame-alt">
+          <tbody id="simulator-frame">
           </tbody>
         </table>
       </div>
@@ -905,11 +1058,11 @@
               id="lock-btn" >
         <i class="fas fa-lock" id="lock-btn-ico"></i>
       </button>
-      <button onclick="switchView()"
-              class='view btn btn--primary'
-              title="Changer d'affichage des rubans">
-        <i class="fas fa-eye"></i>
-      </button>
+      <!-- <button onclick="switchView()" -->
+      <!--         class='view btn btn--primary' -->
+      <!--         title="Changer d'affichage des rubans"> -->
+      <!--   <i class="fas fa-eye"></i> -->
+      <!-- </button> -->
     </div>
     <div class="graph-visualizer" id="graph-of-tm"></div>
     <div class="hidden" id="pop-up-outer">
@@ -929,7 +1082,6 @@
   src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
   ></script>
 <!-- <script src="/cours/assets/js/vis/dist/vis.js"></script> -->
-<script src="./assets/js/turing.js"></script>
 <script>
   var tm
   var myenv  
@@ -1005,12 +1157,12 @@
   )
 
 
-  function switchView(){
-      document.getElementById("table-tape-section").classList.toggle("hidden")
-      document.getElementById("lock-btn").classList.toggle("hidden")
-      document.getElementById("simulator-frame").classList.toggle("hidden")
-      focusView()
-  }
+  // function switchView(){
+  //     document.getElementById("table-tape-section").classList.toggle("hidden")
+  //     document.getElementById("lock-btn").classList.toggle("hidden")
+  //     document.getElementById("simulator-frame").classList.toggle("hidden")
+  //     focusView()
+  // }
 
   function toggleLockView(){
       var btn = document.getElementById("lock-btn")
@@ -1036,7 +1188,7 @@
   }
   
   function prepareTableTape(){
-      const body = document.getElementById("simulator-frame-alt")
+      const body = document.getElementById("simulator-frame")
       body.innerHTML = "<tr class='filler'><td></td><td><div class='state' id='table-state'></div><div class='pointer'></div></td><td></td></tr>"
       for (var row, cell, i = 0; i < myenv.machine.nb_tapes; i++){
           if(i > 0){
@@ -1064,8 +1216,9 @@
   }
 
   function updateTableTape(){
-      document.getElementById('table-state').innerHTML = myenv.current.etat
-      var content =  myenv.current.tapes.map(t => t.content)
+      document.getElementById('table-state').innerHTML = myenv.etat
+      var content =  myenv.tapes.map(function (t) {return t.content})
+
       for (var symb, i = 0; i < myenv.machine.nb_tapes; i++){
           document.getElementById(`past-${i}`).innerHTML = content[i].past
           symb = content[i].present;
@@ -1118,7 +1271,7 @@
   document.getElementById('speedo').onchange = updDelay
 
   function highlight_current(){
-      var nid = `q_${myenv.current.etat}`, eid
+      var nid = `q_${myenv.etat}`, eid
       if (myenv.history.length > 0){
           eid = myenv.history[myenv.history.length - 1].id
       }else{
@@ -1158,85 +1311,35 @@
       graph.focus(nid)
       current_node = nid
   }
-
-  function prtset(s){
-      return `{${Array.from(s).join(',')}}`
-  }
-  function summary(tm){
-      return `${tm.nb_tapes} rubans<br/>états : ${prtset(tm.states)}<br/>état initial : ${tm.init}, état final : ${tm.finalState}<br/> alphabet : ${prtset(tm.alphabet)}`
-  }
-
-  function printCompileErr(err){
-      document.getElementById("compilation-panel").classList.add("alert")
-      document.getElementById("compilation-msg").innerHTML = "Erreur de compilation : <br/>"
-      document.getElementById("compilation-msg").innerHTML += err.message
-  }
-
-  function alertCode(lineStart, lineEnd){
-      for (var i = lineStart; i <= lineEnd; i++){
-          document.getElementById(`pretty-line-${i}`).classList.add('alert')
-      }
-      document.getElementById(`pretty-line-${lineStart}`).scrollIntoView({
-          behavior: "smooth", block: "center", inline: "nearest"
-      })
-  }
-
-  function pacifyCode(lineStart, lineEnd){
-      for (var i = lineStart; i <= lineEnd; i++){
-          document.getElementById(`ln${i}`).classList.remove('alert')
-      }
-  }
   
   function compile(){
-      var gTM_out, states, transitions
-      try {
-          gTM_out = getTuringMachine(document.getElementById('src').value);
-      }
-      catch(err){
-          if (err.name === "TuringException"){
-              printCompileErr(err)
-          } else if (err.name === "CompileException"){
-              printCompileErr(err)
-              alertCode(err.lineStart,err.lineEnd)
-          } else {
-              throw err
+      if (mytm){
+          my_graph = genGraph(mytm)
+          states = my_graph.nodes
+          transitions = my_graph.edges
+          nodes = new vis.DataSet(states)
+          edges = new vis.DataSet(transitions)
+          graph.setData({nodes: nodes, edges:edges})
+          graph.redraw()
+          myenv = new TuringEnv(mytm, '')
+          current_node = "initial"
+          high_trans = "e_init"
+          if (mytm.name != ""){
+              document.getElementById("tm-name").innerHTML = ` : ${mytm.name}`
+          }else{
+              document.getElementById("tm-name").innerHTML = ""
           }
+          load();
+          return true;
+      } else {
           return false
       }
-      document.getElementById("compilation-panel").classList.remove("alert")
-      document.getElementById("compilation-msg").innerHTML = "Compilation réussie ! <br/>"
-      tm = gTM_out.machine
-      document.getElementById("compilation-msg").innerHTML += summary(tm)
-      states = gTM_out.graph.nodes
-      transitions = gTM_out.graph.edges
-      nodes = new vis.DataSet(states)
-      edges = new vis.DataSet(transitions)
-      graph.setData({nodes: nodes, edges:edges})
-      graph.redraw()
-      document.getElementById("simulator-frame").innerHTML = ''
-      myenv = new TuringEnv(tm, '', 'simulator-frame')
-      current_node = "initial"
-      high_trans = "e_init"
-      if (tm.name != ""){
-          document.getElementById("tm-name").innerHTML = ` : ${tm.name}`
-      }else{
-          document.getElementById("tm-name").innerHTML = ""
-      }
-      load();
-      return true;
   }
 
   function load(){
       stop()
       inputword = document.getElementById("input-str").value
-      var hidden = document.getElementById("simulator-frame").classList.contains("hidden")
-      if (hidden){
-          document.getElementById("simulator-frame").classList.remove("hidden")
-      }
       myenv.reset(inputword)
-      if (hidden){
-          document.getElementById("simulator-frame").classList.add("hidden")
-      }
       _finished = myenv.accepted
       steps.innerHTML = myenv.nb_steps
       prepareTableTape()
@@ -1271,8 +1374,6 @@
       }
   }
 
-  // document.getElementById("pop-up").onclick = hidePopUp()
-
   function hidePopUp(){
       document.getElementById("pop-up-outer").classList.add("hidden")
   }
@@ -1291,7 +1392,7 @@
               = `Le mot "${inputword}" est rejetté.`
       }
       if (myenv.machine.output > 0){
-          var output = myenv.current.tapes[myenv.machine.output - 1].content
+          var output = myenv.tapes[myenv.machine.output - 1].content
           document.getElementById("pop-up-content").innerHTML
               += `<br>Sortie : ${output.past}${output.present}${output.future}`
       }
@@ -1357,21 +1458,7 @@
       _keeprunning = false
   }
 
-
-  
-  function resize(){
-      var hidden = document.getElementById("simulator-frame").classList.contains("hidden")
-      if (hidden){
-          document.getElementById("simulator-frame").classList.remove("hidden")
-      }
-      myenv.current.resize()
-      if (hidden){
-          document.getElementById("simulator-frame").classList.add("hidden")
-      }
-  }
-
   updDelay()
   compile()
 
-  window.onresize = resize
 </script>
