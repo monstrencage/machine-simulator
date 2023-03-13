@@ -1,0 +1,63 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+search: false
+---
+
+@charset "utf-8";
+
+
+// links
+$link-color: #6f777d;
+
+a {
+    text-decoration:none;
+    font-weight:bold;
+}
+nav a, .social-icons a {
+    font-weight:normal;
+}
+
+a:not(.btn):hover {
+  text-decoration: underline;
+  font-weight: lighter;
+}
+
+// icones
+
+.sidebar img{
+    max-width:75%;
+}
+
+@media (max-width: 64em){
+    .sidebar img{
+        max-width:5em;
+        margin:0
+    }
+}
+
+.footer-logo img{
+    max-width: 16em;
+    max-height: 3em;
+}
+.footer-logo {
+    width:100%;
+    text-align:right;
+}
+// lists of institutions
+.liste-institutions{
+    width:100%;
+    text-align:center
+}
+.liste-institutions .institution{
+    width:15%;
+    display:inline-block;
+    margin: 2em;
+}
+.liste-institutions .institution img{
+}
+
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
+@import "minimal-mistakes"; // main partials
+
+

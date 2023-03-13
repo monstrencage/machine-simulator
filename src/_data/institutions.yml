@@ -1,0 +1,12 @@
+- name: upec
+  text: Université Paris-Est Créteil
+  logo: logo-upec.png
+  url: https://www.u-pec.fr
+- name: lacl
+  text: Laboratoire d’Algorithmique, Complexité et Logique
+  url: https://www.lacl.fr
+  logo: logo-lacl.png
+- name: episen
+  text: École publique d'ingénieurs de la santé et du numérique
+  url: https://episen.u-pec.fr
+  logo: logo-episen.jpg

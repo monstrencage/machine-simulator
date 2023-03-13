@@ -1,0 +1,8 @@
+main:
+  - title: "Simulateur"
+    url: "/"
+  - title: "Aide"
+    url: help
+  - title: "À propos"
+    url: about
+  

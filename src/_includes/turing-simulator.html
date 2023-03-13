@@ -1,0 +1,1377 @@
+<style>
+
+  #tm-name {
+      display: inline;
+  }
+  
+  .close {
+      position: absolute;
+      top: .5em;
+      right: .5em;
+      border: none;
+      background: none;
+      color: #3d4144;
+  }
+
+  .pop-up-outer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: gray;
+      z-index: 3;
+      opacity: 50%;
+      display: block;
+  }
+
+  div.pop-up{
+      background: white;
+      width: fit-content;
+      padding: 1em;
+      transform: translate(-50%,-50%);
+      position: absolute;
+      z-index: 4;
+      top: 50%;
+      left: 50%;
+      border-radius: 4px;
+      border-color: dimgray;
+      border-width: medium;
+      border-style: solid;
+      width: 50%;
+  }
+
+  .pop-up h2{
+      margin-top:unset
+  }
+
+  .pop-up h2 i{
+      margin-left:.5em;
+  }
+  
+  #extra-btns{
+      text-align:right;
+  }
+
+  #table-tape {
+      position: relative;
+      width:  100%;
+      height: fit-content;
+      overflow-x:scroll
+  }
+  .table-tape .state{
+      font-weight:bold;
+      background:white;
+      border-radius:20px;
+      border:medium solid #263238;
+      padding:.3em .5em;
+      position: absolute;
+      transform:translate(calc(-50% + .4em),-2.4em)
+  }
+
+  .table-tape tr {
+      background: #263238;
+      height: fit-content;
+      width: 100%;
+      padding: .5em;
+  }
+
+  .table-tape tr.filler{
+      background:none;
+      height:1em;
+  }
+
+  .table-tape td{
+      padding:.25em;
+      border:unset;
+      height:unset;
+  }
+  .table-tape table {
+      display:table;
+      font-size:1em;
+      margin-top:3em;
+  }
+
+  .table-tape .pointer{
+      transform: translate(-.4em,-.3em);
+      top:unset;
+      left:unset;
+  }
+  .table-tape .past-tape{
+      text-align:right;
+      width: 50%;
+  }
+  .table-tape .tape.current-tape{
+      text-align:center;
+      width: 1em;
+      border: medium solid #263238;
+      background:#eeffff;
+      color:#263238;
+  }
+  .table-tape .future-tape{
+      text-align:left;
+      width: 50%;
+  }
+
+  .table-tape .tape{
+      color: #eeffff;
+      font-weight : bold;
+  }
+
+  .simulator-frame-alt{
+  }
+
+  .table-tape .current-tape.empty{
+      color:transparent;
+  }
+
+
+  h1 i{
+      margin-right:.5em
+  }
+  
+  .tm-cell{
+      display: inline-flex;
+      vertical-align: bottom;
+      background: #263238;
+      color: #eeffff;
+      width:2em;
+      height:2em;
+      margin:0 .1em;
+      text-align: center;
+  }
+  .tm-cell-content{
+      text-align: center;
+      font-weight: bold;
+      margin: auto auto;
+  }
+  .tm-cell.tm-current {
+      color: #263238;
+      background: #eeffff;
+      border: solid .2em;
+  }
+  .tm-state{
+      width: fit-content;
+      margin:auto;
+  }
+  .pointer{
+      background-image:url("./assets/images/pointer.png");
+      background-size:contain;
+      display:block;
+      width:1.5em;
+      height:1.5em;
+      position:absolute;
+      top:0;
+      left:50%;
+      transform:translate(-50%,0);
+      z-index:3;
+  }
+  .tape{
+      position:relative;
+      height: 2.8em
+  }
+  #simulator-frame .past-tape{
+      position:absolute;
+      top:.8em;
+      left:0;
+      width: calc(50% - 1.05em);
+      height: 2em;
+      text-align:right;
+  }
+  #simulator-frame .current-tape{
+      position:absolute;
+      top:.8em;
+      left:50%;
+      transform:translate(-50%,0);
+  }
+  #simulator-frame .future-tape{
+      position:absolute;
+      top:.8em;
+      right:0;
+      width:calc(50% - 1.05em);
+      height: 2em;
+  }
+
+  .section{
+      padding:.5em
+  }
+
+  #editor .panel{
+      display: inline-block;
+      width: fit-content;
+      padding:1em;
+      vertical-align:top;
+      margin: .2em;
+  }
+
+  #editor .control-panel {
+      width: 100%;
+      padding: .5em 0;
+  }
+
+  
+  .editor textarea {
+      overflow: hidden;
+      padding: 0;
+      border: 0;
+      /* min-width: 500px; */
+      outline: none;
+      resize: none;
+      border-radius:0;
+      box-shadow:none;
+      line-height: 22px;
+      font-size: 0.75em;
+      display:block;
+      position: absolute;
+      top: 20px;
+      left: calc(30px + .5em);
+      background:transparent;
+      color:transparent;
+      caret-color: #eeffff;
+  }
+
+  .editor .line span{
+      margin:0;
+      padding:0;
+      display:inline;
+  }
+  .editor .line .tm-comment{
+      color:burlywood;
+  }
+  .editor .line .tm-ppt{
+      color:springgreen;
+  }
+  .editor .line .tm-colon{
+      color:seagreen;
+  }
+  .editor .line .tm-comma{
+      color:skyblue;
+  }
+  
+  .editor .line .tm-comma-err{
+      color:red;
+  }
+
+  .editor .line .tm-err{
+      color:pink;
+  }
+  .editor .line .tm-state{
+      color:lightblue;
+  }
+
+  .editor .line .tm-int{
+      color:purple;
+  }
+  .editor .line .tm-dir{
+      color:orange;
+  }
+  .editor .line .tm-symb{
+      color:white;
+  }
+
+  
+  .editor .alert .line .tm-comment,
+  .editor .alert .line .tm-ppt,
+  .editor .alert .line .tm-colon,
+  .editor .alert .line .tm-comma,
+  .editor .alert .line .tm-comma-err,
+  .editor .alert .line .tm-err,
+  .editor .alert .line .tm-state,
+  .editor .alert .line .tm-int,
+  .editor .alert .line .tm-dir,
+  .editor .alert .line .tm-symb{
+      color:darkred;
+  }
+
+  .editor .line .comment::after{
+      display:none
+  }
+
+  #editor .editor.panel{
+      display: inline-block;
+      gap: 10px;
+      padding: 20px 10px;
+      border-radius: 4px;
+      border-style:inset;
+      height: 30em;
+      overflow: scroll;
+      position: relative;
+  }
+
+  #editor .editor.panel, #editor .compilation-msg.panel{
+      width:100%;
+  }
+
+  #editor .compilation-msg p{
+      margin-bottom:0;
+  }
+  
+
+  .pretty-line{
+      margin:0
+  }
+  .line-idx{
+      width: 20px;
+      text-align: right;
+      display:inline-block;
+  }
+  .line{
+      margin-left:.5em;
+      display: inline-block;
+      color: #eeffff;
+  }
+  .line-numbers{
+      line-height: 22px;
+      font-size: 0.75em;
+      display:inline-block;
+      color: #506882;
+      position:absolute;
+      left:10px;
+      top:20px;
+  }
+  .line-nb{
+      vertical-align:super;
+      display:block;
+  }
+
+  
+  .line-numbers .alert.line-nb {
+      color: pink;
+      font-weight:bold;
+      background:transparent;
+  }
+  
+  textarea, input, .editor.panel{
+      background: #263238;
+      color: #eeffff;
+  }
+  textarea, input {
+      font-size: 0.75em;
+      line-height: 1.8;
+  }
+
+  textarea, input, .tm-cell-content, .tape , .compilation-msg{
+      font-family: Monaco, Consolas, "Lucida Console", monospace;
+  }
+  
+  #editor .compilation-msg.panel{
+      border-style: dotted;
+  }
+  #editor .compilation-msg.panel.error{
+      background:;
+  }
+  #editor .panel h3{
+      margin-top:.1em
+  }  
+  .section h1{
+      margin: 1em
+  }
+  
+  .section {
+      padding: 1em;
+      margin: auto;
+      max-width: 45em;
+  }
+
+  #simulator .section{
+      width:100%;
+      padding:0;
+      margin-bottom:1em;
+  }
+  
+  #simulator .input-panel{
+      display: inline-flex;
+  }
+  
+  #simulator .input-panel *{
+      margin-top:auto;
+      margin-bottom:auto;
+  }
+
+  #simulator .panel.input-panel input{
+      width:50%;
+      margin-right:1em;
+  }
+
+  .space{
+      display:inline-block;
+      width:1em;
+      margin:0;
+      padding:0;
+      border:0;
+  }
+  #simulator .status-panel div{
+      margin: .1em .5em;      
+  }
+
+  
+  #simulator .top-panel {
+      position:relative
+  }
+  #simulator .top-panel .status-panel {
+      position:absolute;
+      top:.5em;
+      right:.5em;
+  }
+  
+  /* @media(min-width:811px){ */
+  /*     #simulator .top-panel { */
+  /*         display: flex; */
+  /*     } */
+  /*     #simulator .control-panel { */
+  /*         display: inline-flex; */
+  /*     } */
+  /* } */
+
+  /* @media(max-width:810px){ */
+  #simulator .top-panel {
+      display: block;
+  }
+  #simulator .control-panel{
+      margin: .5em;
+      padding: .5em;
+  }
+  #simulator .status-panel{
+      width: fit-content;
+      margin-left: auto
+  }
+  /* } */
+  @media(max-width:500px){
+      #status-helper{
+          height: 3em;
+          display:block;
+      }
+  }
+  @media(min-width:501px){
+      #status-helper{
+          display:none;
+      }
+  }
+  
+
+  #simulator .status-panel{
+      border: .1em solid #6f777d;
+      border-radius:30px;
+      background:white;
+  }
+  
+  #simulator .control-panel {
+      border-radius: 4px;
+      width: fit-content;
+  }
+  
+  #simulator .button-panel .btn:first-child {
+      margin-left:0;
+  }
+  
+  #simulator .control-panel .elt {
+      margin: .5em;
+      width:100%
+  }
+
+  #simulator .button-panel .btn {
+      margin-left: 1em;
+      display: inline-block;
+      height: fit-content;
+  }
+
+  #simulator .speedo.elt {
+      display: block;
+  }
+
+  #simulator #speedtxt{
+      display: inline-flex
+  }
+
+  #speedo {
+      width: 20em;
+      display: block;
+  }
+  #simulator .status-panel * {
+      display: inline-block;
+  }
+  
+  #simulator .simulator-panel {
+      padding: .5em;
+      background: lavender;
+      border-radius: 4px;
+      border:solid .1em;
+      position:relative;
+  }
+
+  .graph-visualizer{
+      width:75%;
+      margin:auto;
+      height:15em;
+      border: .1em solid #6f777d;
+      border-radius:30px;
+      background:white;
+  }
+  
+  .alert {
+      background: pink;
+      color: darkred;
+  }
+</style>
+
+<div id="editor" class="section">
+  <h1><i class="fa fa-edit"></i> Éditeur</h1>
+  <div class="editor panel" id="editor-panel">
+    <div style="color:transparent;position:absolute; line-height:22px;font-size:0.75em" id="txt-sample">a</div>
+    <div class="line-numbers">
+      <span></span>
+    </div>
+    <!-- <div class="textarea"> -->
+      <textarea id='src' wrap='off' spellcheck='false' class="input-field" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'>{% if include.init-machine %}{{ include.init-machine}}{% endif %}
+      </textarea>
+      <!-- </div> -->
+  </div>
+  <div class="compilation-msg panel" id="compilation-panel">
+    <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
+    <p id="compilation-msg"></p>
+  </div>
+  <div class="control-panel panel">
+    <button class="btn btn--primary" onclick="compile()"><i class="fa fa-cog"></i> Compiler</button>
+  </div><!-- -->
+</div>
+
+
+<script>
+  const textarea = document.getElementById('src')
+  const lineNumbers = document.querySelector('.line-numbers')
+
+  function innerWidth(elt){
+      const style = getComputedStyle(elt);
+      var width = elt.clientWidth
+      width = width - (parseInt(style.paddingLeft) || 0)
+      width = width - (parseInt(style.paddingRight) || 0)
+      return width
+  }
+
+  // function resize_input(){
+  //     let editor = document.getElementById("editor-panel")
+  //     let style = getComputedStyle(editor)
+  //     let scrollBarWidth = editor.offsetWidth - editor.clientWidth;
+  //     let left = (parseInt(style.paddingLeft) || 0)
+  //     let right = Math.max(parseInt(style.paddingRight) || 0,scrollBarWidth)
+  //     let editor_width = editor.clientWidth - left - right
+  //     textarea.style.width = `${editor_width - 20}px`
+  // }
+  // resize_input()
+
+  function parseComment(line, spec){
+      let m = line.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
+
+      if (m){
+          return {
+              content: m[1],
+              comment: [{
+                  css : "comment",
+                  src : m[2]
+              }]
+          }
+      } else {
+          return {
+              content: line,
+              comment: []
+          }
+      }
+  }
+
+  function parseOptLn(line, spec){
+      let m = line.match(/^([^:]*):(.*)/)
+      if (m){
+          const ppt = {
+              css : "ppt",
+              src : m[1],
+              value : m[1].trim()
+          }
+          const val = {
+              css : "",
+              src : m[2],
+              value : m[2].trim()
+          }
+          switch(ppt.value){
+          case "init":
+          case "initial":
+              val.css = "state"
+              spec.q0 = val.value
+              break;
+          case "accept":
+          case "final":
+              val.css = "state"
+              spec.qf = val.value
+              break;
+              
+              // case "finaux": // todo : multiple final states.
+              //     break;     //
+              
+          case "sortie":
+          case "ouput":
+              val.css = "int"
+              val.value = parseInt(val.value)
+              spec.output = val.value
+              break;
+          case "name":
+          case "nom":
+              val.css = "plain-txt"
+              spec.name = val.value
+              break;
+          default:
+              break;
+          }
+          return [ppt,{css : "colon", src : ':' }, val]
+      } else {
+          return false
+      }
+  }
+
+  function insertLine (parsedLn,container){
+      for (const elt of parsedLn){
+          switch (elt.css){
+          case "":
+          case "plain-txt":
+              container.innerHTML += elt.src
+              break;
+          default:
+              let span = document.createElement("span")
+              span.className = `tm-${elt.css}`
+              span.innerHTML = elt.src
+              container.appendChild(span)
+          }
+      }
+  }
+
+  let comma = { css : "comma", src : "," }
+  let commaErr = { css : "comma-err", src : "," }
+
+  function parseTail(tail, nb) {
+      var result = new Array ()
+      var i = 0
+      for (var elt of tail){
+          i += 1
+          let val = elt.trim()
+          if ((i <= nb) || (nb == 0)){
+              switch (val.length){
+              case 1 :
+                  result.push(
+                      comma,
+                      {
+                          css : "symb",
+                          src : elt,
+                          value : val
+                      }
+                  )
+                  break;
+              case 0 :
+              default:
+                  result.push(
+                      comma,
+                      {
+                          css : "err err-wdth",
+                          src : elt
+                      }
+                  )
+              }
+          } else if (i <= 2*nb) {
+              switch (val){
+              case "<":
+              case ">":
+              case "-":
+                  result.push(
+                      comma,
+                      {css : "dir", src: elt, value:val}
+                  )
+                  break;
+              default:
+                  result.push(
+                      comma,
+                      {
+                          css : "err err-dir",
+                          src : elt
+                      }
+                  )
+              }
+          } else {
+              result.push(
+                  commaErr,
+                  {
+                      css : "err err-idx",
+                      src : elt
+                  }
+              )
+          }
+      }
+      // alert(`${tail.join(',')}${tail.length} ${result.length}`) 
+      return result
+  }
+  
+  function parseTrans(line, spec){
+      let m = line.match(/^([^,]*),(.*)/)
+      if (m){
+          let state = { css : "state", src : m[1], value : m[1].trim() }
+          let tail = m[2].split(',')
+          if (spec.nb == 0){
+              spec.nb = tail.length
+          }
+          return [state].concat(parseTail(tail, spec.nb))
+      } else {
+          return [ {css : "", src : line} ]
+      }
+  }
+
+
+  function parseLine(line, spec, container){
+      let parts = parseComment(line,spec)
+      let optln = parseOptLn(parts.content, spec)
+      if (optln){
+          insertLine(optln.concat(parts.comment), container)
+      } else {
+          let trln = parseTrans(parts.content,spec)
+          insertLine(trln.concat(parts.comment), container)
+      }
+  }
+  // function styleLn(line, spec){
+  //     var remaining = line
+  //     var comments = "", prefix = ""
+  //     var m = remaining.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
+  //     if (m){
+  //         comments = `<span class="comment">${m[2]}</span>`
+  //         remaining = m[1]
+  //     }
+  //     m = remaining.match(/^([^:]*):(.*)/)
+  //     if (m){
+  //         prefix = `<span class="prefix">${m[1]}</span><span class="colon">:</span>`
+  //         remaining = m[2]
+  //     } else {
+  //         remaining = remaining.replaceAll(',', '<span class="comma">,</span>')
+  //     }
+  //     return `${prefix}${remaining}${comments}`
+  // }
+  
+  function createLine(i, str, spec){
+      const div = document.createElement("pre")
+      div.className = "pretty-line"
+      div.id = `pretty-line-${i}`
+      const idx = document.createElement("div")
+      div.appendChild(idx)
+      idx.className = "line-idx"
+      idx.id = `idx-${i}`
+      const idxC = document.createElement("code")
+      idx.appendChild(idxC)
+      idxC.innerHTML = i
+      const line = document.createElement("code")
+      div.appendChild(line)
+      line.className = "line"
+      line.id = `line-${i}`
+
+      parseLine(str, spec, line)
+      
+      return div
+  }
+
+  function genLineNbs(){
+      const lines = textarea.value.split('\n')
+      const nbLines = lines.length;
+      var maxW = 0
+      const spec = { nb : 0 }
+      
+      
+      lineNumbers.innerHTML = ""
+
+      for (var l, id = 1; id <= nbLines; id++){
+          l = createLine(id, lines[id-1], spec)
+          lineNumbers.appendChild(l)
+          maxW = Math.max(maxW,  l.clientWidth)
+      }
+      textarea.style.width = `${maxW}px`
+  }
+  
+  // textarea.addEventListener('keyup', event => genLineNbs())
+
+  textarea.addEventListener('input', event => genLineNbs())
+  
+  genLineNbs()
+  // resize_input()
+
+  textarea.style.height = textarea.scrollHeight + "px"
+  
+  textarea.addEventListener('keydown', event => {
+      if (event.key === 'Tab') {
+          const start = textarea.selectionStart
+          const end = textarea.selectionEnd
+
+          textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
+
+          event.preventDefault()
+      } else if (event.key === 'Enter' && event.ctrlKey) {
+          const success = compile()
+          if (success){
+              document.getElementById("simulator").scrollIntoView()
+              document.getElementById("input-str").focus()
+          }
+      }
+  })
+  </script>
+
+<div id="simulator" class="section">
+  <h1><i class="fas fa-robot"></i> Simulateur<div id="tm-name"></div></h1>
+  <div class="input-panel panel section">
+    {% if include.init-word %}
+    <input class="input-field" type='text' id='input-str' value='{{include.init-word}}'/>
+    {% else %}
+    <input class="input-field" type='text' id='input-str'/>
+    {% endif %}
+    <button onclick="load()" class="btn btn--primary"><i class="fa fa-undo"></i> Charger mot d'entrée</button>
+    <script>
+      txtinput = document.getElementById("input-str")
+      txtinput.addEventListener('keydown', event => {
+          if (event.key === 'Enter') {
+              load()
+              document.getElementById("simulator-panel").scrollIntoView()
+              txtinput.blur()
+          }
+      })
+    </script>
+  </div>
+  <div class="section simulator-panel" id="simulator-panel" >
+    <div class="top-panel">
+      <div class="status-panel">
+        <div># d'étapes: <div id='tm-nb-steps'></div></div><span class="space"></span>
+        <div><i id='tm-status' class="fas fa-pause-circle"></i></div>
+      </div>
+      <span id="status-helper"></span>
+      <div class="control-panel">
+        <div class="elt button-panel">
+          <button onclick="runback()"
+                  class='btn btn--primary'
+                  title="Rembobiner">
+            <i class="fas fa-fast-backward"></i>
+          </button>
+          <button onclick="back()"
+                  class='btn btn--primary'
+                  title="Reculer d'une étape">
+            <i class="fas fa-step-backward"></i>
+          </button>
+          <button onclick="step()"
+                  class='btn btn--primary'
+                  title="Avancer d'une étape">
+            <i class="fas fa-step-forward"></i>
+          </button>
+          <button onclick="run()"
+                  class='btn btn--primary'
+                  title="Laisser tourner">
+            <i class="fas fa-fast-forward"></i>
+          </button>
+          <button onclick="stop()"
+                  class='btn btn--primary'
+                  title="Arrêter l'exécution">
+            <i class="fas fa-stop"></i>
+          </button>
+        </div>
+        <div class="elt speedo">
+          <i class="fas fa-tachometer-alt"></i> vitesse: <div id='speedtxt'></div>
+          <input id="speedo"
+                 type="range"
+                 list="speeds"
+                 min="0"
+                 max="5"
+                 value="2"
+                 />
+          <datalist id="speeds">
+            <option value="0" label="lent"></option>
+            <option value="1" label="normal"></option>
+            <option value="2" label="plus vite"></option>
+            <option value="3" label="rapide"></option>
+            <option value="4" label="très rapide"></option>
+            <option value="5" label="à toute vitesse"></option>
+          </datalist>
+        </div>
+      </div>
+    </div>
+    <div id="simulator-frame" class="section hidden" ></div>
+    <div class="table-tape section" id="table-tape-section">
+      <div class="table-tape" id="table-tape">
+        <table>
+          <tbody id="simulator-frame-alt">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section" id="extra-btns">
+      <button onclick="toggleLockView()"
+              class='view btn btn--primary'
+              title="Débloquer les rubans"
+              id="lock-btn" >
+        <i class="fas fa-lock" id="lock-btn-ico"></i>
+      </button>
+      <button onclick="switchView()"
+              class='view btn btn--primary'
+              title="Changer d'affichage des rubans">
+        <i class="fas fa-eye"></i>
+      </button>
+    </div>
+    <div class="graph-visualizer" id="graph-of-tm"></div>
+    <div class="hidden" id="pop-up-outer">
+      <div class="pop-up-outer"></div>
+      <div class="pop-up" id="pop-up">
+        <h2 id="pop-up-title"></h2>
+        <button class="close" onclick="hidePopUp()" title="Fermer">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="pop-up-content" id="pop-up-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script
+  type="text/javascript"
+  src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+  ></script>
+<!-- <script src="/cours/assets/js/vis/dist/vis.js"></script> -->
+<script src="./assets/js/turing.js"></script>
+<script>
+  var tm
+  var myenv  
+  let steps = document.getElementById('tm-nb-steps')
+  let status = document.getElementById('tm-status')
+  var inputword = ''
+  var _run = false
+  var _keeprunning = false
+  var _finished = false
+  var _forwards = true
+  var delay = 1000
+  // create a network
+  var graph_container = document.getElementById("graph-of-tm");
+  var nodes = new vis.DataSet([])
+  var edges = new vis.DataSet([])
+  var color_normal = '#6f777d', color_highlight = 'darkred'
+  var data = {
+      nodes: nodes,
+      edges: edges
+  };
+  var options = {
+      nodes:{
+          borderWidth: 0,
+          color: color_normal,
+          font:{
+              color:'white'
+          }
+      },
+      edges:{
+          color: color_normal,
+          font:{
+              color:'black'
+          }
+      }
+  };
+  var graph = new vis.Network(graph_container, data, options);
+  var current_node
+  var high_trans
+  var history = []
+  var _locked = true
+
+  document.addEventListener(
+      'keydown', event => {
+          let elt = document.activeElement
+          if (! elt.classList.contains("input-field")){
+              if (event.key === ' ') {
+                  if (document.getElementById("pop-up-outer").classList.contains("hidden")){
+                      if (_keeprunning){
+                          stop()
+                      }else{
+                          run()
+                      }
+                  }else{
+                      hidePopUp()
+                  }
+              } else if (event.key === '+') {
+                  let lvl = Math.trunc(document.getElementById('speedo').value)
+                  if (lvl > 0){
+                      document.getElementById('speedo').value = lvl + 1
+                      updDelay()
+                  }
+              } else if (event.key === '-') {
+                  let lvl = Math.trunc(document.getElementById('speedo').value)
+                  if (lvl < 5){
+                      document.getElementById('speedo').value = lvl - 1
+                      updDelay()
+                  }
+              } else if (event.key === 'Enter' && ! document.getElementById("pop-up-outer").classList.contains("hidden")){
+                  hidePopUp()
+              }
+          }
+      }
+  )
+
+
+  function switchView(){
+      document.getElementById("table-tape-section").classList.toggle("hidden")
+      document.getElementById("lock-btn").classList.toggle("hidden")
+      document.getElementById("simulator-frame").classList.toggle("hidden")
+      focusView()
+  }
+
+  function toggleLockView(){
+      var btn = document.getElementById("lock-btn")
+      var ico = document.getElementById("lock-btn-ico")
+      _locked = ! _locked
+      if (_locked){
+          focusView()
+          ico.className = "fas fa-lock"
+          btn.title = "Débloquer les rubans"
+      }else{
+          ico.className = "fas fa-lock-open"
+          btn.title = "Centrer automatiquement les rubans"
+      }
+  }
+
+  function focusView(){
+      if (_locked && ! document.getElementById("table-tape-section").classList.contains("hidden")){
+          var bodyRect = document.getElementById("table-tape").getBoundingClientRect(),
+              elemRect = document.getElementById("table-state").getBoundingClientRect(),
+              offset   = elemRect.left - bodyRect.left;
+          document.getElementById("table-tape").scrollLeft = offset
+      }
+  }
+  
+  function prepareTableTape(){
+      const body = document.getElementById("simulator-frame-alt")
+      body.innerHTML = "<tr class='filler'><td></td><td><div class='state' id='table-state'></div><div class='pointer'></div></td><td></td></tr>"
+      for (var row, cell, i = 0; i < myenv.machine.nb_tapes; i++){
+          if(i > 0){
+              row = document.createElement("tr")
+              row.className = "filler"
+              body.appendChild(row)
+          }
+          row = document.createElement("tr")
+          row.id = `tape-${i}`
+          row.className = "tape"
+          body.appendChild(row)
+          cell = document.createElement("td")
+          cell.id = `past-${i}`
+          cell.className = "tape past-tape"
+          row.appendChild(cell)
+          cell = document.createElement("td")
+          cell.id = `current-${i}`
+          cell.className = "tape current-tape"
+          row.appendChild(cell)
+          cell = document.createElement("td")
+          cell.id = `future-${i}`
+          cell.className = "tape future-tape"
+          row.appendChild(cell)
+      }
+  }
+
+  function updateTableTape(){
+      document.getElementById('table-state').innerHTML = myenv.current.etat
+      var content =  myenv.current.tapes.map(t => t.content)
+      for (var symb, i = 0; i < myenv.machine.nb_tapes; i++){
+          document.getElementById(`past-${i}`).innerHTML = content[i].past
+          symb = content[i].present;
+          if(symb.trim() == ""){
+              symb = "#"
+              document.getElementById(`current-${i}`).classList.add("empty")
+          }else{
+              document.getElementById(`current-${i}`).classList.remove("empty")
+          }
+          document.getElementById(`current-${i}`).innerHTML = symb
+          document.getElementById(`future-${i}`).innerHTML = content[i].future
+      }
+  }
+
+  
+  
+  function updTxt(id, txt){
+      document.getElementById(id).innerHTML = txt
+  }
+  
+  function updDelay(){
+      switch(Math.trunc(document.getElementById('speedo').value)){
+      case 0:
+          delay = 2000;
+          updTxt("speedtxt", "très lente")
+          break
+      case 1:
+          delay = 1000;
+          updTxt("speedtxt", "tranquille")
+          break
+      case 2:
+          delay = 750;
+          updTxt("speedtxt", "confortable")
+          break
+      case 3:
+          delay = 500;
+          updTxt("speedtxt", "rapide")
+          break
+      case 4:
+          delay = 100;
+          updTxt("speedtxt", "véloce")
+          break
+      case 5:
+          delay = 0;
+          updTxt("speedtxt", "youhouhou!")
+          break
+      }
+  }
+
+  document.getElementById('speedo').onchange = updDelay
+
+  function highlight_current(){
+      var nid = `q_${myenv.current.etat}`, eid
+      if (myenv.history.length > 0){
+          eid = myenv.history[myenv.history.length - 1].id
+      }else{
+          eid = 'e_init'
+      }
+      if (current_node != nid){
+          nodes.updateOnly([
+              {
+                  id:current_node,
+                  color:color_normal
+              },{
+                  id:nid,
+                  color:color_highlight
+              }
+          ])
+      }
+      if (high_trans != eid){
+          edges.updateOnly([
+              {
+                  id:high_trans,
+                  color:color_normal
+              }])
+          edges.updateOnly([{
+              id:eid,
+              color:color_highlight
+          }
+                           ])
+      }else{
+          edges.updateOnly([
+              {
+                  id:eid,
+                  color:color_highlight
+              }
+          ])
+      }
+      high_trans = eid
+      graph.focus(nid)
+      current_node = nid
+  }
+
+  function prtset(s){
+      return `{${Array.from(s).join(',')}}`
+  }
+  function summary(tm){
+      return `${tm.nb_tapes} rubans<br/>états : ${prtset(tm.states)}<br/>état initial : ${tm.init}, état final : ${tm.finalState}<br/> alphabet : ${prtset(tm.alphabet)}`
+  }
+
+  function printCompileErr(err){
+      document.getElementById("compilation-panel").classList.add("alert")
+      document.getElementById("compilation-msg").innerHTML = "Erreur de compilation : <br/>"
+      document.getElementById("compilation-msg").innerHTML += err.message
+  }
+
+  function alertCode(lineStart, lineEnd){
+      for (var i = lineStart; i <= lineEnd; i++){
+          document.getElementById(`pretty-line-${i}`).classList.add('alert')
+      }
+      document.getElementById(`pretty-line-${lineStart}`).scrollIntoView({
+          behavior: "smooth", block: "center", inline: "nearest"
+      })
+  }
+
+  function pacifyCode(lineStart, lineEnd){
+      for (var i = lineStart; i <= lineEnd; i++){
+          document.getElementById(`ln${i}`).classList.remove('alert')
+      }
+  }
+  
+  function compile(){
+      var gTM_out, states, transitions
+      try {
+          gTM_out = getTuringMachine(document.getElementById('src').value);
+      }
+      catch(err){
+          if (err.name === "TuringException"){
+              printCompileErr(err)
+          } else if (err.name === "CompileException"){
+              printCompileErr(err)
+              alertCode(err.lineStart,err.lineEnd)
+          } else {
+              throw err
+          }
+          return false
+      }
+      document.getElementById("compilation-panel").classList.remove("alert")
+      document.getElementById("compilation-msg").innerHTML = "Compilation réussie ! <br/>"
+      tm = gTM_out.machine
+      document.getElementById("compilation-msg").innerHTML += summary(tm)
+      states = gTM_out.graph.nodes
+      transitions = gTM_out.graph.edges
+      nodes = new vis.DataSet(states)
+      edges = new vis.DataSet(transitions)
+      graph.setData({nodes: nodes, edges:edges})
+      graph.redraw()
+      document.getElementById("simulator-frame").innerHTML = ''
+      myenv = new TuringEnv(tm, '', 'simulator-frame')
+      current_node = "initial"
+      high_trans = "e_init"
+      if (tm.name != ""){
+          document.getElementById("tm-name").innerHTML = ` : ${tm.name}`
+      }else{
+          document.getElementById("tm-name").innerHTML = ""
+      }
+      load();
+      return true;
+  }
+
+  function load(){
+      stop()
+      inputword = document.getElementById("input-str").value
+      var hidden = document.getElementById("simulator-frame").classList.contains("hidden")
+      if (hidden){
+          document.getElementById("simulator-frame").classList.remove("hidden")
+      }
+      myenv.reset(inputword)
+      if (hidden){
+          document.getElementById("simulator-frame").classList.add("hidden")
+      }
+      _finished = myenv.accepted
+      steps.innerHTML = myenv.nb_steps
+      prepareTableTape()
+      updateTableTape()
+      update_status()
+  }
+
+  function do_step(){
+      var success
+      if (!_run){
+          _run = true
+          if (_forwards){
+              success = myenv.step()
+          } else {
+              success = myenv.back()
+          }
+          _run = false
+          _keeprunning = _keeprunning && success
+          updateTableTape()
+          focusView()
+          steps.innerHTML = myenv.nb_steps
+          if (_keeprunning) {
+              highlight_current()
+              setTimeout(do_step, delay)
+          } else{
+              _finished = _forwards && !success
+              update_status()
+              if(_finished){
+                  notifySuccess()
+              }
+          }
+      }
+  }
+
+  // document.getElementById("pop-up").onclick = hidePopUp()
+
+  function hidePopUp(){
+      document.getElementById("pop-up-outer").classList.add("hidden")
+  }
+  
+  function notifySuccess(){
+      let status = document.createElement("i")
+      status.className = document.getElementById("tm-status").className
+      document.getElementById("pop-up-outer").classList.remove("hidden")
+      document.getElementById("pop-up-title").innerHTML = "Exécution terminée :"
+      document.getElementById("pop-up-title").appendChild(status)
+      if (myenv.accepted){       
+          document.getElementById("pop-up-content").innerHTML
+              = `Le mot "${inputword}" est accepté.`
+      } else {    
+          document.getElementById("pop-up-content").innerHTML
+              = `Le mot "${inputword}" est rejetté.`
+      }
+      if (myenv.machine.output > 0){
+          var output = myenv.current.tapes[myenv.machine.output - 1].content
+          document.getElementById("pop-up-content").innerHTML
+              += `<br>Sortie : ${output.past}${output.present}${output.future}`
+      }
+  }
+
+  function update_status(){
+      highlight_current()
+      status.classList.remove('fa-check-circle')
+      status.classList.remove('fa-times-circle')
+      status.classList.remove('fa-pause-circle')
+      status.classList.remove('fa-spin')
+      status.classList.remove('fa-cog')
+      if (_run || _keeprunning){
+          status.classList.add('fa-spin')
+          status.classList.add('fa-cog')
+      } else if (_finished){
+          if (myenv.accepted){
+              status.classList.add('fa-check-circle')
+          } else { 
+              status.classList.add('fa-times-circle')
+          }
+      } else {
+          status.classList.add('fa-pause-circle')
+      }
+  }
+  
+  function step(){
+      if (!_keeprunning && !_run){
+          _forwards = true
+          update_status()
+          do_step()
+      }
+  }
+
+  function run(){
+      if (!_keeprunning && !_run){
+          _forwards = true
+          _keeprunning = true
+          update_status()
+          do_step()
+      }
+  }
+
+  function back(){
+      if (!_keeprunning && !_run){
+          _forwards = false
+          update_status()
+          do_step()
+      }
+  }
+
+  function runback(){
+      if (!_keeprunning && !_run){
+          _forwards = false
+          _keeprunning = true
+          update_status()
+          do_step()
+      }
+  }
+  
+  function stop(){
+      _run = false
+      _keeprunning = false
+  }
+
+
+  
+  function resize(){
+      var hidden = document.getElementById("simulator-frame").classList.contains("hidden")
+      if (hidden){
+          document.getElementById("simulator-frame").classList.remove("hidden")
+      }
+      myenv.current.resize()
+      if (hidden){
+          document.getElementById("simulator-frame").classList.add("hidden")
+      }
+  }
+
+  updDelay()
+  compile()
+
+  window.onresize = resize
+</script>
