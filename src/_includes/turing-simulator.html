@@ -1,503 +1,3 @@
-<style>
-
-  #tm-name {
-      display: inline;
-  }
-  
-  .close {
-      position: absolute;
-      top: .5em;
-      right: .5em;
-      border: none;
-      background: none;
-      color: #3d4144;
-  }
-
-  .pop-up-outer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      background-color: gray;
-      z-index: 3;
-      opacity: 50%;
-      display: block;
-  }
-
-  div.pop-up{
-      background: white;
-      width: fit-content;
-      padding: 1em;
-      transform: translate(-50%,-50%);
-      position: absolute;
-      z-index: 4;
-      top: 50%;
-      left: 50%;
-      border-radius: 4px;
-      border-color: dimgray;
-      border-width: medium;
-      border-style: solid;
-      width: 50%;
-  }
-
-  .pop-up h2{
-      margin-top:unset
-  }
-
-  .pop-up h2 i{
-      margin-left:.5em;
-  }
-  
-  #extra-btns{
-      text-align:right;
-  }
-
-  #table-tape {
-      position: relative;
-      width:  100%;
-      height: fit-content;
-      overflow-x:scroll
-  }
-  .table-tape .state{
-      font-weight:bold;
-      background:white;
-      border-radius:20px;
-      border:medium solid #263238;
-      padding:.3em .5em;
-      position: absolute;
-      transform:translate(calc(-50% + .4em),-2.4em)
-  }
-
-  .table-tape tr {
-      background: #263238;
-      height: fit-content;
-      width: 100%;
-      padding: .5em;
-  }
-
-  .table-tape tr.filler{
-      background:none;
-      height:1em;
-  }
-
-  .table-tape td{
-      padding:.25em;
-      border:unset;
-      height:unset;
-  }
-  .table-tape table {
-      display:table;
-      font-size:1em;
-      margin-top:3em;
-  }
-
-
-  .table-tape .past-tape{
-      text-align:right;
-      width: 50%;
-  }
-  .table-tape .tape.current-tape{
-      text-align:center;
-      width: 1em;
-      border: medium solid #263238;
-      background:#eeffff;
-      color:#263238;
-  }
-  .table-tape .future-tape{
-      text-align:left;
-      width: 50%;
-  }
-
-  .table-tape .tape{
-      color: #eeffff;
-      font-weight : bold;
-  }
-
-
-  .table-tape .current-tape.empty{
-      color:transparent;
-  }
-
-
-  h1 i{
-      margin-right:.5em
-  }
-  
-  .tm-cell{
-      display: inline-flex;
-      vertical-align: bottom;
-      background: #263238;
-      color: #eeffff;
-      width:2em;
-      height:2em;
-      margin:0 .1em;
-      text-align: center;
-  }
-  .tm-cell-content{
-      text-align: center;
-      font-weight: bold;
-      margin: auto auto;
-  }
-  .tm-cell.tm-current {
-      color: #263238;
-      background: #eeffff;
-      border: solid .2em;
-  }
-  .tm-state{
-      width: fit-content;
-      margin:auto;
-  }
-  .table-tape .pointer{
-      transform: translate(-.4em,-.3em);
-      background-image:url("./assets/images/pointer.png");
-      background-size:contain;
-      display:block;
-      width:1.5em;
-      height:1.5em;
-      position:absolute;
-      z-index:3;
-  }
-
-  /* #simulator-frame .past-tape{ */
-  /*     position:absolute; */
-  /*     top:.8em; */
-  /*     left:0; */
-  /*     width: calc(50% - 1.05em); */
-  /*     height: 2em; */
-  /*     text-align:right; */
-  /* } */
-  /* #simulator-frame .current-tape{ */
-  /*     position:absolute; */
-  /*     top:.8em; */
-  /*     left:50%; */
-  /*     transform:translate(-50%,0); */
-  /* } */
-  /* #simulator-frame .future-tape{ */
-  /*     position:absolute; */
-  /*     top:.8em; */
-  /*     right:0; */
-  /*     width:calc(50% - 1.05em); */
-  /*     height: 2em; */
-  /* } */
-
-  #editor .panel{
-      display: inline-block;
-      width: fit-content;
-      padding:1em;
-      vertical-align:top;
-      margin: .2em;
-  }
-
-  #editor .control-panel {
-      width: 100%;
-      padding: .5em 0;
-  }
-
-  
-  .editor textarea {
-      overflow: hidden;
-      padding: 0;
-      border: 0;
-      /* min-width: 500px; */
-      outline: none;
-      resize: none;
-      border-radius:0;
-      box-shadow:none;
-      line-height: 22px;
-      font-size: 0.75em;
-      display:block;
-      position: absolute;
-      top: 20px;
-      left: calc(30px + .5em);
-      background:transparent;
-      color:transparent;
-      caret-color: #eeffff;
-  }
-
-  .editor .line span{
-      margin:0;
-      padding:0;
-      display:inline;
-  }
-  .editor .line .tm-comment{
-      color:burlywood;
-  }
-  .editor .line .tm-ppt{
-      color:springgreen;
-  }
-  .editor .line .tm-colon{
-      color:seagreen;
-  }
-  .editor .line .tm-comma{
-      color:skyblue;
-  }
-  
-  .editor .line .tm-comma-err{
-      color:red;
-  }
-
-  .editor .line .tm-err{
-      color:pink;
-  }
-  .editor .line .tm-state{
-      color:lightblue;
-  }
-
-  .editor .line .tm-int{
-      color:violet;
-  }
-  .editor .line .tm-dir{
-      color:orange;
-  }
-  .editor .line .tm-symb{
-      color:white;
-  }
-
-  
-  .editor .alert .line .tm-comment,
-  .editor .alert .line .tm-ppt,
-  .editor .alert .line .tm-colon,
-  .editor .alert .line .tm-comma,
-  .editor .alert .line .tm-comma-err,
-  .editor .alert .line .tm-err,
-  .editor .alert .line .tm-state,
-  .editor .alert .line .tm-int,
-  .editor .alert .line .tm-dir,
-  .editor .alert .line .tm-symb{
-      color:darkred;
-  }
-
-  .editor .line .comment::after{
-      display:none
-  }
-
-  #editor .editor.panel{
-      display: inline-block;
-      gap: 10px;
-      padding: 20px 10px;
-      border-radius: 4px;
-      border-style:inset;
-      height: 30em;
-      overflow: scroll;
-      position: relative;
-  }
-
-  #editor .editor.panel, #editor .compilation-msg.panel{
-      width:100%;
-  }
-
-  #editor .compilation-msg p{
-      margin-bottom:0;
-  }
-  
-
-  .pretty-line{
-      margin:0
-  }
-  .line-idx{
-      width: 20px;
-      text-align: right;
-      display:inline-block;
-  }
-  .line{
-      margin-left:.5em;
-      display: inline-block;
-      color: #eeffff;
-  }
-  .line-numbers{
-      line-height: 22px;
-      font-size: 0.75em;
-      display:inline-block;
-      color: #506882;
-      position:absolute;
-      left:10px;
-      top:20px;
-  }
-  .line-nb{
-      vertical-align:super;
-      display:block;
-  }
-
-  
-  .line-numbers .alert.line-idx {
-      color: pink;
-      font-weight:bold;
-      background:transparent;
-  }
-  
-  textarea, input, .editor.panel{
-      background: #263238;
-      color: #eeffff;
-  }
-  textarea, input {
-      font-size: 0.75em;
-      line-height: 1.8;
-  }
-
-  textarea, input, .tm-cell-content, .tape , .compilation-msg{
-      font-family: Monaco, Consolas, "Lucida Console", monospace;
-  }
-  
-  #editor .compilation-msg.panel{
-      border-style: dotted;
-  }
-  #editor .compilation-msg.panel.error{
-      background:;
-  }
-  #editor .panel h3{
-      margin-top:.1em
-  }  
-  .section h1{
-      margin: 1em
-  }
-  
-  .section {
-      padding: 1em;
-      margin: auto;
-      max-width: 45em;
-  }
-
-  #simulator .section{
-      width:100%;
-      padding:0;
-      margin-bottom:1em;
-  }
-  
-  #simulator .input-panel{
-      display: inline-flex;
-  }
-  
-  #simulator .input-panel *{
-      margin-top:auto;
-      margin-bottom:auto;
-  }
-
-  #simulator .panel.input-panel input{
-      width:50%;
-      margin-right:1em;
-  }
-
-  .space{
-      display:inline-block;
-      width:1em;
-      margin:0;
-      padding:0;
-      border:0;
-  }
-  #simulator .status-panel div{
-      margin: .1em .5em;      
-  }
-
-  
-  #simulator .top-panel {
-      position:relative
-  }
-  #simulator .top-panel .status-panel {
-      position:absolute;
-      top:.5em;
-      right:.5em;
-  }
-  
-  /* @media(min-width:811px){ */
-  /*     #simulator .top-panel { */
-  /*         display: flex; */
-  /*     } */
-  /*     #simulator .control-panel { */
-  /*         display: inline-flex; */
-  /*     } */
-  /* } */
-
-  /* @media(max-width:810px){ */
-  #simulator .top-panel {
-      display: block;
-  }
-  #simulator .control-panel{
-      margin: .5em;
-      padding: .5em;
-  }
-  #simulator .status-panel{
-      width: fit-content;
-      margin-left: auto
-  }
-  /* } */
-  @media(max-width:500px){
-      #status-helper{
-          height: 3em;
-          display:block;
-      }
-  }
-  @media(min-width:501px){
-      #status-helper{
-          display:none;
-      }
-  }
-  
-
-  #simulator .status-panel{
-      border: .1em solid #6f777d;
-      border-radius:30px;
-      background:white;
-  }
-  
-  #simulator .control-panel {
-      border-radius: 4px;
-      width: fit-content;
-  }
-  
-  #simulator .button-panel .btn:first-child {
-      margin-left:0;
-  }
-  
-  #simulator .control-panel .elt {
-      margin: .5em;
-      width:100%
-  }
-
-  #simulator .button-panel .btn {
-      margin-left: 1em;
-      display: inline-block;
-      height: fit-content;
-  }
-
-  #simulator .speedo.elt {
-      display: block;
-  }
-
-  #simulator #speedtxt{
-      display: inline-flex
-  }
-
-  #speedo {
-      width: 20em;
-      display: block;
-  }
-  #simulator .status-panel * {
-      display: inline-block;
-  }
-  
-  #simulator .simulator-panel {
-      padding: .5em;
-      background: lavender;
-      border-radius: 4px;
-      border:solid .1em;
-      position:relative;
-  }
-
-  .graph-visualizer{
-      width:75%;
-      margin:auto;
-      height:15em;
-      border: .1em solid #6f777d;
-      border-radius:30px;
-      background:white;
-  }
-  
-  .alert {
-      background: pink;
-      color: darkred;
-  }
-</style>
 
 <div id="editor" class="section">
   <h1><i class="fa fa-edit"></i> Éditeur</h1>
@@ -516,437 +16,22 @@
     <p id="compilation-msg"></p>
   </div>
   <div class="control-panel panel">
-    <button class="btn btn--primary" onclick="compile()"><i class="fa fa-cog"></i>Charger la machine</button>
+    <button class="btn btn--primary txt" onclick="compile()"><i class="fa fa-cog"></i>Charger la machine</button>
   </div><!-- -->
 </div>
-
-<script src="./assets/js/turing.js"></script>
 
 
 <script>
   const textarea = document.getElementById('src')
   const lineNumbers = document.querySelector('.line-numbers')
-  var mytm = false
+ 
 
-  function parseComment(idx, line, spec){
-      let m = line.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
-
-      if (m){
-          return {
-              content: m[1],
-              comment: [{
-                  css : "comment",
-                  src : m[2]
-              }]
-          }
-      } else {
-          return {
-              content: line,
-              comment: []
-          }
-      }
-  }
-
-  function parseOptLn(idx, line, spec){
-      let m = line.match(/^([^:,]*):(.*)/)
-      if (m){
-          const ppt = {
-              css : "ppt",
-              src : m[1],
-              value : m[1].trim()
-          }
-          const val = {
-              css : "",
-              src : m[2],
-              value : m[2].trim()
-          }
-          switch(ppt.value){
-          case "init":
-          case "initial":
-              val.css = "state"
-              spec.q0 = val.value
-              break;
-          case "accept":
-          case "final":
-              val.css = "state"
-              spec.qf = val.value
-              break;
-              
-              // case "finaux": // todo : multiple final states.
-              //     break;     //
-              
-          case "sortie":
-          case "output":
-              if (val.value.match(/^[0-9]*$/)){
-                  val.value = parseInt(val.value)
-                  if (val.value > 0 ){
-                      val.css = "int"
-                      spec.output = val.value
-                      spec.outputLn = idx
-                  } else {
-                      val.css = "err"
-                      spec.errors.push({
-                          type: 'bad tape index for output',
-                          line: idx,
-                          txt: "La valeur de cet attribut doit être un entier strictement positif."        
-                      })
-                  }
-              } else {
-                  val.css = "err"
-                  spec.errors.push({
-                      type: 'bad tape index for output',
-                      line: idx,
-                      txt: "La valeur de cet attribut doit être un entier strictement positif."        
-                  })
-              }
-              break;
-          case "name":
-          case "nom":
-              val.css = "plain-txt"
-              spec.name = val.value
-              break;
-          default:
-              ppt.css = "plain-txt"
-              break;
-          }
-          return [ppt,{css : "colon", src : ':' }, val]
-      } else {
-          return false
-      }
-  }
-
-  function insertLine (parsedLn,container){
-      for (const elt of parsedLn){
-          switch (elt.css){
-          case "":
-          case "plain-txt":
-              container.innerHTML += elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
-              break;
-          default:
-              let span = document.createElement("span")
-              span.className = `tm-${elt.css}`
-              span.innerHTML = elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
-              if (elt.txt){
-                  span.title = elt.txt
-              }
-              container.appendChild(span)
-          }
-      }
-  }
-
-  let comma = {
-      css : "comma",
-      src : ","
-  }
-  let commaErr = { css : "comma-err",
-                   src : "," ,
-                   title: "Cette ligne de transition est trop longue."}
-
-  function parseTail(idx, tail, spec, q) {
-      let nb = spec.nb
-      var errors = new Array ()
-      var result = new Array ()
-      var i = 0
-      for (var elt of tail){
-          i += 1
-          let val = elt.trim()
-          if ((i <= nb) || (nb == 0)){
-              switch (val.length){
-              case 1 :
-                  result.push(
-                      comma,
-                      {
-                          css : "symb",
-                          src : elt,
-                          value : val
-                      }
-                  )
-                  break;
-              case 0 :
-              default:
-                  errors.push({
-                      type: 'bad symbol',
-                      line: idx,
-                      txt: `'${val}' n'est pas un symbole valide.`
-                  })
-                  result.push(
-                      comma,
-                      {
-                          css : "err err-wdth",
-                          src : elt,
-                          txt: `'${val}' n'est pas un symbole valide.`
-                      }
-                  )
-              }
-          } else if (i <= 2*nb) {
-              switch (val){
-              case "<":
-              case ">":
-              case "-":
-                  result.push(
-                      comma,
-                      {css : "dir", src: elt, value:val}
-                  )
-                  break;
-              default:
-                  errors.push({
-                      type: 'bad dir',
-                      line: idx,
-                      txt: `'${val}' n'est pas une direction valide.`
-                  })
-                  result.push(
-                      comma,
-                      {
-                          css : "err err-dir",
-                          src : elt,
-                          txt: `'${val}' n'est pas un symbole valide.`
-                      }
-                  )
-              }
-          } else {
-              errors.push({
-                  type: 'trans line too long',
-                  line: idx,
-                  txt : "Cette ligne de transition est trop longue."
-              })
-              result.push(
-                  commaErr,
-                  {
-                      css : "err err-idx",
-                      src : elt,
-                      txt : "Cette ligne de transition est trop longue."
-                  }
-              )
-          }
-      }
-      if (errors.length > 0 ){
-          spec.errors = spec.errors.concat(errors)
-          spec.input_trans = false
-      } else if (spec.input_trans){
-          let i1 = spec.input_trans.ln
-          let q1 = spec.input_trans.etat
-          let reads = spec.input_trans.reads
-          spec.input_trans = false
-          if (tail.length == 2 * nb){
-              let writes = tail.slice(0, nb)
-              let moves = tail.splice(nb)
-              let actions = new Array(nb)
-              for (var i = 0; i < nb; i++){
-                  actions[i]=[writes[i].trim(),moves[i].trim()]
-              }
-              spec.trans.push(new Transition(i1,
-                                             idx,
-                                             q1,
-                                             q,
-                                             reads,
-                                             actions))
-          } else if (tail.length < 2 * nb){
-              spec.errors.push({
-                  type: 'trans line too short',
-                  line: idx,
-                  txt : "Cette ligne de transition est trop courte."
-              })
-          } else {
-              spec.errors.push({
-                  type: 'unknown, should not happen',
-                  line: idx,
-                  txt: '??'
-              })
-          }
-      } else {
-          if (tail.length == nb){
-              spec.input_trans = {
-                  ln : idx,
-                  etat : q,
-                  reads : tail.map(function(s){return s.trim()})
-              }
-          } else if (tail.length < nb){
-              spec.errors.push({
-                  type: 'trans line short',
-                  line: idx,
-                  txt: "Cette ligne de transition est trop courte."
-              })
-          } else {
-              spec.errors.push({
-                  type: 'too many symbols for input',
-                  line: idx,
-                  txt: "Cette ligne de transition est trop longue."
-              })
-          }
-      }
-      return result
-  }
+  var mytm
   
-  function parseTrans(idx, line, spec){
-      let m = line.match(/^([^,]*),(.*)/)
-      if (m){
-          let state = { css : "state", src : m[1], value : m[1].trim() }
-          let tail = m[2].split(',')
-          if (spec.nb == 0){
-              spec.nb = tail.length
-          }
-          return [state].concat(parseTail(idx, tail, spec, state.value))
-      } else {
-          if (line.trim().length > 0){
-              spec.errors.push({
-                  type: 'not recognized',
-                  line: idx,
-                  txt: "Cette ligne est incompréhensible."
-              })
-          }
-          return [ {css : "", src : line} ]
-      }
-  }
-
-
-  function parseLine(idx, line, spec, container){
-      let parts = parseComment(idx, line,spec)
-      let optln = parseOptLn(idx, parts.content, spec)
-      if (optln){
-          insertLine(optln.concat(parts.comment), container)
-      } else {
-          let trln = parseTrans(idx, parts.content,spec)
-          insertLine(trln.concat(parts.comment), container)
-      }
-  }
+  textarea.addEventListener('input', event =>
+      mytm = parseTM(textarea,lineNumbers))
   
-  function createLine(i, str, spec){
-      const div = document.createElement("pre")
-      div.className = "pretty-line"
-      div.id = `pretty-line-${i}`
-      const idx = document.createElement("div")
-      div.appendChild(idx)
-      idx.className = "line-idx"
-      idx.id = `idx-${i}`
-      const idxC = document.createElement("code")
-      idx.appendChild(idxC)
-      idxC.innerHTML = i
-      const line = document.createElement("code")
-      div.appendChild(line)
-      line.className = "line"
-      line.id = `line-${i}`
-
-      parseLine(i, str, spec, line)
-      
-      return div
-  }
-
-  function prtset(s){
-      let out = "{"
-      let init = true
-      for (const i of s){
-          if (init){
-              init = false
-          } else {
-              out += ','
-          }
-          out += i
-      }
-      return (out+"}")
-  }
-  function summary(tm){
-      return `${tm.nb_tapes} rubans<br/>états : ${prtset(tm.states)}<br/>transitions : { ${tm.transList.join(',<br/>')} }<br/>état initial : ${tm.init}, état final : ${tm.finalState}<br/> alphabet : ${prtset(tm.alphabet)}`
-  }
-
-
-  function transitionToEdge(tr){
-      let src = textarea.value.split('\n').slice(tr.ln1-1, tr.ln2 + 1).join('\n')
-      return {
-          id: tr.id,
-          from : `q_${tr.etat_read}`,
-          to: `q_${tr.etat_write}`,
-          arrows: "to",
-          label: `${tr.test}/${tr.action}`,
-          title: `lignes ${tr.ln1}-${tr.ln2}:\n${src}`
-      }
-  }
-
-  function genGraph(tm){
-      var nodes = new Array(), edges = new Array()
-      for (let q of tm.states){
-          nodes.push({id: `q_${q}`, label:q})
-      }
-      nodes.push({id: "initial", shape:"dot", size:1}, {id: "final", shape:"dot", size:1})
-      edges.push({id: "e_init", from: "initial", to: `q_${tm.init}`, arrows: "to"},
-                 {id: "e_final", from: `q_${tm.finalState}`, to: "final", arrows: "to"})
-      for (const t of tm.transList){
-          edges.push(transitionToEdge(t))
-      }
-      return {
-          nodes: nodes,
-          edges: edges
-      }
-  }
-  
-  function parseTM(){
-      const lines = textarea.value.split('\n')
-      const nbLines = lines.length;
-      var maxW = 0
-      const spec = {
-          nb : 0,
-          trans : new Array(),
-          output: 0,
-          outputLn: 0,
-          name: "",
-          errors : new Array()
-      }
-      
-      
-      lineNumbers.innerHTML = ""
-
-      for (var l, id = 1; id <= nbLines; id++){
-          l = createLine(id, lines[id-1], spec)
-          lineNumbers.appendChild(l)
-          maxW = Math.max(maxW,  l.clientWidth)
-      }
-      textarea.style.width = `${maxW}px`
-
-      if (spec.output > spec.nb){
-          spec.errors.push({
-              type : 'output tape index is larger than nb of tapes',
-              line : spec.errors.outputLn,
-              txt : `Le ruban de sortie ${spec.output} n'existe pas, cette machine a ${spec.nb} rubans`
-          })
-      }
-      if (spec.errors.length > 0){
-          mytm = false
-          document.getElementById("compilation-panel").classList.add("alert")
-          errElt = document.getElementById("compilation-msg")
-          errElt.innerHTML = "Spécification incorrecte : <br/>"
-          for (const e of spec.errors){
-              let ln = document.getElementById(`idx-${e.line}`)
-              ln.classList.add('alert')
-              if(ln.title){
-                  ln.title += `\n${e.txt}`
-              } else {
-                  ln.title = e.txt
-              }
-              errElt.innerHTML += `<br/>ligne ${e.line}: ${e.txt.replaceAll('<','&lt').replaceAll('<','&gt')}`
-          }
-      } else if (spec.q0 && spec.qf && spec.trans.length > 0) {
-          mytm = new TuringMachine(spec.nb, spec.q0, spec.qf, spec.trans, spec.output, spec.name)
-          document.getElementById("compilation-panel").classList.remove("alert")
-          document.getElementById("compilation-msg").innerHTML = `Compilation réussie ! <br/> ${summary(mytm)}`
-      } else {
-          mytm = false
-          document.getElementById("compilation-panel").classList.add("alert")
-          errElt = document.getElementById("compilation-msg")
-          errElt.innerHTML = "Spécification incomplète : <br/>"
-          if (! spec.q0){
-              errElt.innerHTML += "<br/> état initial manquant."
-          }
-          if (! spec.qf){
-              errElt.innerHTML += "<br/> état final manquant."
-          }
-          if (spec.trans.length == 0){
-              errElt.innerHTML += "<br/> transitions manquantes."
-          }
-      }
-  }
-  
-  textarea.addEventListener('input', event => parseTM())
-  
-  parseTM()
+  mytm = parseTM(textarea,lineNumbers)
   
   textarea.style.height = textarea.scrollHeight + "px"
     
@@ -975,7 +60,7 @@
     {% else %}
     <input class="input-field" type='text' id='input-str'/>
     {% endif %}
-    <button onclick="load()" class="btn btn--primary"><i class="fa fa-undo"></i> Charger mot d'entrée</button>
+    <button onclick="load()" class="btn btn--primary txt"><i class="fa fa-undo"></i> Charger mot d'entrée</button>
     <script>
       txtinput = document.getElementById("input-str")
       txtinput.addEventListener('keydown', event => {
@@ -990,40 +75,48 @@
   <div class="section simulator-panel" id="simulator-panel" >
     <div class="top-panel">
       <div class="status-panel">
-        <div># d'étapes: <div id='tm-nb-steps'></div></div><span class="space"></span>
+        <div># d'étapes : <span id='tm-nb-steps'></span></div><span class="space"></span>
         <div><i id='tm-status' class="fas fa-pause-circle"></i></div>
       </div>
-      <span id="status-helper"></span>
       <div class="control-panel">
         <div class="elt button-panel">
           <button onclick="runback()"
                   class='btn btn--primary'
                   title="Rembobiner">
             <i class="fas fa-fast-backward"></i>
-          </button>
-          <button onclick="back()"
+          </button><button onclick="back()"
                   class='btn btn--primary'
                   title="Reculer d'une étape">
             <i class="fas fa-step-backward"></i>
-          </button>
-          <button onclick="step()"
+          </button><button onclick="step()"
                   class='btn btn--primary'
                   title="Avancer d'une étape">
             <i class="fas fa-step-forward"></i>
-          </button>
-          <button onclick="run()"
+          </button><button onclick="run()"
                   class='btn btn--primary'
                   title="Laisser tourner">
             <i class="fas fa-fast-forward"></i>
-          </button>
-          <button onclick="stop()"
+          </button><button onclick="stop()"
                   class='btn btn--primary'
                   title="Arrêter l'exécution">
             <i class="fas fa-stop"></i>
+          </button><button onclick="toggleLockView()"
+                  class='view btn btn--primary'
+                  title="Débloquer les rubans"
+                  id="lock-btn" >
+            <i class="fas fa-lock" id="lock-btn-ico"></i>
           </button>
+          <!-- <button onclick="switchView()" -->
+          <!--         class='view btn btn--primary' -->
+          <!--         title="Changer d'affichage des rubans"> -->
+            <!--   <i class="fas fa-eye"></i> -->
+            <!-- </button> -->
         </div>
         <div class="elt speedo">
-          <i class="fas fa-tachometer-alt"></i> vitesse: <div id='speedtxt'></div>
+          <div class="elt">
+            <i class="fas fa-tachometer-alt"></i> vitesse:
+            <div id='speedtxt'></div>
+          </div>
           <input id="speedo"
                  type="range"
                  list="speeds"
@@ -1042,7 +135,6 @@
         </div>
       </div>
     </div>
-    <!-- <div id="simulator-frame" class="section hidden" ></div> -->
     <div class="table-tape section" id="table-tape-section">
       <div class="table-tape" id="table-tape">
         <table>
@@ -1050,19 +142,6 @@
           </tbody>
         </table>
       </div>
-    </div>
-    <div class="section" id="extra-btns">
-      <button onclick="toggleLockView()"
-              class='view btn btn--primary'
-              title="Débloquer les rubans"
-              id="lock-btn" >
-        <i class="fas fa-lock" id="lock-btn-ico"></i>
-      </button>
-      <!-- <button onclick="switchView()" -->
-      <!--         class='view btn btn--primary' -->
-      <!--         title="Changer d'affichage des rubans"> -->
-      <!--   <i class="fas fa-eye"></i> -->
-      <!-- </button> -->
     </div>
     <div class="graph-visualizer" id="graph-of-tm"></div>
     <div class="hidden" id="pop-up-outer">
@@ -1081,7 +160,6 @@
   type="text/javascript"
   src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
   ></script>
-<!-- <script src="/cours/assets/js/vis/dist/vis.js"></script> -->
 <script>
   var tm
   var myenv  
@@ -1215,21 +293,20 @@
       }
   }
 
+  function makespaces(s){
+      return s.replaceAll(' ','<span class="emptysymb">#</span>')
+  }
   function updateTableTape(){
       document.getElementById('table-state').innerHTML = myenv.etat
       var content =  myenv.tapes.map(function (t) {return t.content})
 
-      for (var symb, i = 0; i < myenv.machine.nb_tapes; i++){
-          document.getElementById(`past-${i}`).innerHTML = content[i].past
-          symb = content[i].present;
-          if(symb.trim() == ""){
-              symb = "#"
-              document.getElementById(`current-${i}`).classList.add("empty")
-          }else{
-              document.getElementById(`current-${i}`).classList.remove("empty")
-          }
-          document.getElementById(`current-${i}`).innerHTML = symb
-          document.getElementById(`future-${i}`).innerHTML = content[i].future
+      for (var i = 0; i < myenv.machine.nb_tapes; i++){
+          document.getElementById(`past-${i}`).innerHTML =
+              makespaces(content[i].past)
+          document.getElementById(`current-${i}`).innerHTML =
+              makespaces(content[i].present)
+          document.getElementById(`future-${i}`).innerHTML =
+              makespaces(content[i].future)
       }
   }
 
@@ -1314,7 +391,7 @@
   
   function compile(){
       if (mytm){
-          my_graph = genGraph(mytm)
+          my_graph = genGraph(mytm, textarea.value)
           states = my_graph.nodes
           transitions = my_graph.edges
           nodes = new vis.DataSet(states)

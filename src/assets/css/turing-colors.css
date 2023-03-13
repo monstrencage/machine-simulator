@@ -1,0 +1,120 @@
+
+#simulator .simulator-panel {
+    background: lavender;
+}
+
+.alert * {
+    color: darkred;
+}
+
+/* .alert .line { */
+/*     text-decoration: wavy; */
+/*     text-decoration-color: red; */
+/*     text-decoration-line: underline; */
+/* } */
+
+.panel.alert{ 
+    background: pink;
+}
+  
+.line-numbers{
+    color: #506882;
+}
+.line{
+    color: #eeffff;
+}
+
+.editor .line .tm-comment{
+    color:burlywood;
+}
+.editor .line .tm-ppt{
+    color:springgreen;
+}
+.editor .line .tm-colon{
+    color:seagreen;
+}
+.editor .line .tm-comma{
+    color:skyblue;
+}
+
+.editor .line .tm-comma-err{
+    color:red;
+}
+
+.editor .line .tm-err, .alert.line-idx code{
+    color:pink;
+}
+.editor .line .tm-state{
+    color:lightblue;
+}
+
+.editor .line .tm-int{
+    color:violet;
+}
+.editor .line .tm-dir{
+    color:orange;
+}
+.editor .line .tm-symb{
+    color:white;
+}
+
+
+.editor textarea {
+    caret-color: #eeffff;
+}
+
+
+textarea, input, .editor.panel, .table-tape .tape{
+    background: #263238;
+    color: #eeffff;
+}
+
+
+.table-tape .tape.current-tape{
+    background:#eeffff;
+    color:#263238;
+    border-color:#263238;
+}
+
+.table-tape .state{
+    background:white;
+    border-color: #263238;
+}
+
+
+.graph-visualizer, #simulator .status-panel, div.pop-up{
+    border-color: #6f777d;
+    background: white;
+}
+
+.pop-up-outer {
+    background-color: #6f777d;
+}
+
+.close{
+    color: #3d4144;
+}
+/* not really colors, but more aboute being pretty. */
+textarea, input, .tm-cell-content, .tape , .compilation-msg{
+    font-family: Monaco, Consolas, "Lucida Console", monospace;
+}
+
+.line-numbers .alert.line-idx {
+    font-weight:bold;
+}
+
+#editor .compilation-msg.panel{
+    border-style: dotted;
+}
+
+/* .tm-cell-content{ */
+/*     font-weight: bold; */
+/* } */
+
+.table-tape .tape{
+    font-weight : bold;
+}
+
+.table-tape .state{
+    font-weight:bold;
+}
