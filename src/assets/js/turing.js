@@ -21,6 +21,21 @@ function print_symb(s){
     }
 }
 
+function prtset(s){
+    let out = "{"
+    let init = true
+    for (const i of s){
+        if (init){
+            init = false
+        } else {
+            out += ','
+        }
+        out += i
+    }
+    return (out+"}")
+}
+
+
 class InfStack{
     constructor(init = '', forward = true){
         this.forward = forward
@@ -287,16 +302,22 @@ class TuringMachine {
         }
         return alphabet;
     }
+
+    get summary(){
+        return `${this.nb_tapes} rubans<br/>états : ${prtset(this.states)}<br/>transitions : { ${this.transList.join(',<br/>')} }<br/>état initial : ${this.init}, état final : ${this.finalState}<br/> alphabet : ${prtset(this.alphabet)}`
+    }
+    
 }
 
-function uncomment(ln){
-    var m = ln.match(/(.*)\/\/.*/);
-    if (m){
-        return (m[1].trim())
-    }else{
-        return (ln.trim())
-    }
-}
+// function uncomment(ln){
+//     var m = ln.match(/(.*)\/\/.*/);
+//     if (m){
+//         return (m[1].trim())
+//     }else{
+//         return (ln.trim())
+//     }
+// }
+
 
 function invDir(direction){
     switch (direction){

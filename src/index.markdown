@@ -11,13 +11,17 @@ intro:
       Ce simulateur de Machines de Turing vous permet de visualiser l'exécution d'une machine de Turing *déterministe* manipulant un nombre arbitraire de rubans *bi-infinis*.
       Pour ce faire, spécifiez une machine dans cet éditeur. Vous pouvez par exemple modifier l'exemple ci-dessous.
 
+
 custom_css:
 - turing
 - turing-colors
 
+external_js:
+- "https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
 custom_js:
 - turing
 - editor
+- graphOfTm
 ---
 {% include feature_row id="intro" type="center" %}
 

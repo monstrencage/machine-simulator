@@ -16,48 +16,50 @@
 .panel.alert{ 
     background: pink;
 }
-  
-.line-numbers{
+
+.line-idx::before{
+    /* color: transparent; */
+}
+.line-idx{
     color: #506882;
 }
 .line{
     color: #eeffff;
 }
 
-.editor .line .tm-comment{
+.editor .line .comment{
     color:burlywood;
 }
-.editor .line .tm-ppt{
+.editor .line .ppt{
     color:springgreen;
 }
-.editor .line .tm-colon{
+.editor .line .colon{
     color:seagreen;
 }
-.editor .line .tm-comma{
+.editor .line .comma{
     color:skyblue;
 }
 
-.editor .line .tm-comma-err{
-    color:red;
-}
-
-.editor .line .tm-err, .alert.line-idx code{
-    color:pink;
-}
-.editor .line .tm-state{
+.editor .line .state{
     color:lightblue;
 }
 
-.editor .line .tm-int{
+.editor .line .int{
     color:violet;
 }
-.editor .line .tm-dir{
+.editor .line .dir{
     color:orange;
 }
-.editor .line .tm-symb{
+.editor .line .symb{
     color:white;
 }
 
+.editor .line *.error, .alert.line-idx{
+    color:pink;
+}
+.editor .line .comma.error{
+    color:red;
+}
 
 .editor textarea {
     caret-color: #eeffff;
@@ -99,7 +101,7 @@ textarea, input, .tm-cell-content, .tape , .compilation-msg{
     font-family: Monaco, Consolas, "Lucida Console", monospace;
 }
 
-.line-numbers .alert.line-idx {
+#editor .alert.line-idx {
     font-weight:bold;
 }
 

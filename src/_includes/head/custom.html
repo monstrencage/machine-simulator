@@ -9,6 +9,15 @@
   {% endfor %}
 {% endif %}
 
+{% if page.external_js %}
+  {% for js_url in page.external_js %}
+<script
+  type="text/javascript"
+  src="{{ js_url }}">
+</script>
+  {% endfor %}
+{% endif %}
+
 {% if page.custom_js %}
   {% for js_file in page.custom_js %}
 <script

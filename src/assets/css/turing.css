@@ -82,11 +82,10 @@ div.pop-up{
     border-radius:0;
     box-shadow:none;
     line-height: 22px;
-    font-size: 0.75em;
     display:block;
     position: absolute;
     top: 20px;
-    left: calc(30px + .5em);
+    left: calc(10px + 2.2em);
     background:transparent;
     color:transparent;
 }
@@ -119,35 +118,49 @@ div.pop-up{
 #editor .compilation-msg p{
     margin-bottom:0;
 }
+#editor .compilation-msg span{
+    display:list-item;
+    margin-left: 1em;
+}
 
 
 .pretty-line{
     margin:0
 }
 .line-idx{
-    width: 20px;
+    max-width: 2.2em;
+    width: 2.2em;
     text-align: right;
-    display:inline-block;
+    font-size: small;
+    direction: rtl;
+}
+.line-idx::before{
+    content: ":";
+    font-size: large;
 }
 .line{
-    margin-left:.5em;
-    display: inline-block;
+    padding-left:.66em;
 }
-.line-numbers{
+.editor-display{
     line-height: 22px;
-    font-size: 0.75em;
-    display:inline-block;
+    display:table;
     position:absolute;
     left:10px;
     top:20px;
 }
-.line-nb{
-    vertical-align:super;
-    display:block;
+.editor-display pre {
+    display: table-row;
+}
+.editor-display pre code {
+    display: table-cell;
 }
 
-textarea, input {
-    font-size: 0.75em;
+.line-nb{
+    vertical-align:super;
+}
+
+.text-sample, textarea, input, .editor-display, #editor textarea {
+    font-size: large;
     line-height: 1.8;
 }
 

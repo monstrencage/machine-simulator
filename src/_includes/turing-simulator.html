@@ -2,55 +2,40 @@
 <div id="editor" class="section">
   <h1><i class="fa fa-edit"></i> Éditeur</h1>
   <div class="editor panel" id="editor-panel">
-    <div style="color:transparent;position:absolute; line-height:22px;font-size:0.75em" id="txt-sample">a</div>
-    <div class="line-numbers">
+    <div style="color:transparent;position:absolute" id="txt-sample" class="txt-sample">a</div>
+    <div class="editor-display" id="editor-display">
       <span></span>
     </div>
-    <!-- <div class="textarea"> -->
-      <textarea id='src' wrap='off' spellcheck='false' class="input-field" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'>{% if include.init-machine %}{{ include.init-machine}}{% endif %}
+      <textarea id='src' wrap='off' spellcheck='false' class="input-field">{% if include.init-machine %}{{ include.init-machine}}{% endif %}
       </textarea>
-      <!-- </div> -->
   </div>
   <div class="compilation-msg panel" id="compilation-panel">
     <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
     <p id="compilation-msg"></p>
   </div>
   <div class="control-panel panel">
-    <button class="btn btn--primary txt" onclick="compile()"><i class="fa fa-cog"></i>Charger la machine</button>
+    <button class="btn btn--primary txt" id="compile"><!-- -->
+      <i class="fa fa-cog"></i>Charger la machine</button>
   </div><!-- -->
 </div>
 
 
 <script>
-  const textarea = document.getElementById('src')
-  const lineNumbers = document.querySelector('.line-numbers')
- 
+  const editorElts = {
+      input: document.getElementById('src'),
+      output: document.getElementById('editor-display'),
+      dialogue_outer : document.getElementById("compilation-panel"),
+      dialogue_inner : document.getElementById("compilation-msg"),
+      button: document.getElementById('compile')
+  }
 
-  var mytm
-  
-  textarea.addEventListener('input', event =>
-      mytm = parseTM(textarea,lineNumbers))
-  
-  mytm = parseTM(textarea,lineNumbers)
-  
-  textarea.style.height = textarea.scrollHeight + "px"
-    
-  textarea.addEventListener('keydown', event => {
-      if (event.key === 'Tab') {
-          const start = textarea.selectionStart
-          const end = textarea.selectionEnd
+  const output = {
+      ok: false,
+      value: 0
+  }
 
-          textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
-
-          event.preventDefault()
-      } else if (event.key === 'Enter' && event.ctrlKey) {
-          if (mytm){
-              document.getElementById("simulator").scrollIntoView()
-              document.getElementById("input-str").focus()
-          }
-      }
-  })
-  </script>
+  makeEditor(editorElts, output, compile)
+</script>
 
 <div id="simulator" class="section">
   <h1><i class="fas fa-robot"></i> Simulateur<div id="tm-name"></div></h1>
@@ -106,11 +91,6 @@
                   id="lock-btn" >
             <i class="fas fa-lock" id="lock-btn-ico"></i>
           </button>
-          <!-- <button onclick="switchView()" -->
-          <!--         class='view btn btn--primary' -->
-          <!--         title="Changer d'affichage des rubans"> -->
-            <!--   <i class="fas fa-eye"></i> -->
-            <!-- </button> -->
         </div>
         <div class="elt speedo">
           <div class="elt">
@@ -132,6 +112,45 @@
             <option value="4" label="très rapide"></option>
             <option value="5" label="à toute vitesse"></option>
           </datalist>
+          <script>
+            var delay = 1000
+
+            function updTxt(id, txt){
+                document.getElementById(id).innerHTML = txt
+            }
+            
+            function updDelay(){
+                switch(Math.trunc(document.getElementById('speedo').value)){
+                case 0:
+                    delay = 2000;
+                    updTxt("speedtxt", "très lente")
+                    break
+                case 1:
+                    delay = 1000;
+                    updTxt("speedtxt", "tranquille")
+                    break
+                case 2:
+                    delay = 750;
+                    updTxt("speedtxt", "confortable")
+                    break
+                case 3:
+                    delay = 500;
+                    updTxt("speedtxt", "rapide")
+                    break
+                case 4:
+                    delay = 100;
+                    updTxt("speedtxt", "véloce")
+                    break
+                case 5:
+                    delay = 0;
+                    updTxt("speedtxt", "youhouhou!")
+                    break
+                }
+            }
+
+            document.getElementById('speedo').onchange = updDelay
+            
+          </script>
         </div>
       </div>
     </div>
@@ -144,6 +163,9 @@
       </div>
     </div>
     <div class="graph-visualizer" id="graph-of-tm"></div>
+    <script>
+        const graph = new GraphTM("graph-of-tm", "src")
+    </script>
     <div class="hidden" id="pop-up-outer">
       <div class="pop-up-outer"></div>
       <div class="pop-up" id="pop-up">
@@ -154,14 +176,34 @@
         <div class="pop-up-content" id="pop-up-content"></div>
       </div>
     </div>
+    <script>
+      function hidePopUp(){
+          document.getElementById("pop-up-outer").classList.add("hidden")
+      }
+      
+      function notifySuccess(myenv, inputword){
+          let status = document.createElement("i")
+          status.className = document.getElementById("tm-status").className
+          document.getElementById("pop-up-outer").classList.remove("hidden")
+          document.getElementById("pop-up-title").innerHTML = "Exécution terminée :"
+          document.getElementById("pop-up-title").appendChild(status)
+          if (myenv.accepted){       
+              document.getElementById("pop-up-content").innerHTML
+                  = `Le mot "${inputword}" est accepté.`
+          } else {    
+              document.getElementById("pop-up-content").innerHTML
+                  = `Le mot "${inputword}" est rejetté.`
+          }
+          if (myenv.machine.output > 0){
+              var output = myenv.tapes[myenv.machine.output - 1].content
+              document.getElementById("pop-up-content").innerHTML
+                  += `<br>Sortie : ${output.past}${output.present}${output.future}`
+          }
+      }
+    </script>
   </div>
 </div>
-<script
-  type="text/javascript"
-  src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
-  ></script>
 <script>
-  var tm
   var myenv  
   let steps = document.getElementById('tm-nb-steps')
   let status = document.getElementById('tm-status')
@@ -170,36 +212,11 @@
   var _keeprunning = false
   var _finished = false
   var _forwards = true
-  var delay = 1000
+  
   // create a network
-  var graph_container = document.getElementById("graph-of-tm");
-  var nodes = new vis.DataSet([])
-  var edges = new vis.DataSet([])
-  var color_normal = '#6f777d', color_highlight = 'darkred'
-  var data = {
-      nodes: nodes,
-      edges: edges
-  };
-  var options = {
-      nodes:{
-          borderWidth: 0,
-          color: color_normal,
-          font:{
-              color:'white'
-          }
-      },
-      edges:{
-          color: color_normal,
-          font:{
-              color:'black'
-          }
-      }
-  };
-  var graph = new vis.Network(graph_container, data, options);
-  var current_node
-  var high_trans
-  var history = []
+
   var _locked = true
+
 
   document.addEventListener(
       'keydown', event => {
@@ -233,14 +250,6 @@
           }
       }
   )
-
-
-  // function switchView(){
-  //     document.getElementById("table-tape-section").classList.toggle("hidden")
-  //     document.getElementById("lock-btn").classList.toggle("hidden")
-  //     document.getElementById("simulator-frame").classList.toggle("hidden")
-  //     focusView()
-  // }
 
   function toggleLockView(){
       var btn = document.getElementById("lock-btn")
@@ -312,105 +321,26 @@
 
   
   
-  function updTxt(id, txt){
-      document.getElementById(id).innerHTML = txt
-  }
   
-  function updDelay(){
-      switch(Math.trunc(document.getElementById('speedo').value)){
-      case 0:
-          delay = 2000;
-          updTxt("speedtxt", "très lente")
-          break
-      case 1:
-          delay = 1000;
-          updTxt("speedtxt", "tranquille")
-          break
-      case 2:
-          delay = 750;
-          updTxt("speedtxt", "confortable")
-          break
-      case 3:
-          delay = 500;
-          updTxt("speedtxt", "rapide")
-          break
-      case 4:
-          delay = 100;
-          updTxt("speedtxt", "véloce")
-          break
-      case 5:
-          delay = 0;
-          updTxt("speedtxt", "youhouhou!")
-          break
-      }
-  }
-
-  document.getElementById('speedo').onchange = updDelay
-
   function highlight_current(){
-      var nid = `q_${myenv.etat}`, eid
+      var eid
       if (myenv.history.length > 0){
           eid = myenv.history[myenv.history.length - 1].id
       }else{
           eid = 'e_init'
       }
-      if (current_node != nid){
-          nodes.updateOnly([
-              {
-                  id:current_node,
-                  color:color_normal
-              },{
-                  id:nid,
-                  color:color_highlight
-              }
-          ])
-      }
-      if (high_trans != eid){
-          edges.updateOnly([
-              {
-                  id:high_trans,
-                  color:color_normal
-              }])
-          edges.updateOnly([{
-              id:eid,
-              color:color_highlight
-          }
-                           ])
-      }else{
-          edges.updateOnly([
-              {
-                  id:eid,
-                  color:color_highlight
-              }
-          ])
-      }
-      high_trans = eid
-      graph.focus(nid)
-      current_node = nid
+      graph.highlight(myenv.etat, eid)
   }
   
-  function compile(){
-      if (mytm){
-          my_graph = genGraph(mytm, textarea.value)
-          states = my_graph.nodes
-          transitions = my_graph.edges
-          nodes = new vis.DataSet(states)
-          edges = new vis.DataSet(transitions)
-          graph.setData({nodes: nodes, edges:edges})
-          graph.redraw()
-          myenv = new TuringEnv(mytm, '')
-          current_node = "initial"
-          high_trans = "e_init"
-          if (mytm.name != ""){
-              document.getElementById("tm-name").innerHTML = ` : ${mytm.name}`
-          }else{
-              document.getElementById("tm-name").innerHTML = ""
-          }
-          load();
-          return true;
-      } else {
-          return false
+  function compile(mytm){
+      graph.upd(mytm)
+      myenv = new TuringEnv(mytm, '')
+      if (mytm.name != ""){
+          document.getElementById("tm-name").innerHTML = ` : ${mytm.name}`
+      }else{
+          document.getElementById("tm-name").innerHTML = ""
       }
+      load();
   }
 
   function load(){
@@ -445,35 +375,12 @@
               _finished = _forwards && !success
               update_status()
               if(_finished){
-                  notifySuccess()
+                  notifySuccess(myenv, inputword)
               }
           }
       }
   }
 
-  function hidePopUp(){
-      document.getElementById("pop-up-outer").classList.add("hidden")
-  }
-  
-  function notifySuccess(){
-      let status = document.createElement("i")
-      status.className = document.getElementById("tm-status").className
-      document.getElementById("pop-up-outer").classList.remove("hidden")
-      document.getElementById("pop-up-title").innerHTML = "Exécution terminée :"
-      document.getElementById("pop-up-title").appendChild(status)
-      if (myenv.accepted){       
-          document.getElementById("pop-up-content").innerHTML
-              = `Le mot "${inputword}" est accepté.`
-      } else {    
-          document.getElementById("pop-up-content").innerHTML
-              = `Le mot "${inputword}" est rejetté.`
-      }
-      if (myenv.machine.output > 0){
-          var output = myenv.tapes[myenv.machine.output - 1].content
-          document.getElementById("pop-up-content").innerHTML
-              += `<br>Sortie : ${output.past}${output.present}${output.future}`
-      }
-  }
 
   function update_status(){
       highlight_current()
@@ -536,6 +443,6 @@
   }
 
   updDelay()
-  compile()
+  compile(output.value)
 
 </script>

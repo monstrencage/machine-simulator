@@ -1,108 +1,328 @@
-function parseComment(idx, line, spec){
-    let m = line.match(/((?:[^/]|\/(?!\/))*)(\/\/.*)/);
+class Error{
+    #line = 0;
+    #txt;
 
-    if (m){
-        return {
-            content: m[1],
-            comment: [{
-                css : "comment",
-                src : m[2]
-            }]
+    constructor(txt, line = 0){
+        this.#txt = txt
+        this.#line = line
+    }
+
+    print(genId){
+        // alert(`${this.#line}, ${this.#txt}`)
+        let ln = document.getElementById(genId(this.#line)) 
+        let msg = this.#txt.replaceAll('<','&lt').replaceAll('<','&gt')
+        if (this.#line > 0){
+            ln.classList.add('alert')
+            if (ln.title){
+                ln.title += `\n${this.#txt}`
+            } else {
+                ln.title = this.#txt
+            }
+            msg = `ligne ${this.#line}: ${msg}`
         }
-    } else {
+        let span = document.createElement("span")
+        span.innerHTML = msg
+        return span
+    }
+}
+
+class Elt {
+    #css = ""
+    #src = ""
+    value;
+    #error = false;
+    #error_msg = "";
+
+    constructor(txt){
+        this.#src = txt.replaceAll('<','&lt').replaceAll('<','&gt')
+        this.value = txt
+    }
+
+    addClass(cls){
+        if (this.#css == ""){
+            this.#css = ` ${cls} `
+        } else {
+            this.#css += `${cls} `
+        }
+    }
+
+    removeClass(cls){
+        this.#css = this.#css.replaceAll(` ${cls} `,' ')
+    }
+
+    set falsify(msg){
+        this.#error = true
+        if (this.#error_msg == []){
+            this.#error_msg = msg
+        } else {
+            this.#error_msg = `${this.#error_msg}\n${msg}`
+        }
+    }
+
+    get ok(){
+        return (! this.#error)
+    }
+
+    getError(i){
+        if (this.#error){
+            return [new Error(this.#error_msg, i)]
+        } else {
+            return []
+        }
+    }
+
+    // get error(){
+    //     if (this.#error)
+    //         return this.#error_msg
+    //     else
+    //         return false
+    // }
+
+    get html(){
+        let span = document.createElement("span")
+        span.className = this.#css
+        if (this.#error){
+            span.classList.add("error")
+        }
+        span.innerHTML = this.#src
+        return span
+    }
+}
+
+function colon(){
+    let c = new Elt(':')
+    c.addClass('colon')
+    return c
+}
+function colonErr(){
+    let c = colon
+    c.falsify("")
+    return c
+}
+
+class Line {
+    #idx = 0
+    #src = ""
+    #remaining
+    #elts_pre = new Array();
+    #elts_suff = new Array();
+    #own_errors = new Array();
+    
+    constructor(idx, line){
+        this.#idx = idx
+        this.#src = line
+        this.#remaining = line
+    }
+
+    get index(){
+        return this.#idx
+    }
+
+    get line(){
+        return this.#src
+    }
+
+    get isEmpty(){
+        return this.#remaining === ""
+    }
+
+    get isWhite(){
+        return this.#remaining.trim() === ""
+    }
+
+    get elts (){
+        return this.#elts_pre.concat(this.#elts_suff)
+    }
+
+    toElt(){
+        let elt = new Elt(this.#remaining)
+        this.#remaining = ""
+        this.#elts_pre.push(elt)
+        return elt
+    }
+
+    parseRegex(r){
+        let m = this.#remaining.match(r)
+        if (m){
+            return this.toElt()
+        } else {
+            return false
+        }
+    }
+
+    splitRegex(r, forwards = true){
+        let m = this.#remaining.match(r)
+        if (m && forwards){
+            this.#remaining = m[2]
+            let elt = new Elt(m[1])
+            this.#elts_pre.push(elt)
+            return elt            
+        } else if (m && !forwards){
+            this.#remaining = m[1]
+            let elt = new Elt(m[2])
+            this.#elts_suff.unshift(elt)
+            return elt            
+        } else {
+            return false
+        }
+            
+    }
+    get ok(){
+        if (this.#own_errors.length > 0 || ! this.isEmpty )
+            return false
+        let ok = true
+        for (const e of this.elts)
+            if (! e.ok)
+                return false
+        return true
+    }
+
+    set falsify (msg){
+        this.#own_errors.push(new Error(msg,this.index))
+    }
+
+    get html (){
+        let errors = this.#own_errors
+        const div = document.createElement("pre")
+        div.className = "pretty-line"
+        div.id = `pretty-line-${this.index}`
+        const idx = document.createElement("code")
+        div.appendChild(idx)
+        idx.className = "line-idx"
+        idx.id = `idx-${this.index}`
+        idx.innerHTML = this.index
+        const line = document.createElement("code")
+        div.appendChild(line)
+        line.className = "line"
+        line.id = `line-${this.index}`
+        for (const elt of this.elts.values()){
+            line.appendChild(elt.html)
+            errors = errors.concat(elt.getError(this.index))
+        }
         return {
-            content: line,
-            comment: []
+            elt : div,
+            errors: errors
         }
     }
 }
 
-function parseOptLn(idx, line, spec){
-    let m = line.match(/^([^:,]*):(.*)/)
+
+function parseComment(line){
+    let m = line.splitRegex(/((?:[^/]|\/(?!\/))*)(\/\/.*)/, false);
     if (m){
-        const ppt = {
-            css : "ppt",
-            src : m[1],
-            value : m[1].trim()
-        }
-        const val = {
-            css : "",
-            src : m[2],
-            value : m[2].trim()
-        }
-        switch(ppt.value){
-        case "init":
-        case "initial":
-            val.css = "state"
-            spec.q0 = val.value
-            break;
-        case "accept":
-        case "final":
-            val.css = "state"
-            spec.qf = val.value
-            break;
-            
-            // case "finaux": // todo : multiple final states.
-            //     break;     //
-            
-        case "sortie":
-        case "output":
-            if (val.value.match(/^[0-9]*$/)){
-                val.value = parseInt(val.value)
-                if (val.value > 0 ){
-                    val.css = "int"
-                    spec.output = val.value
-                    spec.outputLn = idx
-                } else {
-                    val.css = "err"
-                    spec.errors.push({
-                        type: 'bad tape index for output',
-                        line: idx,
-                        txt: "La valeur de cet attribut doit être un entier strictement positif."        
-                    })
+        m.addClass('comment')
+    } 
+}
+
+function formatTxtElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('plain-txt')
+    if(! elt.value.match(/^.+$/)){
+        elt.falsify = "La valeur d'un attribut ne doit pas être vide."
+    }
+}
+function formatIntElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('int')
+    if(! elt.value.match(/^[0-9]+$/) || elt.value.match(/^0*$/)){
+        elt.falsify = "Cette valeur doit être un entier strictement positif."
+    } else {
+        elt.value = parseInt(elt.value)
+    }
+}
+function formatStateElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('state')
+    if(! elt.value.match(/^[^:,]+$/)){
+        elt.falsify = "Un nom d'état ne doit pas être vide, ni contenir  ',' ou ':'."
+    }
+}
+function formatSymbElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('symb')
+    if(! elt.value.match(/^[^:,]$/)){
+        elt.falsify = "Un symbole doit être de longueur 1, et différent de ',' et de ':'."
+    }
+}
+function formatDirElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('dir')
+    if(! elt.value.match(/^[<>-]$/)){
+        elt.falsify = "Les directions acceptées sont '>', '<', et '-'."
+    }
+}
+
+function formatPptElt(elt){
+    elt.value = elt.value.trim()
+    elt.addClass('ppt')
+    switch (elt.value){ 
+    case "init":
+    case "initial":
+    case "accept":
+    case "final":
+        // case "finaux": // todo : multiple final states.
+    case "sortie":
+    case "output":
+    case "name":
+    case "nom":
+        break;
+    default:
+        elt.falsify = "Propritété inconnue."
+    }
+}
+
+function parseOptLn(line, spec){
+    let ppt = line.splitRegex(/^([^:,]*)(:.*)$/)
+    if (ppt){
+        formatPptElt(ppt)
+        let colon = line.splitRegex(/^(:)(.*)$/)
+        colon.addClass("comma")
+        let val = line.toElt()
+        if (ppt.ok) {
+            switch(ppt.value){
+            case "init":
+            case "initial":
+                formatStateElt(val)
+                if (val.ok) {
+                    spec.q0 = val.value
                 }
-            } else {
-                val.css = "err"
-                spec.errors.push({
-                    type: 'bad tape index for output',
-                    line: idx,
-                    txt: "La valeur de cet attribut doit être un entier strictement positif."        
-                })
+                break;
+            case "accept":
+            case "final":
+                formatStateElt(val)
+                if (val.ok) {
+                    spec.qf = val.value
+                }
+                break;
+                // case "finaux": // todo : multiple final states.
+                //     break;     //
+                
+            case "sortie":
+            case "output":                
+                formatIntElt(val)
+                if (val.ok) {
+                    spec.output = val.value
+                    spec.outputLn = line.index
+                }
+                break;
+            case "name":
+            case "nom":
+                formatTxtElt(val)
+                if (val.ok) {
+                    spec.name = val.value
+                }
+                break;
+            default:
+                throw "should not happen"
+                break;
             }
-            break;
-        case "name":
-        case "nom":
-            val.css = "plain-txt"
-            spec.name = val.value
-            break;
-        default:
-            ppt.css = "plain-txt"
-            break;
         }
-        return [ppt,{css : "colon", src : ':' }, val]
+        return true
     } else {
         return false
     }
 }
 
-function insertLine (parsedLn,container){
-    for (const elt of parsedLn){
-        switch (elt.css){
-        case "":
-        case "plain-txt":
-            container.innerHTML += elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
-            break;
-        default:
-            let span = document.createElement("span")
-            span.className = `tm-${elt.css}`
-            span.innerHTML = elt.src.replaceAll('<','&lt').replaceAll('<','&gt')
-            if (elt.txt){
-                span.title = elt.txt
-            }
-            container.appendChild(span)
-        }
-    }
-}
 
 let comma = {
     css : "comma",
@@ -112,305 +332,180 @@ let commaErr = { css : "comma-err",
                  src : "," ,
                  title: "Cette ligne de transition est trop longue."}
 
-function parseTail(idx, tail, spec, q) {
+
+function processTail(line, q, spec) {
     let nb = spec.nb
-    var errors = new Array ()
-    var result = new Array ()
-    var i = 0
-    for (var elt of tail){
-        i += 1
-        let val = elt.trim()
-        if ((i <= nb) || (nb == 0)){
-            switch (val.length){
-            case 1 :
-                result.push(
-                    comma,
-                    {
-                        css : "symb",
-                        src : elt,
-                        value : val
-                    }
-                )
-                break;
-            case 0 :
-            default:
-                errors.push({
-                    type: 'bad symbol',
-                    line: idx,
-                    txt: `'${val}' n'est pas un symbole valide.`
-                })
-                result.push(
-                    comma,
-                    {
-                        css : "err err-wdth",
-                        src : elt,
-                        txt: `'${val}' n'est pas un symbole valide.`
-                    }
-                )
-            }
-        } else if (i <= 2*nb) {
-            switch (val){
-            case "<":
-            case ">":
-            case "-":
-                result.push(
-                    comma,
-                    {css : "dir", src: elt, value:val}
-                )
-                break;
-            default:
-                errors.push({
-                    type: 'bad dir',
-                    line: idx,
-                    txt: `'${val}' n'est pas une direction valide.`
-                })
-                result.push(
-                    comma,
-                    {
-                        css : "err err-dir",
-                        src : elt,
-                        txt: `'${val}' n'est pas un symbole valide.`
-                    }
-                )
-            }
-        } else {
-            errors.push({
-                type: 'trans line too long',
-                line: idx,
-                txt : "Cette ligne de transition est trop longue."
-            })
-            result.push(
-                commaErr,
-                {
-                    css : "err err-idx",
-                    src : elt,
-                    txt : "Cette ligne de transition est trop longue."
-                }
-            )
-        }
-    }
-    if (errors.length > 0 ){
-        spec.errors = spec.errors.concat(errors)
-        spec.input_trans = false
-    } else if (spec.input_trans){
-        let i1 = spec.input_trans.ln
-        let q1 = spec.input_trans.etat
-        let reads = spec.input_trans.reads
-        spec.input_trans = false
-        if (tail.length == 2 * nb){
-            let writes = tail.slice(0, nb)
-            let moves = tail.splice(nb)
-            let actions = new Array(nb)
-            for (var i = 0; i < nb; i++){
-                actions[i]=[writes[i].trim(),moves[i].trim()]
-            }
-            spec.trans.push(new Transition(i1,
-                                           idx,
-                                           q1,
-                                           q,
-                                           reads,
-                                           actions))
-        } else if (tail.length < 2 * nb){
-            spec.errors.push({
-                type: 'trans line too short',
-                line: idx,
-                txt : "Cette ligne de transition est trop courte."
-            })
-        } else {
-            spec.errors.push({
-                type: 'unknown, should not happen',
-                line: idx,
-                txt: '??'
-            })
-        }
-    } else {
-        if (tail.length == nb){
-            spec.input_trans = {
-                ln : idx,
-                etat : q,
-                reads : tail.map(function(s){return s.trim()})
-            }
-        } else if (tail.length < nb){
-            spec.errors.push({
-                type: 'trans line short',
-                line: idx,
-                txt: "Cette ligne de transition est trop courte."
-            })
-        } else {
-            spec.errors.push({
-                type: 'too many symbols for input',
-                line: idx,
-                txt: "Cette ligne de transition est trop longue."
-            })
-        }
-    }
-    return result
-}
-
-function parseTrans(idx, line, spec){
-    let m = line.match(/^([^,]*),(.*)/)
-    if (m){
-        let state = { css : "state", src : m[1], value : m[1].trim() }
-        let tail = m[2].split(',')
-        if (spec.nb == 0){
-            spec.nb = tail.length
-        }
-        return [state].concat(parseTail(idx, tail, spec, state.value))
-    } else {
-        if (line.trim().length > 0){
-            spec.errors.push({
-                type: 'not recognized',
-                line: idx,
-                txt: "Cette ligne est incompréhensible."
-            })
-        }
-        return [ {css : "", src : line} ]
-    }
-}
-
-
-function parseLine(idx, line, spec, container){
-    let parts = parseComment(idx, line,spec)
-    let optln = parseOptLn(idx, parts.content, spec)
-    if (optln){
-        insertLine(optln.concat(parts.comment), container)
-    } else {
-        let trln = parseTrans(idx, parts.content,spec)
-        insertLine(trln.concat(parts.comment), container)
-    }
-}
-
-function createLine(i, str, spec){
-    const div = document.createElement("pre")
-    div.className = "pretty-line"
-    div.id = `pretty-line-${i}`
-    const idx = document.createElement("div")
-    div.appendChild(idx)
-    idx.className = "line-idx"
-    idx.id = `idx-${i}`
-    const idxC = document.createElement("code")
-    idx.appendChild(idxC)
-    idxC.innerHTML = i
-    const line = document.createElement("code")
-    div.appendChild(line)
-    line.className = "line"
-    line.id = `line-${i}`
-
-    parseLine(i, str, spec, line)
+    let i = 0
+    let actions = new Array ()
     
-    return div
-}
-
-function prtset(s){
-    let out = "{"
-    let init = true
-    for (const i of s){
-        if (init){
-            init = false
-        } else {
-            out += ','
+    while (!line.isEmpty){
+        let comma = line.splitRegex(/(,)(.*)/)
+        comma.addClass('comma')
+        let x = line.splitRegex(/([^,]*)(,.*)/)
+        if (!x) {
+            x = line.toElt()
         }
-        out += i
+        if ((i < nb) || (nb == 0)){
+            formatSymbElt(x)
+            actions[i] = [x.value]
+        } else if (i < 2*nb) {
+            formatDirElt(x)
+            actions[i-nb][1] = x.value
+        } else {
+            comma.falsify = "Cette ligne de transition est trop longue."
+        }
+        i ++
     }
-    return (out+"}")
+    if (nb == 0)
+        spec.nb = i
+    if (line.ok) {
+        if (i == spec.nb && ! spec.input_trans){
+            spec.input_trans = {
+                ln : line.index,
+                etat : q,
+                reads : actions
+            }
+        } else if ((i == 2 * spec.nb) && spec.input_trans){
+            let i1 = spec.input_trans.ln
+            let q1 = spec.input_trans.etat
+            let reads = spec.input_trans.reads
+            spec.input_trans = false
+            spec.trans.push(
+                new Transition(
+                    i1,
+                    line.index,
+                    q1,
+                    q,
+                    reads,
+                    actions)
+            )
+        } else if (i != 2 * spec.nb && spec.input_trans){
+            spec.input_trans = false
+            line.falsify = "Cette ligne de transition est trop courte."
+        } else if (i < spec.nb && ! spec.input_trans){
+            line.falsify = "Cette ligne de transition est trop courte."
+        } else if (i > spec.nb && ! spec.input_trans){
+            line.falsify = "Cette ligne de transition est trop longue."
+        }
+    } else {
+        spec.input_trans = false
+    }
 }
-function summary(tm){
-    return `${tm.nb_tapes} rubans<br/>états : ${prtset(tm.states)}<br/>transitions : { ${tm.transList.join(',<br/>')} }<br/>état initial : ${tm.init}, état final : ${tm.finalState}<br/> alphabet : ${prtset(tm.alphabet)}`
+
+function parseTrans(line, spec){
+    let state = line.splitRegex(/^([^,]*)(,.*)/)
+    if (state){
+        formatStateElt(state)
+        processTail(line, state.value, spec)
+        return true
+    } else {
+        return false
+    }
 }
 
 
-function transitionToEdge(tr, src_txt){
-    let src = src_txt.split('\n').slice(tr.ln1-1, tr.ln2 + 1).join('\n')
-    return {
-        id: tr.id,
-        from : `q_${tr.etat_read}`,
-        to: `q_${tr.etat_write}`,
-        arrows: "to",
-        label: `${tr.test}/${tr.action}`,
-        title: `lignes ${tr.ln1}-${tr.ln2}:\n${src}`
+function parseLine(idx, line_src, spec){
+    let line = new Line(idx, line_src)
+    parseComment(line)
+    if (line.isWhite) {
+        let e = line.toElt()
+        return line
+    } else if (parseOptLn(line, spec)){
+        return line
+    } else if (parseTrans(line,spec)){
+        return line
+    } else {
+        let e = line.toElt()
+        line.falsify = "Ligne incompréhensible."
+        return line
     }
 }
 
-function genGraph(tm, src_txt){
-    var nodes = new Array(), edges = new Array()
-    for (let q of tm.states){
-        nodes.push({id: `q_${q}`, label:q})
-    }
-    nodes.push({id: "initial", shape:"dot", size:1}, {id: "final", shape:"dot", size:1})
-    edges.push({id: "e_init", from: "initial", to: `q_${tm.init}`, arrows: "to"},
-               {id: "e_final", from: `q_${tm.finalState}`, to: "final", arrows: "to"})
-    for (const t of tm.transList){
-        edges.push(transitionToEdge(t, src_txt))
-    }
-    return {
-        nodes: nodes,
-        edges: edges
-    }
-}
 
-function parseTM(textarea, displayarea){
-    const lines = textarea.value.split('\n')
+
+function parseTM(editor, output){
+    const lines = editor.input.value.split('\n')
     const nbLines = lines.length;
     var maxW = 0
+    var errors = new Array()
     const spec = {
         nb : 0,
         trans : new Array(),
         output: 0,
         outputLn: 0,
-        name: "",
-        errors : new Array()
+        name: ""
     }
     
-    
-    displayarea.innerHTML = ""
+    editor.output.innerHTML = ""
 
     for (var l, id = 1; id <= nbLines; id++){
-        l = createLine(id, lines[id-1], spec)
-        displayarea.appendChild(l)
-        maxW = Math.max(maxW,  l.clientWidth)
+        l = parseLine(id, lines[id-1], spec).html
+        errors = errors.concat(l.errors)
+        editor.output.appendChild(l.elt)
+        maxW = Math.max(maxW,  l.elt.clientWidth)
     }
-    textarea.style.width = `${maxW}px`
+    editor.input.style.width = `${maxW}px`
 
     if (spec.output > spec.nb){
-        spec.errors.push({
-            type : 'output tape index is larger than nb of tapes',
-            line : spec.errors.outputLn,
-            txt : `Le ruban de sortie ${spec.output} n'existe pas, cette machine a ${spec.nb} rubans`
-        })
+        errors.push(
+            new Error(`Le ruban de sortie ${spec.output} n'existe pas, cette machine a ${spec.nb} rubans`, spec.outputLn)
+        )
     }
-    if (spec.errors.length > 0){
-        document.getElementById("compilation-panel").classList.add("alert")
-        errElt = document.getElementById("compilation-msg")
-        errElt.innerHTML = "Spécification incorrecte : <br/>"
-        for (const e of spec.errors){
-            let ln = document.getElementById(`idx-${e.line}`)
-            ln.classList.add('alert')
-            if(ln.title){
-                ln.title += `\n${e.txt}`
-            } else {
-                ln.title = e.txt
-            }
-            errElt.innerHTML += `<br/>ligne ${e.line}: ${e.txt.replaceAll('<','&lt').replaceAll('<','&gt')}`
-        }
-        return false
-    } else if (spec.q0 && spec.qf && spec.trans.length > 0) {
-        let mytm = new TuringMachine(spec.nb, spec.q0, spec.qf, spec.trans, spec.output, spec.name)
-        document.getElementById("compilation-panel").classList.remove("alert")
-        document.getElementById("compilation-msg").innerHTML = `Compilation réussie ! <br/> ${summary(mytm)}`
-        return mytm
+    if (! spec.q0){
+        errors.push(new Error("état initial manquant."))
+    }
+    if (! spec.qf){
+        errors.push(new Error("état final manquant."))
+    }
+    if (spec.trans.length == 0){
+        errors.push(new Error("transitions manquantes."))
+    }
+    if (errors.length > 0){
+        output.ok = false
+        output.value = 0
+        editor.dialogue_outer.classList.add("alert")
+        editor.dialogue_inner.innerHTML = "Spécification incorrecte : <br/>"
+
+        for (const e of errors.values())
+            editor.dialogue_inner.appendChild(e.print(function (i) {return `idx-${i}`}))
     } else {
-        document.getElementById("compilation-panel").classList.add("alert")
-        errElt = document.getElementById("compilation-msg")
-        errElt.innerHTML = "Spécification incomplète : <br/>"
-        if (! spec.q0){
-            errElt.innerHTML += "<br/> état initial manquant."
-        }
-        if (! spec.qf){
-            errElt.innerHTML += "<br/> état final manquant."
-        }
-        if (spec.trans.length == 0){
-            errElt.innerHTML += "<br/> transitions manquantes."
-        }
-        return false
+        output.ok = true
+        output.value = new TuringMachine(spec.nb, spec.q0, spec.qf, spec.trans, spec.output, spec.name)
+        editor.dialogue_outer.classList.remove("alert")
+        editor.dialogue_inner.innerHTML = `Compilation réussie ! <br/> ${output.value.summary}`
     }
+}
+
+function makeEditor(editor, output, action){
+    let textarea = editor.input
+
+    let upd = function (){
+        textarea.style.height = textarea.scrollHeight + "px"
+        parseTM(editorElts, output)
+    }
+    
+    textarea.addEventListener('input', event => upd())
+    
+    textarea.addEventListener('keydown', event => {
+        if (event.key === 'Tab') {
+            const start = textarea.selectionStart
+            const end = textarea.selectionEnd
+            textarea.value = textarea.value.substring(0, start) + '\t' + textarea.value.substring(end)
+            
+            event.preventDefault()
+        } else if (event.key === 'Enter' && event.ctrlKey) {
+            if (output.ok){
+                action(output.value)
+            }
+        }
+    })
+
+    editor.button.onclick = function () {
+        if (output.ok){
+            action(output.value)
+        }
+    }
+    
+    upd()
+    
 }
