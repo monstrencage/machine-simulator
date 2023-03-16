@@ -460,6 +460,9 @@ function parseTM(editor, output){
     if (spec.trans.length == 0){
         errors.push(new Error("transitions manquantes."))
     }
+    if (spec.input_trans){
+        errors.push(new Error("transition incomplète", spec.input_trans.ln))
+    }
     if (errors.length > 0){
         output.ok = false
         output.value = 0
