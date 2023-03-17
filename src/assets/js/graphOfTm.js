@@ -1,12 +1,11 @@
-function transitionToEdge(tr, src_txt){
-    let src = src_txt.split('\n').slice(tr.ln1-1, tr.ln2 + 1).join('\n')
+function transitionToEdge(tr){
     return {
         id: tr.id,
         from : `q_${tr.etat_read}`,
         to: `q_${tr.etat_write}`,
         arrows: "to",
         label: `${tr.test}/${tr.action}`,
-        title: `lignes ${tr.ln1}-${tr.ln2}:\n${src}`
+        title: tr.src
     }
 }
 
@@ -33,19 +32,16 @@ class GraphTM {
         }
     };
     #graph
-    #src
 
-    constructor(id, src){
+    constructor(elt){
         this.#graph = new vis.Network(
-            document.getElementById(id),
+            elt,
             { nodes: this.#nodes, edges: this.#edges},
             this.#options);
-        this.#src = document.getElementById(src)
     }
 
     upd(tm){
         var states = new Array(), transitions = new Array()
-        const src_txt = this.#src.value
         for (let q of tm.states){
             states.push({id: `q_${q}`, label:q})
         }
@@ -56,7 +52,7 @@ class GraphTM {
                          {id: "e_final", from: `q_${tm.finalState}`, to: "final",
                           arrows: "to"})
         for (const t of tm.transList){
-            transitions.push(transitionToEdge(t, src_txt))
+            transitions.push(transitionToEdge(t))
         }
         this.#nodes = new vis.DataSet(states)
         this.#edges = new vis.DataSet(transitions)

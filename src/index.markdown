@@ -21,7 +21,10 @@ external_js:
 custom_js:
 - turing
 - editor
+- parserElts
+- parserTM
 - graphOfTm
+- simulator
 ---
 {% include feature_row id="intro" type="center" %}
 

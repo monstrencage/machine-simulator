@@ -123,21 +123,23 @@ div.pop-up{
     margin-left: 1em;
 }
 
+#editor .panel h3{
+    margin-top:.1em
+}  
 
 .pretty-line{
     margin:0
+}
+.line-idx span{
+    float:right
 }
 .line-idx{
     max-width: 2.2em;
     width: 2.2em;
     text-align: right;
     font-size: small;
-    direction: rtl;
 }
-.line-idx::before{
-    content: ":";
-    font-size: large;
-}
+
 .line{
     padding-left:.66em;
 }
@@ -164,13 +166,17 @@ div.pop-up{
     line-height: 1.8;
 }
 
-#editor .panel h3{
-    margin-top:.1em
-}  
+.editor-display .emptyspan::after{
+    content: "0";
+    display:inline;
+    color:transparent;
+    /* position:absolute; */
+}
+
 
 
 /* simulator */
-#tm-name {
+.tm-name {
     display: inline;
 }
 
@@ -272,15 +278,16 @@ div.pop-up{
 }
 
 
-#simulator .speedo.elt {
+#simulator .speedo-elt {
     display: block;
 }
 
-#simulator #speedtxt{
-    display: inline
+#simulator .speedtxt{
+    display: inline;
+    margin-left:.5em;
 }
 
-#speedo {
+.speedo {
     width: 20em;
     display: block;
     margin:auto;
@@ -310,11 +317,12 @@ div.pop-up{
 
 
  /* tapes */
-#table-tape {
+.table-tape.section {
     position: relative;
     width:  100%;
     height: fit-content;
-    overflow-x:scroll
+    overflow-x:scroll;
+    display:inline-block
 }
 
 .table-tape .state{
@@ -331,7 +339,7 @@ div.pop-up{
     padding: .5em;
 }
 
-.table-tape tr.filler{
+.table-tape tr.filler, .table-tape .head-row{
     background:none;
     height:1em;
 }
@@ -381,3 +389,4 @@ div.pop-up{
 .emptysymb{
     color:transparent;
 }
+

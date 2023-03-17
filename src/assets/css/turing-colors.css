@@ -17,8 +17,8 @@
     background: pink;
 }
 
-.line-idx::before{
-    /* color: transparent; */
+.line-idx::after{
+    color: transparent;
 }
 .line-idx{
     color: #506882;

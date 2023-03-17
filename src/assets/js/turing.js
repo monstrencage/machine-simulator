@@ -121,13 +121,12 @@ function printWrites(wrts){
 }
 
 class Transition {
-    constructor(i1, i2, r, w, sr, sw) {
+    constructor(id, src, r, w, sr, sw) {
         if (sr.length !== sw.length) {
             throw "Bad transition : not the same number of tapes between input and output.";
         }
-        this.id = i1;
-        this.ln1 = i1;
-        this.ln2 = i2;
+        this.id = id;
+        this.src = src;
         this.etat_write = w;
         this.etat_read = r;
         this.symbols_read = sr.join('');
@@ -153,7 +152,7 @@ class Config {
             throw new TuringException(`Bad number of tapes : ${nb_tapes}`);
         }
         this.etat_courant = q0;
-
+        this.inputword = w
         
         this.tapes = [new Tape(w)];
 
@@ -184,7 +183,7 @@ class Config {
     reset(q0, w){
         let nb_tapes = this.tapes.length
         this.etat_courant = q0;
-
+        this.inputword = w
         this.tapes = [new Tape(w)];
         for (var i = 0; i < nb_tapes - 1; i ++) {
             this.tapes.push(new Tape());
@@ -417,5 +416,21 @@ this.nb_steps=${this.nb_steps}`)
         this.upd_accepted();
         this.timed_out = false;
         super.reset(this.machine.init, w);
+    }
+
+    get outputMsg(){
+        let msg = ""
+        
+        if (this.accepted){       
+            msg = `Le mot "${this.inputword}" est accepté.`
+        } else {    
+            msg = `Le mot "${this.inputword}" est rejetté.`
+        }
+        if (this.machine.output > 0){
+            var output = this.tapes[this.machine.output - 1].content
+            msg +=
+                `<br>Sortie : ${output.past}${output.present}${output.future}`
+        }
+        return msg
     }
 }
