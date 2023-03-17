@@ -10,7 +10,7 @@
   </div>
   <div class="compilation-msg panel" id="compilation-panel">
     <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
-    <p id="compilation-msg"></p>
+    <p class="compilation-msg"></p>
   </div>
   <div class="control-panel panel">
     <button class="btn btn--primary txt" id="compile-btn"><!-- -->
@@ -35,9 +35,42 @@
 
 <script>
   
-  let editorElt = new EditorElt('src',
-                                'editor-display',
-                                'compilation-msg',
+  
+//   class ColorButton{
+// #palette
+// #button
+      
+//       constructor(panelId, paletteList){
+//           this.#palette = new PaletteList(paletteList)
+//           this.#button = new SimButton(document.getElementById(panelId),
+//                                        this.#palette.nextName,
+//                                        this.#palette.nextLogo,
+//                                        true)
+          
+//           this.#button.style.position = "absolute"
+//           this.#button.style.top = "1em"
+//           this.#button.style.right = "1em"
+//           this.#button.onclick = this.toggle.bind(this)
+//       }
+      
+//       toggle(){
+//           this.#palette.change()
+//           this.#button.title = this.#palette.nextName
+//           this.#button.icoClass = this.#palette.nextLogo
+//           editorElt.colors = this.#palette.colors
+//           editor.upd()
+//       }
+
+//       get colors(){
+//           return
+//           editorElt.colors = this.#palette.colors
+//           editor.upd()
+
+//       }
+
+//   }
+
+  let editorElt = new EditorElt("editor-panel",
                                 'compilation-panel')
   
   let editor = new Editor(editorElt, new TMParser())
@@ -48,6 +81,7 @@
                                   TapeVis,
                                   TuringEnv)
 
+  
   function load(input, simulator){
           simulator.inputword = input.value
           input.blur()      
@@ -66,11 +100,15 @@
               if (event.key === 'Enter') { load(input,simulator) }
           }
       
-      inputBtn.onclick =
-          e => load(input,simulator)
+      inputBtn.onclick = e => {
+          load(input,simulator)
+          simulator.focus()
+      }
 
-      compileBtn.onclick =
-          e => compile(editor,input,simulator)
+      compileBtn.onclick = e => {
+          compile(editor,input,simulator)
+          input.scrollIntoView()
+      }
 
       compile(editor, input, simulator)
   }

@@ -76,7 +76,7 @@ function parseTrans(line, spec){
 
 
 class TMParser {
-
+    
     constructor(){
         this.spec = {
             nb : 0,
@@ -120,7 +120,7 @@ class TMParser {
             line.toElt()
             line.falsify = "Ligne incompréhensible."
         }
-        return line.html
+        return line
     }
 
     checkSpec(){

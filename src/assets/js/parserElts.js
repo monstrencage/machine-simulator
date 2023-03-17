@@ -1,3 +1,4 @@
+
 class Error{
     #line = 0;
     #txt;
@@ -29,6 +30,7 @@ class Error{
 class Elt {
     #css = ""
     #src = ""
+    #semCat
     value;
     #error = false;
     #error_msg = "";
@@ -36,6 +38,7 @@ class Elt {
     constructor(txt){
         this.#src = txt.replaceAll('<','&lt').replaceAll('<','&gt')
         this.value = txt
+        this.#semCat = "plain-txt"
     }
 
     addClass(cls){
@@ -44,6 +47,10 @@ class Elt {
         } else {
             this.#css += `${cls} `
         }
+    }
+
+    set semCat(cat){
+        this.#semCat = cat
     }
 
     removeClass(cls){
@@ -78,11 +85,18 @@ class Elt {
     //         return false
     // }
 
-    get html(){
+    html(scheme){
         let span = document.createElement("span")
         span.className = this.#css
-        if (this.#error){
-            span.classList.add("error")
+        if (scheme.entities.has(this.#semCat)){
+            // alert(this.#semCat)
+            if (this.#error){
+                // span.classList.add(scheme.get(this.#semCat).err)
+                span.style["color"] = scheme.entities.get(this.#semCat).err
+            } else {
+                // span.classList.add(scheme.get(this.#semCat).std)
+                span.style["color"] = scheme.entities.get(this.#semCat).std
+            }
         }
         span.innerHTML = this.#src
         return span
@@ -91,7 +105,7 @@ class Elt {
 
 function colon(){
     let c = new Elt(':')
-    c.addClass('colon')
+    c.semCat = 'colon'
     return c
 }
 function colonErr(){
@@ -177,7 +191,7 @@ class Line {
         this.#own_errors.push(new Error(msg,this.index))
     }
 
-    get html (){
+    html (scheme){
         let errors = this.#own_errors
         const div = document.createElement("pre")
         div.className = "pretty-line"
@@ -186,6 +200,7 @@ class Line {
         div.appendChild(idx)
         idx.className = "line-idx"
         idx.id = `idx-${this.index}`
+        idx.style.color = scheme.idx
         let span = document.createElement("span")
         span.innerHTML = `${this.index}:`
         idx.appendChild(span)
@@ -194,7 +209,7 @@ class Line {
         line.className = "line"
         line.id = `line-${this.index}`
         for (const elt of this.elts.values()){
-            line.appendChild(elt.html)
+            line.appendChild(elt.html(scheme))
             errors = errors.concat(elt.getError(this.index))
         }
         return {
@@ -208,7 +223,7 @@ class Line {
 function parseComment(line){
     let m = line.splitRegex(/((?:[^/]|\/(?!\/))*)(\/\/.*)/, false);
     if (m){
-        m.addClass('comment')
+        m.semCat = 'comment'
     }
 }
 
@@ -225,14 +240,14 @@ function parseEmpty(line){
 }
 function formatTxtElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('plain-txt')
+    elt.semCat = 'plain-txt'
     if(! elt.value.match(/^.+$/)){
         elt.falsify = "La valeur d'un attribut ne doit pas être vide."
     }
 }
 function formatIntElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('int')
+    elt.semCat = 'int'
     if(! elt.value.match(/^[0-9]+$/) || elt.value.match(/^0*$/)){
         elt.falsify = "Cette valeur doit être un entier strictement positif."
     } else {
@@ -241,21 +256,21 @@ function formatIntElt(elt){
 }
 function formatStateElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('state')
+    elt.semCat = 'state'
     if(! elt.value.match(/^[^:,]+$/)){
         elt.falsify = "Un nom d'état ne doit pas être vide, ni contenir  ',' ou ':'."
     }
 }
 function formatSymbElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('symb')
+    elt.semCat = 'symb'
     if(! elt.value.match(/^[^:,]$/)){
         elt.falsify = "Un symbole doit être de longueur 1, et différent de ',' et de ':'."
     }
 }
 function formatDirElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('dir')
+    elt.semCat = 'dir'
     if(! elt.value.match(/^[<>-]$/)){
         elt.falsify = "Les directions acceptées sont '>', '<', et '-'."
     }
@@ -263,7 +278,7 @@ function formatDirElt(elt){
 
 function formatPptElt(elt){
     elt.value = elt.value.trim()
-    elt.addClass('ppt')
+    elt.semCat = 'ppt'
     switch (elt.value){ 
     case "init":
     case "initial":
@@ -285,7 +300,7 @@ function parseOptLn(line, spec){
     if (ppt){
         formatPptElt(ppt)
         let colon = line.splitRegex(/^(:)(.*)$/)
-        colon.addClass("comma")
+        colon.semCat = "colon"
         let val = line.toElt()
         if (ppt.ok) {
             switch(ppt.value){

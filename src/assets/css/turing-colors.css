@@ -20,53 +20,59 @@
 .line-idx::after{
     color: transparent;
 }
-.line-idx{
-    color: #506882;
-}
-.line{
-    color: #eeffff;
-}
 
-.editor .line .comment{
-    color:burlywood;
-}
-.editor .line .ppt{
-    color:springgreen;
-}
-.editor .line .colon{
-    color:seagreen;
-}
-.editor .line .comma{
-    color:skyblue;
-}
+/* .editor .line .comment{ */
+/*     color:burlywood; */
+/* } */
+/* .editor .line .ppt{ */
+/*     color:springgreen; */
+/* } */
+/* .editor .line .colon{ */
+/*     color:seagreen; */
+/* } */
+/* .editor .line .comma{ */
+/*     color:skyblue; */
+/* } */
 
-.editor .line .state{
-    color:lightblue;
-}
+/* .editor .line .state{ */
+/*     color:lightblue; */
+/* } */
 
-.editor .line .int{
-    color:violet;
-}
-.editor .line .dir{
-    color:orange;
-}
-.editor .line .symb{
-    color:white;
-}
+/* .editor .line .int{ */
+/*     color:violet; */
+/* } */
+/* .editor .line .dir{ */
+/*     color:orange; */
+/* } */
+/* .editor .line .symb{ */
+/*     color:white; */
+/* } */
 
-.editor .line *.error, .alert.line-idx{
+/* .editor .line *.error, */
+.alert.line-idx{
     color:pink;
 }
-.editor .line .comma.error{
-    color:red;
-}
+/* .editor .line .comma.error{ */
+/*     color:red; */
+/* } */
 
-.editor textarea {
-    caret-color: #eeffff;
-}
+/* .line-idx{ */
+/*     color: #506882; */
+/* } */
+/* .line{ */
+/*     color: #eeffff; */
+/* } */
 
+/* .editor textarea { */
+/*     caret-color: #eeffff; */
+/* } */
 
-textarea, input, .editor.panel, .table-tape .tape{
+/* textarea { */
+/*     background: #263238; */
+/*     color: #eeffff; */
+/* } */
+
+input, .editor.panel, .table-tape .tape{
     background: #263238;
     color: #eeffff;
 }

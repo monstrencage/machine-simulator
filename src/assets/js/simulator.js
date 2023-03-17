@@ -1,3 +1,44 @@
+class SimButton {
+    #button
+    #ico
+    
+    constructor (button, title, icoClass, create = false){
+        if (create){
+            this.#button = document.createElement("button")
+            button.appendChild(this.#button)
+        } else {
+            this.#button = button
+         }
+
+        this.#button.className = 'btn btn--primary'
+
+        let ico = document.createElement("i")
+        this.#button.appendChild(ico)
+
+        this.#ico = ico
+        this.icoClass = icoClass
+        this.title = title
+    }
+
+    set title(txt){
+        this.#button.title = txt
+    }
+
+    set icoClass(cls){
+        this.#ico.className = cls
+    }
+
+    set onclick(fun){
+        this.#button.onclick = fun
+    }
+
+    get style(){
+        return this.#button.style
+    }
+}
+
+
+
 const speeds = [["très lente", 2000],
                 ["tranquille", 1000],
                 ["confortable", 750],
@@ -97,40 +138,6 @@ function makespaces(s){
     return s.replaceAll(' ','<span class="emptysymb">#</span>')
 }
 
-
-class SimButton {
-    #button
-    #ico
-    
-    constructor (button, title, icoClass, create=false){
-        if (create){
-            this.#button = document.createElement("button")
-            button.appendChild(this.#button)
-        } else {
-            this.#button = button
-        }
-        this.#button.className = 'btn btn--primary'
-
-        let ico = document.createElement("i")
-        this.#button.appendChild(ico)
-
-        this.#ico = ico
-        this.icoClass = icoClass
-        this.title = title
-    }
-
-    set title(txt){
-        this.#button.title = txt
-    }
-
-    set icoClass(cls){
-        this.#ico.className = cls
-    }
-
-    set onclick(fun){
-        this.#button.onclick = fun
-    }
-}
 
 class TapeVis{
     #display
@@ -476,9 +483,11 @@ class Simulator{
         this.#steps.innerHTML = this.#myenv.nb_steps
         this.#mytape.update(this.#myenv)
         this.update_status()
-        this.#mainDisplay.scrollIntoView()
     }
 
+    focus(){
+        this.#mainDisplay.scrollIntoView()
+    }
     
     step(){
         if (!this.#keeprunning && !this.#run){
