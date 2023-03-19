@@ -4,7 +4,7 @@ function transitionToEdge(tr){
         from : `q_${tr.etat_read}`,
         to: `q_${tr.etat_write}`,
         arrows: "to",
-        label: `${tr.test}/${tr.action}`,
+        label: `${tr.testString}/${tr.actionString}`,
         title: tr.src
     }
 }

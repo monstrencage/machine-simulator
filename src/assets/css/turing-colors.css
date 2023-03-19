@@ -103,7 +103,7 @@ input, .editor.panel, .table-tape .tape{
     color: #3d4144;
 }
 /* not really colors, but more aboute being pretty. */
-textarea, input, .tm-cell-content, .tape , .compilation-msg{
+textarea, input, .tm-cell-content, .tape , .compilation-msg, .editor-display{
     font-family: Monaco, Consolas, "Lucida Console", monospace;
 }
 

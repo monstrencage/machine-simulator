@@ -1,3 +1,9 @@
+function isTransInput(spec){
+    return (spec.input_trans == false)
+}
+
+
+
 function processTail(line, q, spec) {
     let nb = spec.nb
     let i = 0
@@ -11,7 +17,11 @@ function processTail(line, q, spec) {
             x = line.toElt()
         }
         if ((i < nb) || (nb == 0)){
-            formatSymbElt(x)
+            if (isTransInput(spec)){
+                formatInSymbElt(x)
+            } else {
+                formatOutSymbElt(x, nb)
+            }
             actions[i] = [x.value]
         } else if (i < 2*nb) {
             formatDirElt(x)
@@ -29,7 +39,7 @@ function processTail(line, q, spec) {
                 ln : line.index,
                 src : line.line,
                 etat : q,
-                reads : actions
+                reads : actions.map(t => t[0])
             }
         } else if ((i == 2 * spec.nb) && spec.input_trans){
             let i1 = spec.input_trans.ln
@@ -41,6 +51,9 @@ function processTail(line, q, spec) {
             if (i1 + 1 < line.index){
                 placeholder = "\n[...]"
             }
+            
+            // alert (reads.map(c => c.constructor.name).join(','))
+
             spec.trans.push(
                 new Transition(
                     i1,
@@ -83,7 +96,8 @@ class TMParser {
             trans : new Array(),
             output: 0,
             outputLn: 0,
-            name: ""
+            name: "",
+            input_trans : false
         }
         this.idx = 0
         this.tm = new TuringMachine(1,"q","q", Array())
@@ -95,7 +109,8 @@ class TMParser {
             trans : new Array(),
             output: 0,
             outputLn: 0,
-            name: ""
+            name: "",
+            input_trans : false
         }
         this.idx = 0
     }

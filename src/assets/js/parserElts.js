@@ -191,31 +191,26 @@ class Line {
         this.#own_errors.push(new Error(msg,this.index))
     }
 
-    html (scheme){
+    html (display, scheme){
         let errors = this.#own_errors
-        const div = document.createElement("pre")
-        div.className = "pretty-line"
-        div.id = `pretty-line-${this.index}`
-        const idx = document.createElement("code")
-        div.appendChild(idx)
+        const idx = document.createElement("a")
+        display.appendChild(idx)
         idx.className = "line-idx"
         idx.id = `idx-${this.index}`
         idx.style.color = scheme.idx
         let span = document.createElement("span")
         span.innerHTML = `${this.index}:`
         idx.appendChild(span)
-        const line = document.createElement("code")
-        div.appendChild(line)
-        line.className = "line"
-        line.id = `line-${this.index}`
+        // const line = document.createElement("code")
+        // div.appendChild(line)
+        // line.className = "line"
+        // line.id = `line-${this.index}`
         for (const elt of this.elts.values()){
-            line.appendChild(elt.html(scheme))
+            display.appendChild(elt.html(scheme))
             errors = errors.concat(elt.getError(this.index))
         }
-        return {
-            elt : div,
-            errors: errors
-        }
+        display.innerHTML += "<br/>"
+        return errors
     }
 }
 
@@ -266,6 +261,46 @@ function formatSymbElt(elt){
     elt.semCat = 'symb'
     if(! elt.value.match(/^[^:,]$/)){
         elt.falsify = "Un symbole doit être de longueur 1, et différent de ',' et de ':'."
+    }
+}
+
+function formatInSymbElt(elt){
+    elt.value = elt.value.trim()
+    elt.semCat = 'symb'
+
+     if(elt.value.match(/^[^:,]$/)){
+        elt.value = {type : "symb", value : elt.value}
+    } else {
+        let m = elt.value.match(/^\[([^:,\s]+)\]$/)
+        if (m){
+            let s = new Set()
+            for (var c of m[1]){
+                s.add(c)
+            }
+            // alert (`${s}`)
+            elt.value = {type : "range", value : s}
+        } else {
+            elt.falsify = "Un test d'entrée doit être soit un symbole (de longueur 1, et différent de ',', ':', ou ' '), ou une liste non vide de symboles entre crochets."
+        }
+    }
+}
+function formatOutSymbElt(elt, nb){
+    elt.value = elt.value.trim()
+    elt.semCat = 'symb'
+    if(elt.value.match(/^[^:,]$/)){
+        elt.value = {type : "symb", value : elt.value}
+    } else {
+        let m = elt.value.match(/^[$]([0-9]+)$/)
+        if (m){
+            let i = parseInt(m[1])
+            if (0 < i && i <= nb){
+                elt.value = {type : "ref", value : i}
+            } else {
+                elt.falsify = "Une référence aux valeurs d'entrée doit être de la forme '$i', où i est un entier compris entre 1 et le nombre de rubans."
+            }
+        } else {
+            elt.falsify = "Un symbole doit être de longueur 1, et différent de ',' et de ':'. Une référence aux valeurs d'entrée doit être de la forme '$i', où i est un entier compris entre 1 et le nombre de rubans."
+        }
     }
 }
 function formatDirElt(elt){

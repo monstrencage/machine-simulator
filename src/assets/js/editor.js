@@ -186,12 +186,17 @@ class EditorElt{
     }
 
     addDisplay(elt){
-        this.display.appendChild(elt)
+        this.display.innerHTML += elt.innerHTML + "<br/>"
     }
 
     set size(s){
         this.input.style.height = this.input.scrollHeight + "px"
         this.input.style.width = `${s}px`
+    }
+
+    resize(){
+        this.input.style.height = this.input.scrollHeight + "px"
+        this.input.style.width = `${this.display.clientWidth}px`
     }
 
     set errorTitle(s){
@@ -249,14 +254,18 @@ class Editor {
         // alert (this.#palette.constructor.name)
         this.#editor.reset(this.#palette.colors)
         let errors = new Array()
-        let maxW = 0
+        // let maxW = 0
         for(var l of src_txt){
-            let out = this.#parser.processLine(l).html(this.colors)
-            this.#editor.addDisplay(out.elt)
-            errors = errors.concat(out.errors)
-            maxW = Math.max(maxW, out.elt.clientWidth)
+            errors = errors.concat(
+                this.#parser.processLine(l)
+                    .html(this.#editor.display,
+                          this.colors)
+            )
+            // this.#editor.addDisplay(out.elt)
+            // errors = errors.concat(out.errors)
+            // maxW = Math.max(maxW, out.elt.clientWidth)
         }
-        this.#editor.size = maxW
+        this.#editor.resize()
         errors = errors.concat(this.#parser.checkSpec())
 
         if (errors.length > 0){
@@ -265,13 +274,14 @@ class Editor {
             for (const e of errors.values())
                 this.#editor.addMsg(e.print(function (i) {return `idx-${i}`}))
         } else {
-            this.#parser.compile()
-            this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
+            this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."
             this.#ok = true
         }
     }
     
     get value (){
+        this.#parser.compile()
+        this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
         return this.#parser.value
     }
 

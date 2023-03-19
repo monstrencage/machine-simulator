@@ -115,9 +115,48 @@ class Tape {
 }
 
 function printWrites(wrts){
-    let sw = wrts.map(function(p){return p[0]}).join(',')
-    let mw = wrts.map(function(p){return p[1]}).join(',')
+    let sw = Array(wrts.length),
+        mw = Array(wrts.length)
+    for (const i of wrts.keys()){
+        mw[i] = wrts[i][1]
+        switch (wrts[i][0].type){
+        case "symb":
+            sw[i] = wrts[i][0].value
+            break;
+        case "ref":
+            sw[i] = `\$${wrts[i][0].value}`
+            break;
+        }
+        
+    }
     return `${sw},${mw}`
+}
+
+function printSet(s){
+    var res = ""
+    for (const c of s){
+        res = res.concat(c)
+    }
+    return res
+}
+    
+function printReads(reads){
+    let sr = Array()
+    for (const c of reads){
+        switch (c.type){
+        case "symb":
+            sr.push(`${c.value}`)
+            break;
+        case "range":
+            sr.push(`[${printSet(c.value)}]`)
+            break;
+        default: 
+            sr.push(`${c.type}:${c.value}`)
+            break;
+        }
+        
+    }
+    return sr.join(",")
 }
 
 class Transition {
@@ -125,25 +164,29 @@ class Transition {
         if (sr.length !== sw.length) {
             throw "Bad transition : not the same number of tapes between input and output.";
         }
+        // alert (sr.map(c => c.constructor.name).join(','))
+        
         this.id = id;
         this.src = src;
         this.etat_write = w;
         this.etat_read = r;
-        this.symbols_read = sr.join('');
         this.writes = sw;
+        this.nb = sr.length
+        this.symbols_read = sr
     }
 
-    get test(){
-        return this.symbols_read.split('').join(',')
+    get testString(){
+        return printReads(this.symbols_read)
     }
 
-    get action () {
+    get actionString () {
         return printWrites(this.writes)
      }
 
     toString(){
-        return `${this.etat_read} -[${this.test}/${this.action}]-> ${this.etat_write}`
+        return `${this.etat_read} -[${this.testString}/${this.actionString}]-> ${this.etat_write}`
     }
+    
 }
 
 class Config {
@@ -191,7 +234,7 @@ class Config {
         
     }
 
-        is_available(tr){
+    is_available(tr){
         if (!tr.constructor === Transition){
             throw new TuringException (`is_available: bad argument ${tr}`)
         }
@@ -216,20 +259,29 @@ class Config {
             throw new TuringException (`execute: bad argument ${tr}`)
         }
         this.etat = tr.etat_write;
+        let inSymbs = Array(this.tapes.length)
         for (var i=0; i < this.tapes.length; i++) {
-            this.tapes[i].currentSymb = tr.writes[i][0];
+            inSymbs[i] = this.tapes[i].currentSymb
+        }
+        for (var i=0; i < this.tapes.length; i++) {
+            switch (tr.writes[i][0].type){
+            case "symb":
+                this.tapes[i].currentSymb = tr.writes[i][0].value;
+                break;
+            case "ref":
+                // alert(`${tr.id} : write on tape ${i+1} symbol ${inSymbs[tr.writes[i][0].value - 1]}`)
+                this.tapes[i].currentSymb = inSymbs[tr.writes[i][0].value - 1];
+                break;
+            }
             this.tapes[i].move(tr.writes[i][1]);
         }
     }
 
     cancel(tr){
-        if(!tr.constructor === Transition){
-            throw new TuringException (`execute: bad argument ${tr}`)
-        }
-        this.etat = tr.etat_read;
+        this.etat = tr.trans.etat_read;
         for (var i=0; i < this.tapes.length; i++) {
-            this.tapes[i].move(invDir(tr.writes[i][1]));
-            this.tapes[i].currentSymb = tr.symbols_read[i];
+            this.tapes[i].move(invDir(tr.trans.writes[i][1]));
+            this.tapes[i].currentSymb = tr.symbs[i];
         }
     }
 
@@ -245,31 +297,20 @@ class TuringMachine {
         var tr_map = new Map();
         for (const t of tr){
             if (tr_map.has(t.etat_read)){
-                var m = tr_map.get(t.etat_read)
-                if (m.has(t.symbols_read)){
-                    m.set(t.symbols_read,m.get(t.symbols_read).push(t))
-                } else {
-                    m.set(t.symbols_read,[t])
-                }
+                tr_map.get(t.etat_read).push(t)
             }else{
-                var m = new Map()
-                m.set(t.symbols_read,[t])
-                tr_map.set(t.etat_read,m)
+                tr_map.set(t.etat_read, new Array(t))
             }
         }
         this.transitions = tr_map
     }
 
     get transList(){
-        var tr = new Array()
-        for (const t of this.transitions.keys()){
-            for(const tt of this.transitions.get(t).keys()){
-                for(const ttt of this.transitions.get(t).get(tt)){
-                    tr.push(ttt)
-                }
-            }
+        var res = new Array()
+        for (const t of this.transitions.values()){
+            res = res.concat(t)
         }
-        return tr
+        return res
     }
     
     get states() {
@@ -288,13 +329,29 @@ class TuringMachine {
 
 
         for (const ts of this.transitions.values()){
-            for (const tt of ts.values()){
-                for (const t of tt){ 
-                    for (const s of t.symbols_read){
-                        alphabet.add(s)
+            for (const t of ts.values()){
+                for (const s of t.symbols_read){
+                    switch (s.type){
+                    case "symb":
+                        alphabet.add(s.value)
+                        // console.log(`(si) add ${s.value}, result ${prtset(alphabet)} (size ${alphabet.size})`)
+                        break;
+                    case "range":
+                        // console.log(`${t.id} - range ${prtset(s.value)}`)
+                        for (const c of s.value){
+                            alphabet.add(c)    
+                            // console.log(`(r) add ${c}, result ${prtset(alphabet)} (size ${alphabet.size})`) }
+                        break;
                     }
-                    for (const w of t.writes){
-                        alphabet.add(w[0])
+                }
+                for (const w of t.writes){
+                    switch(w[0].type){
+                    case "symb":
+                        alphabet.add(w[0].value)
+                        // console.log(`(so) add ${w[0].value}, result ${prtset(alphabet)} (size ${alphabet.size})`)
+                        break;
+                    case "type":
+                        break;
                     }
                 }
             }
@@ -303,7 +360,8 @@ class TuringMachine {
     }
 
     get summary(){
-        return `${this.nb_tapes} rubans<br/>états : ${prtset(this.states)}<br/>transitions : { ${this.transList.join(',<br/>')} }<br/>état initial : ${this.init}, état final : ${this.finalState}<br/> alphabet : ${prtset(this.alphabet)}`
+        let trans_list = this.transList.map(tr => tr.toString()).join(",<br/>  ")
+        return `${this.nb_tapes} rubans<br/>états : ${prtset(this.states)}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init}, état final : ${this.finalState}<br/> alphabet : ${prtset(this.alphabet)}`
     }
     
 }
@@ -343,25 +401,42 @@ class TuringEnv extends Config {
 
     get available_transitions () {
         const q = this.etat
+        const res = new Array()
         if (this.machine.transitions.has(q)){
-            const m = this.machine.transitions.get(q)
+            const trList = this.machine.transitions.get(q)
             const r = this.currentSymbs
-            if (m.has(r)){
-                return m.get(r)
-            }else{
-                return []
+            for (const tr of trList){
+                var ok = true
+                var i = 0
+                while (ok && (i < this.machine.nb)){
+                    switch (tr.type){
+                    case "symb":
+                        ok = ok && tr.value == r[i]
+                        break;
+                    case "range":
+                        ok = ok && tr.value.has(r[i])
+                        break;
+                    }
+                    i++
+                }
+                if (ok){
+                    res.push(tr)
+                }
             }
-        }else{
-            return []
+            
         }
+        return res
     }
 
     step() {
-        const tr = this.available_transitions
-        if (tr.length > 0){
-            const t = tr[0] 
+        const t = this.next_transition
+        if (t){
+            let symbs = this.currentSymbs
             this.execute(t);
-            this.history.push(t);
+            this.history.push({
+                trans : t,
+                symbs : symbs
+            });
             this.nb_steps ++;
             this.upd_accepted();
             return true;
@@ -371,15 +446,34 @@ class TuringEnv extends Config {
     }
 
     get next_transition() {
-        for (var t, i = 0; i < this.machine.transitions.length; i++){
-            t = this.machine.transitions[i];
-
-            if (this.is_available(t)) {
-                return t.id;
+        const q = this.etat
+        if (this.machine.transitions.has(q)){
+            const trList = this.machine.transitions.get(q)
+            const r = this.currentSymbs
+            for (const tr of trList){
+                var ok = true
+                var i = 0
+                while (ok && (i < this.machine.nb_tapes)){
+                    
+                    switch (tr.symbols_read[i].type){
+                    case "symb":
+                        ok = ok && (tr.symbols_read[i].value == r[i])
+                        break;
+                    case "range":
+                        ok = ok && (tr.symbols_read[i].value.has(r[i]))
+                        break;
+                    default:
+                        break;
+                    }
+                    i++
+                }
+                if (ok){
+                    return tr
+                }
             }
+            
         }
-
-        return null;
+        return false
     }
 
     

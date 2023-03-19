@@ -87,7 +87,7 @@ div.pop-up{
     top: 20px;
     left: calc(10px + 2.2em);
     background:transparent;
-    color:transparent;
+    /* color:transparent; */
 }
 
 #editor .line span{
@@ -96,9 +96,9 @@ div.pop-up{
     display:inline;
 }
 
-#editor .line .comment::after{
-    display:none
-}
+/* #editor .line .comment::after{ */
+/*     display:none */
+/* } */
 
 #editor .editor.panel{
     display: inline-block;
@@ -130,25 +130,34 @@ div.pop-up{
 .pretty-line{
     margin:0
 }
+
 .line-idx span{
-    float:right
+    /* float:right */
+    font-size:small
 }
+
 .line-idx{
     max-width: 2.2em;
     width: 2.2em;
     text-align: right;
-    font-size: small;
+    display:inline-block;
+    padding-right:.5em;
 }
+.editor-display a.line-idx:hover{
+    text-decoration:unset
+}
+
 
 .line{
     padding-left:.66em;
 }
 .editor-display{
-    line-height: 22px;
-    display:table;
+    /* line-height: 22px; */
+    /* display:table; */
     position:absolute;
     left:10px;
     top:20px;
+    margin-top:0;
 }
 .editor-display pre {
     display: table-row;
@@ -166,12 +175,12 @@ div.pop-up{
     line-height: 1.8;
 }
 
-.editor-display .emptyspan::after{
-    content: "0";
-    display:inline;
-    color:transparent;
-    /* position:absolute; */
-}
+/* .editor-display .emptyspan::after{ */
+/*     content: "0"; */
+/*     display:inline; */
+/*     color:transparent; */
+/*     /\* position:absolute; *\/ */
+/* } */
 
 
 

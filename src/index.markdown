@@ -60,14 +60,67 @@ q1,b,_,>,< // Lors de son exécution, elle change l'état courant
            // sur le second, et déplace la première tête de 
            // lecture vers la droite.
 
+// Les expressions avec un dollard sur la seconde ligne d'une
+// transition font référence au contenu du ruban d'entrée. 
+// Par exemple, la transition ci-dessous :
+
 q1,a,_
-q1,_,a,>,<
+q1,$2,$1,>,<
+
+//est équivalente à la transition commentée:
+// q1,a,_
+// q1,_,a,>,<
 
 q1,b,_
 q0,b,_,>,<
 
 q1,_,_
 q2,_,_,-,-
+
+
+// Les expressions (non-vides) entre crochets sur la première ligne
+// d'une transition permettent d'activer la transition dès que la 
+// tête de lecture du ruban correspondant se trouve sur un symbole 
+// appartenant à la liste entre crochets.
+// Par exemple, la transition ci-dessous:
+
+q0,[01],[_a]
+q3,_ ,a,>,>
+
+// est équivalente aux transitions suivantes:
+
+// q0,0,_
+// q3,_,a,>,>
+// 
+// q0,1,_
+// q3,_,a,>,>
+// 
+// q0,0,a
+// q3,_,a,>,>
+// 
+// q0,1,a
+// q3,_,a,>,>
+
+// Ces constructions peuvent être combinées. Cela permet par exemple
+// d'écrire une transition comme ceci:
+
+q3,[01],[_a]
+q0,_,$1,>,<
+
+// qui peut également être réalisée par les transitions suivantes:
+
+// q3,0,_
+// q0,_,0,>,<
+// 
+// q3,1,_
+// q0,_,1,>,<
+// 
+// q3,0,a
+// q0,_,0,>,<
+// 
+// q3,1,a
+// q0,_,1,>,<
+
 {% endcapture %}
 
 {% include turing-simulator.html init-word = "ababaaabaaa" init-machine = init-machine %}
