@@ -297,7 +297,7 @@ div.pop-up{
 }
 
 .speedo {
-    width: 20em;
+    /* width: 20em; */
     display: block;
     margin:auto;
 }
