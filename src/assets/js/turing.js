@@ -341,7 +341,8 @@ class TuringMachine {
                         for (const c of s.value){
                             alphabet.add(c)    
                             // console.log(`(r) add ${c}, result ${prtset(alphabet)} (size ${alphabet.size})`) }
-                        break;
+                            break;
+                        }
                     }
                 }
                 for (const w of t.writes){
