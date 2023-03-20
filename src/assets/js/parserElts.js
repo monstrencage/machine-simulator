@@ -51,6 +51,7 @@ class Elt {
 
     set semCat(cat){
         this.#semCat = cat
+        // this.#semCat = cat
     }
 
     removeClass(cls){
@@ -59,6 +60,7 @@ class Elt {
 
     set falsify(msg){
         this.#error = true
+        this.addClass("err")
         if (this.#error_msg == []){
             this.#error_msg = msg
         } else {
@@ -85,21 +87,21 @@ class Elt {
     //         return false
     // }
 
-    html(scheme){
-        let span = document.createElement("span")
-        span.className = this.#css
-        if (scheme.entities.has(this.#semCat)){
-            // alert(this.#semCat)
-            if (this.#error){
-                // span.classList.add(scheme.get(this.#semCat).err)
-                span.style["color"] = scheme.entities.get(this.#semCat).err
-            } else {
-                // span.classList.add(scheme.get(this.#semCat).std)
-                span.style["color"] = scheme.entities.get(this.#semCat).std
-            }
-        }
-        span.innerHTML = this.#src
-        return span
+    html(){
+        // let span = document.createElement("span")
+        // span.className = this.#css
+        // if (scheme.entities.has(this.#semCat)){
+        //     // alert(this.#semCat)
+        //     if (this.#error){
+        //         // span.classList.add(scheme.get(this.#semCat).err)
+        //         span.style["color"] = scheme.entities.get(this.#semCat).err
+        //     } else {
+        //         // span.classList.add(scheme.get(this.#semCat).std)
+        //         span.style["color"] = scheme.entities.get(this.#semCat).std
+        //     }
+        // }
+        // span.innerHTML = this.#src
+        return `<span class="${this.#css} ${this.#semCat}">${this.#src}</span>`
     }
 }
 
@@ -191,13 +193,12 @@ class Line {
         this.#own_errors.push(new Error(msg,this.index))
     }
 
-    html (display, scheme){
+    html (display){
         let errors = this.#own_errors
         const idx = document.createElement("a")
         display.appendChild(idx)
         idx.className = "line-idx"
         idx.id = `idx-${this.index}`
-        idx.style.color = scheme.idx
         let span = document.createElement("span")
         span.innerHTML = `${this.index}:`
         idx.appendChild(span)
@@ -206,7 +207,7 @@ class Line {
         // line.className = "line"
         // line.id = `line-${this.index}`
         for (const elt of this.elts.values()){
-            display.appendChild(elt.html(scheme))
+            display.innerHTML += elt.html()
             errors = errors.concat(elt.getError(this.index))
         }
         display.innerHTML += "<br/>"
@@ -218,7 +219,7 @@ class Line {
 function parseComment(line){
     let m = line.splitRegex(/((?:[^/]|\/(?!\/))*)(\/\/.*)/, false);
     if (m){
-        m.semCat = 'comment'
+        m.semCat = 'comments'
     }
 }
 

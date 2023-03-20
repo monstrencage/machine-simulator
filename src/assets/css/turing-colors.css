@@ -1,4 +1,148 @@
+.editor .input-field{
+    color:transparent;
+    background:transparent;
+}
+/* Color themes for the editor */
 
+/* Light theme */
+.editor.light .editor-display .colon{
+    color: darkgreen
+}
+.editor.light .editor-display .colon.err{
+    color: red
+}
+.editor.light .editor-display .comments{
+    color: peru
+}
+.editor.light .editor-display .comments.err{
+    color: crimson
+}
+.editor.light .editor-display .plain-txt{
+    color: #3d4144
+}
+.editor.light .editor-display .plain-txt.err{
+    color: crimson
+}
+.editor.light .editor-display .int{
+    color: darkmagenta
+}
+.editor.light .editor-display .int.err{
+    color: crimson
+}
+.editor.light .editor-display .state{
+    color: dodgerblue
+}
+.editor.light .editor-display .state.err{
+    color: crimson
+}
+.editor.light .editor-display .symb{
+    color: darkslategray
+}
+.editor.light .editor-display .symb.err{
+    color: crimson
+}
+.editor.light .editor-display .dir{
+    color: chocolate
+}
+.editor.light .editor-display .dir.err{
+    color: crimson
+}
+.editor.light .editor-display .ppt{
+    color: darkgreen
+}
+.editor.light .editor-display .ppt.err{
+    color: crimson
+}
+.editor.light .editor-display .comma{
+    color: deepskyblue
+}
+.editor.light .editor-display .comma.err{
+    color: red
+}
+.editor.light .editor-display .line-idx{
+    color: #506882
+}
+.editor.light, .light .editor-display {
+    color: #3d4144
+           background-color: white
+}
+.editor.light{
+    border-color: white
+}
+.editor.light .input-field{
+    caret-color: #3d4144
+}
+
+/* Dark theme */
+.editor.dark .editor-display .colon{
+    color: seagreen
+}
+.editor.dark .editor-display .colon.err{
+    color: red
+}
+.editor.dark .editor-display .comments{
+    color: burlywood
+}
+.editor.dark .editor-display .comments.err{
+    color: pink
+}
+.editor.dark .editor-display .plain-txt{
+    color: #eeffff
+}
+.editor.dark .editor-display .plain-txt.err{
+    color: pink
+}
+.editor.dark .editor-display .int{
+    color: violet
+}
+.editor.dark .editor-display .int.err{
+    color: pink
+}
+.editor.dark .editor-display .state{
+    color: lightblue
+}
+.editor.dark .editor-display .state.err{
+    color: pink
+}
+.editor.dark .editor-display .symb{
+    color: white
+}
+.editor.dark .editor-display .symb.err{
+    color: pink
+}
+.editor.dark .editor-display .dir{
+    color: orange
+}
+.editor.dark .editor-display .dir.err{
+    color: pink
+}
+.editor.dark .editor-display .ppt{
+    color: springgreen
+}
+.editor.dark .editor-display .ppt.err{
+    color: pink
+}
+.editor.dark .editor-display .comma{
+    color: skyblue
+}
+.editor.dark .editor-display .comma.err{
+    color: red
+}
+.editor.dark .editor-display .line-idx {
+    color : #506882
+}
+.editor.dark, .dark .editor-display {
+    color: #eeffff
+           background-color: #263238
+}
+.editor.dark{
+    border-color: #263238
+}
+.editor.dark .input-field{
+    caret-color: #eeffff 
+}
+
+/* Other colors */
 #simulator .simulator-panel {
     background: lavender;
 }
@@ -7,72 +151,15 @@
     color: darkred;
 }
 
-/* .alert .line { */
-/*     text-decoration: wavy; */
-/*     text-decoration-color: red; */
-/*     text-decoration-line: underline; */
-/* } */
-
 .panel.alert{ 
     background: pink;
 }
 
-.line-idx::after{
-    color: transparent;
-}
-
-/* .editor .line .comment{ */
-/*     color:burlywood; */
-/* } */
-/* .editor .line .ppt{ */
-/*     color:springgreen; */
-/* } */
-/* .editor .line .colon{ */
-/*     color:seagreen; */
-/* } */
-/* .editor .line .comma{ */
-/*     color:skyblue; */
-/* } */
-
-/* .editor .line .state{ */
-/*     color:lightblue; */
-/* } */
-
-/* .editor .line .int{ */
-/*     color:violet; */
-/* } */
-/* .editor .line .dir{ */
-/*     color:orange; */
-/* } */
-/* .editor .line .symb{ */
-/*     color:white; */
-/* } */
-
-/* .editor .line *.error, */
 .alert.line-idx{
     color:pink;
 }
-/* .editor .line .comma.error{ */
-/*     color:red; */
-/* } */
 
-/* .line-idx{ */
-/*     color: #506882; */
-/* } */
-/* .line{ */
-/*     color: #eeffff; */
-/* } */
-
-/* .editor textarea { */
-/*     caret-color: #eeffff; */
-/* } */
-
-/* textarea { */
-/*     background: #263238; */
-/*     color: #eeffff; */
-/* } */
-
-input, .editor.panel, .table-tape .tape{
+input, .table-tape .tape{
     background: #263238;
     color: #eeffff;
 }

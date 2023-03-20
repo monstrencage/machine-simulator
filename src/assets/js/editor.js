@@ -37,56 +37,60 @@ const palettes = [
     {
         name   : "light mode",
         logo   : "fas fa-sun",
-        entities : [
-            ["colon","darkgreen","red"],
-            ["comment","peru","crimson"],
-            ["plain-txt","#3d4144","crimson"],
-            ["int","darkmagenta","crimson"],
-            ["state","dodgerblue","crimson"],
-            ["symb","darkslategray","crimson"],
-            ["dir","chocolate","crimson"],
-            ["ppt","darkgreen","crimson"],
-            ["comma","deepskyblue","red"]
-        ],
-        idx : "#506882",
-        basic: "#3d4144",
-        background: "white"
+        css    : "light"
+        // entities : [
+        //     ["colon","darkgreen","red"],
+        //     ["comment","peru","crimson"],
+        //     ["plain-txt","#3d4144","crimson"],
+        //     ["int","darkmagenta","crimson"],
+        //     ["state","dodgerblue","crimson"],
+        //     ["symb","darkslategray","crimson"],
+        //     ["dir","chocolate","crimson"],
+        //     ["ppt","darkgreen","crimson"],
+        //     ["comma","deepskyblue","red"]
+        // ],
+        // idx : "#506882",
+        // basic: "#3d4144",
+        // background: "white"
     },
     {
         name   : "dark mode",
         logo   : "fas fa-moon",
-        entities : [
-            ["colon","seagreen","red"],
-            ["comment","burlywood","pink"],
-            ["plain-txt","#eeffff","pink"],
-            ["int","violet","pink"],
-            ["state","lightblue","pink"],
-            ["symb","white","pink"],
-            ["dir","orange","pink"],
-            ["ppt","springgreen","pink"],
-            ["comma","skyblue","red"]
-        ],
-        idx : "#506882",
-        basic: "#eeffff",
-        background: "#263238"
+        css    : "dark"
+        // entities : [
+        //     ["colon","seagreen","red"],
+        //     ["comment","burlywood","pink"],
+        //     ["plain-txt","#eeffff","pink"],
+        //     ["int","violet","pink"],
+        //     ["state","lightblue","pink"],
+        //     ["symb","white","pink"],
+        //     ["dir","orange","pink"],
+        //     ["ppt","springgreen","pink"],
+        //     ["comma","skyblue","red"]
+        // ],
+        // idx : "#506882",
+        // basic: "#eeffff",
+        // background: "#263238"
     }
 ]
 
-for (const sch of palettes){
-    let map = new Map()
-    for(const cat of sch.entities){
-        map.set(cat[0],{std : cat[1], err: cat[2]})
-    }
-    sch.entities = map
-}
+// for (const sch of palettes){
+//     let map = new Map()
+//     for(const cat of sch.entities){
+//         map.set(cat[0],{std : cat[1], err: cat[2]})
+//     }
+//     sch.entities = map
+// }
 
 class PaletteList{
 #list
 #current
 #nb
+#previous = false
     
     constructor(){
         this.#current = 0
+        this.#previous = false
         this.#list = palettes
         this.#nb = palettes.length
         // alert(this.#nb)
@@ -97,6 +101,9 @@ class PaletteList{
     }
     get logo(){
         return this.#list[this.#current].logo
+    }
+    get css (){
+        return this.#list[this.#current].css
     }
     get colors(){
         return this.#list[this.#current]
@@ -120,8 +127,11 @@ class PaletteList{
         }
     } 
 
+    get previous(){
+        return this.#previous
+    }
     change(){
-        let before = this.#current
+        this.#previous = this.#current
         if (this.#current == this.#nb - 1){
             this.#current = 0
         } else {
@@ -165,16 +175,21 @@ class EditorElt{
         this.output.innerHTML = ""
         this.outputFlag.classList.remove("alert")
 
+        if (colors.previous){
+            this.inputPanel.classList.remove(colors.previous.css)
+        }
+        this.inputPanel.classList.add(colors.css)
+        
         // alert(colors.name)
      
-        this.inputPanel.style.background = colors.background
-        this.inputPanel.style.color = colors.basic
-        this.inputPanel.style["border-color"] = colors.background
-        this.display.style.background = colors.background
-        this.display.style.color = colors.basic
-        this.input.style.background = "transparent"
-        this.input.style.color = "transparent"
-        this.input.style["caret-color"] = colors.basic
+        // this.inputPanel.style.background = colors.background
+        // this.inputPanel.style.color = colors.basic
+        // this.inputPanel.style["border-color"] = colors.background
+        // this.display.style.background = colors.background
+        // this.display.style.color = colors.basic
+        // this.input.style.background = "transparent"
+        // this.input.style.color = "transparent"
+        // this.input.style["caret-color"] = colors.basic
     }
 
     addMsg(elt){
@@ -258,8 +273,7 @@ class Editor {
         for(var l of src_txt){
             errors = errors.concat(
                 this.#parser.processLine(l)
-                    .html(this.#editor.display,
-                          this.colors)
+                    .html(this.#editor.display)
             )
             // this.#editor.addDisplay(out.elt)
             // errors = errors.concat(out.errors)
