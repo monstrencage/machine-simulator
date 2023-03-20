@@ -86,7 +86,7 @@ div.pop-up{
     position: absolute;
     top: 20px;
     left: calc(10px + 2.2em);
-    background:transparent;
+    /* background:transparent; */
     /* color:transparent; */
 }
 

@@ -2,6 +2,9 @@
     color:transparent;
     background:transparent;
 }
+.editor mark{
+    background:unset
+}
 /* Color themes for the editor */
 
 /* Light theme */
@@ -63,14 +66,19 @@
     color: #506882
 }
 .editor.light, .light .editor-display {
-    color: #3d4144
-           background-color: white
+    color: #3d4144;
+    background-color: white
 }
 .editor.light{
     border-color: white
 }
 .editor.light .input-field{
     caret-color: #3d4144
+}
+
+.editor.light .input-field.visible{
+    color: #3d4144;
+    background-color: white
 }
 
 /* Dark theme */
@@ -132,14 +140,18 @@
     color : #506882
 }
 .editor.dark, .dark .editor-display {
-    color: #eeffff
-           background-color: #263238
+    color: #eeffff;
+    background-color: #263238
 }
 .editor.dark{
     border-color: #263238
 }
 .editor.dark .input-field{
     caret-color: #eeffff 
+}
+.editor.dark .input-field.visible{
+    color: #eeffff ;
+    background-color: #263238
 }
 
 /* Other colors */

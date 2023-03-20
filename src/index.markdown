@@ -60,7 +60,7 @@ q1,b,_,>,< // Lors de son exécution, elle change l'état courant
            // sur le second, et déplace la première tête de 
            // lecture vers la droite.
 
-// Les expressions avec un dollard sur la seconde ligne d'une
+// Les expressions avec un dollar sur la seconde ligne d'une
 // transition font référence au contenu du ruban d'entrée. 
 // Par exemple, la transition ci-dessous :
 

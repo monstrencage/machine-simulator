@@ -182,3 +182,117 @@ class TMParser {
     }
 }
 
+
+function displaySymbs(tail){
+    return tail.map(s => `<mark class="symb">${s}</mark>`).join('<mark class="comma">,</mark>')
+}
+function displayMoves(tail){
+    return tail.map(s => `<mark class="dir">${s}</mark>`).join('<mark class="comma">,</mark>')
+}
+function displayErr(tail){
+    return tail.join('<mark class="comma err">,</mark>')
+}
+
+class QuickParser {
+    
+    constructor(display, str){
+        this.nb_tapes = 0
+        this.idx = 0
+        this.errors = false
+        this.display = display
+        this.remainder = str
+        this.finished = false
+
+        this.display.innerHTML = ""
+    }
+
+    process(){
+        this.idx += 1
+        let temp = this.remainder 
+        let output = ""
+        let err = false
+        let parts = this.remainder.split('\n',2)
+        var myline = ""
+        if (parts.length == 0){
+            console.log(`processSrc : ${str} splits into 0 lines (weird)`)
+        } else if (parts.length == 1){
+            myline = parts[0]
+            this.remainder = ""
+            this.finished = true
+        } else if (parts.length == 2){
+            myline = parts[0]
+            this.remainder = this.remainder.substring(myline.length +1)
+            console.assert(temp == `${myline}\n${this.remainder}`, `called on ${temp}, split as ${myline}\n${this.remainder}`)
+        } else {
+            console.log(`processSrc : ${str} splits into ${parts.length} lines (weird)`)
+        }
+
+        parts = myline.split("//",2)
+        if (parts.length == 2){
+            output = `<mark class="comments">//${parts[1]}</mark>`
+            myline = parts[0]
+        }
+        
+        if (/^\s*$/.test(myline)){
+            output = `${myline}${output}`
+        } else {
+            parts = myline.match(/^([^:]*):(.*)/)
+            if (parts){
+                switch(parts[1].trim()){
+                case "init":
+                case "initial":
+                case "accept":
+                case "final":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="state">${parts[2]}</mark>${output}`
+                    break;
+                case "sortie":
+                case "output":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="int">${parts[2]}</mark>${output}`
+                    break;
+                case "name":
+                case "nom":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
+                    break;
+                default:
+                    output = `<mark class="ppt err">${parts[1]}</mark><mark class="colon err">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
+                    err = true
+                    break;
+                }
+            } else {
+                parts = myline.match(/^([^,]*),(.*)/)
+                if (parts){
+                    let tail = parts[2].split(",")
+                    if (this.nb_tapes == 0){
+                        this.nb_tapes = tail.length
+                    }
+                    
+                    if (this.nb_tapes == tail.length){
+                        output = `<mark class="state">${parts[1]}</mark><mark class="comma">,</mark>${displaySymbs(tail)}${output}`
+                    } else  if (2 * this.nb_tapes == tail.length){
+                        let symbs = tail.slice(0, this.nb_tapes)
+                        let moves = tail.slice(this.nb_tapes)
+                        output = `<mark class="state">${parts[1]}</mark><mark class="comma">,</mark>${displaySymbs(symbs)}<mark class="comma">,</mark>${displayMoves(moves)}${output}`
+                    } else {
+                        err = true
+                        output = `<mark class="state">${parts[1]}</mark><mark class="comma err">,</mark>${displayErr(tail)}${output}`
+                    }
+                } else {
+                    err = true
+                    output = `<mark class="err">${myline}</mark>${output}`
+                }
+            }
+        }
+        if (err){
+           output = `<a id="idx-${this.idx}" class="line-idx alert"><span>${this.idx}:</span></a>${output}` 
+        } else {
+           output = `<a id="idx-${this.idx}" class="line-idx"><span>${this.idx}:</span></a>${output}` 
+        }
+
+        this.display.innerHTML += output
+        if (! this.finished){
+            this.errors = this.errors || err
+            this.display.innerHTML += "<br/>"
+            this.process()
+        }
+    }
+}

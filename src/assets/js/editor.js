@@ -228,15 +228,18 @@ class EditorElt{
 class Editor {
     #editor
     #parser
+    #quickParser
     #ok
     #colorButton
     #palette
+    latency = 500
     
-    constructor(editorElt, myParser){
+    constructor(editorElt, myParser, myQuickParser){
         // this.#colorScheme = makeColor(myColorScheme)
         this.#editor = editorElt
         this.#palette = new PaletteList()
         this.#parser = myParser
+        this.#quickParser = myQuickParser
         this.#editor.update = this.upd.bind(this)
         
         this.#colorButton = new EditorButton(this.#editor.inputPanel, "", "")
@@ -246,7 +249,7 @@ class Editor {
         this.#colorButton.onclick = this.toggle.bind(this)
         this.updateBtn()
 
-        this.upd()
+        this.quickUpdate()
     }
 
     updateBtn(){
@@ -258,27 +261,36 @@ class Editor {
         this.#palette.change()
         // alert(this.#palette.colors.name)
         this.updateBtn()
-        this.upd()
+        this.quickUpdate()
     }
 
-    upd () {
+    get value (){
+        console.time('processing')
         this.#ok = false
-        let src_txt = this.#editor.value.split('\n')
+        let src_txt = this.#editor.value
         this.#parser.reset()
 
         // alert (this.#palette.constructor.name)
         this.#editor.reset(this.#palette.colors)
         let errors = new Array()
         // let maxW = 0
-        for(var l of src_txt){
+        var m = src_txt.match(/^([^\n]*)\n/)
+        while (m){
             errors = errors.concat(
-                this.#parser.processLine(l)
+                this.#parser.processLine(m[1])
                     .html(this.#editor.display)
             )
+            src_txt = src_txt.substring(m[0].length)
+            m = src_txt.match(/^([^\n]*)\n/)
             // this.#editor.addDisplay(out.elt)
             // errors = errors.concat(out.errors)
             // maxW = Math.max(maxW, out.elt.clientWidth)
         }
+        // alert(src_txt)
+        errors = errors.concat(
+            this.#parser.processLine(src_txt)
+                .html(this.#editor.display)
+        )
         this.#editor.resize()
         errors = errors.concat(this.#parser.checkSpec())
 
@@ -291,12 +303,39 @@ class Editor {
             this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."
             this.#ok = true
         }
-    }
-    
-    get value (){
+        console.timeEnd('processing')
         this.#parser.compile()
         this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
         return this.#parser.value
+    }
+
+    upd(){
+        this.lastEntry = Date.now()
+        this.#editor.input.classList.add("visible")
+        setTimeout(this.tryUpdate.bind(this),this.latency)
+    }
+
+    tryUpdate(){
+        if (Date.now() - this.lastEntry >= this.latency){
+            this.#editor.input.classList.remove("visible")
+            this.quickUpdate()
+        }
+    }
+    quickUpdate(){
+        this.#editor.reset(this.#palette.colors)
+        let p = new this.#quickParser(this.#editor.display, this.#editor.value)
+        console.time("quick processing")
+        p.process()
+        console.timeEnd("quick processing")
+        console.log(`processed ${p.idx} lines`)
+        if (p.errors){
+            this.#editor.errorTitle = "Spécification incorrecte"
+            this.#ok = false
+        } else {
+            this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."
+            this.#ok = true
+        }
+
     }
 
     get ok(){

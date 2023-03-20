@@ -73,7 +73,7 @@
   let editorElt = new EditorElt("editor-panel",
                                 'compilation-panel')
   
-  let editor = new Editor(editorElt, new TMParser())
+  let editor = new Editor(editorElt, new TMParser(), QuickParser)
   
   const simulator = new Simulator("simulator-panel",
                                   GraphTM,
