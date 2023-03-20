@@ -90,7 +90,7 @@ class PaletteList{
     
     constructor(){
         this.#current = 0
-        this.#previous = false
+        this.#previous = 0
         this.#list = palettes
         this.#nb = palettes.length
         // alert(this.#nb)
@@ -128,7 +128,7 @@ class PaletteList{
     } 
 
     get previous(){
-        return this.#previous
+        return this.#list[this.#previous]
     }
     change(){
         this.#previous = this.#current
@@ -175,9 +175,8 @@ class EditorElt{
         this.output.innerHTML = ""
         this.outputFlag.classList.remove("alert")
 
-        if (colors.previous){
-            this.inputPanel.classList.remove(colors.previous.css)
-        }
+        console.log(`color change :\n current classes ${this.inputPanel.className}\n${colors.previous.css} -> ${colors.css}`)
+        this.inputPanel.classList.remove(colors.previous.css)
         this.inputPanel.classList.add(colors.css)
         
         // alert(colors.name)
@@ -271,7 +270,7 @@ class Editor {
         this.#parser.reset()
 
         // alert (this.#palette.constructor.name)
-        this.#editor.reset(this.#palette.colors)
+        this.#editor.reset(this.#palette)
         let errors = new Array()
         // let maxW = 0
         var m = src_txt.match(/^([^\n]*)\n/)
@@ -322,7 +321,7 @@ class Editor {
         }
     }
     quickUpdate(){
-        this.#editor.reset(this.#palette.colors)
+        this.#editor.reset(this.#palette)
         let p = new this.#quickParser(this.#editor.display, this.#editor.value)
         console.time("quick processing")
         p.process()
