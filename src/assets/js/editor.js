@@ -194,6 +194,9 @@ class EditorElt{
     addMsg(elt){
         this.output.appendChild(elt)
     }
+    appMsg(txt){
+        this.output.innerHTML += txt
+    }
     
     set msg(txt){
         this.output.innerHTML = txt
@@ -263,7 +266,7 @@ class Editor {
         this.quickUpdate()
     }
 
-    get value (){
+    fullUpdate(){
         console.time('processing')
         this.#ok = false
         let src_txt = this.#editor.value
@@ -295,7 +298,7 @@ class Editor {
 
         if (errors.length > 0){
             this.#editor.errorTitle = "Spécification incorrecte"
-
+            
             for (const e of errors.values())
                 this.#editor.addMsg(e.print(function (i) {return `idx-${i}`}))
         } else {
@@ -303,9 +306,16 @@ class Editor {
             this.#ok = true
         }
         console.timeEnd('processing')
-        this.#parser.compile()
-        this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
-        return this.#parser.value
+    }
+    get value (){
+        this.fullUpdate()
+        if (this.#ok){
+            this.#parser.compile()
+            this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
+            return this.#parser.value
+        } else {
+            return false
+        }
     }
 
     upd(){
@@ -327,8 +337,16 @@ class Editor {
         p.process()
         console.timeEnd("quick processing")
         console.log(`processed ${p.idx} lines`)
-        if (p.errors){
+        if (p.errors.length > 0){
             this.#editor.errorTitle = "Spécification incorrecte"
+            if (p.errors.length == 1)
+            {
+                this.#editor.appMsg(`erreur détectée ligne ${p.errors[0]}.<br/>`)
+                this.#editor.appMsg("Essayez de compiler pour obtenir plus d'informations sur cette erreur.")
+            } else {
+                this.#editor.appMsg(`erreurs détectées lignes ${p.errors.join(",")}.<br/>`)
+                this.#editor.appMsg("Essayez de compiler pour obtenir plus d'informations sur ces erreurs.")
+            }
             this.#ok = false
         } else {
             this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."

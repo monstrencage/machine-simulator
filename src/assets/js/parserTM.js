@@ -198,7 +198,7 @@ class QuickParser {
     constructor(display, str){
         this.nb_tapes = 0
         this.idx = 0
-        this.errors = false
+        this.errors = new Array()
         this.display = display
         this.remainder = str
         this.finished = false
@@ -226,6 +226,8 @@ class QuickParser {
         } else {
             console.log(`processSrc : ${str} splits into ${parts.length} lines (weird)`)
         }
+
+        myline = myline.replaceAll('<','&lt').replaceAll('<','&gt')
 
         parts = myline.split("//",2)
         if (parts.length == 2){
@@ -290,7 +292,9 @@ class QuickParser {
 
         this.display.innerHTML += output
         if (! this.finished){
-            this.errors = this.errors || err
+            if (err){
+                this.errors.push(this.idx)
+            }
             this.display.innerHTML += "<br/>"
             this.process()
         }

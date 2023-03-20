@@ -87,8 +87,9 @@
           input.blur()      
   }
   function compile(editor, input, simulator){
-      if (editor.ok){
-          simulator.machine = editor.value
+      let output = editor.value
+      if (output){
+          simulator.machine = output
           load(input, simulator);
       }
   }
@@ -107,7 +108,7 @@
 
       compileBtn.onclick = e => {
           compile(editor,input,simulator)
-          input.scrollIntoView()
+          if (editor.ok){input.scrollIntoView()}
       }
 
       compile(editor, input, simulator)
