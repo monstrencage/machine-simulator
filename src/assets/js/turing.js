@@ -22,17 +22,17 @@ function print_symb(s){
 }
 
 function prtset(s){
-    let out = "{"
+    let out = "{ "
     let init = true
     for (const i of s){
         if (init){
             init = false
         } else {
-            out += ','
+            out += ', '
         }
         out += i
     }
-    return (out+"}")
+    return (out+" }")
 }
 
 

@@ -337,6 +337,7 @@ class Editor {
         p.process()
         console.timeEnd("quick processing")
         console.log(`processed ${p.idx} lines`)
+        this.#editor.resize()
         if (p.errors.length > 0){
             this.#editor.errorTitle = "Spécification incorrecte"
             if (p.errors.length == 1)

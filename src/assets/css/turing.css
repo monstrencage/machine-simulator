@@ -117,6 +117,8 @@ div.pop-up{
 
 #editor .compilation-msg p{
     margin-bottom:0;
+    word-break:break-word;
+    whitespace:normal
 }
 #editor .compilation-msg span{
     display:list-item;
