@@ -146,12 +146,12 @@ parser.chercher,[+*],[+*],_,_
 parser.chercher,$1,$2,_,_,-,<,-,-
 
 parser.chercher,[+*],?,_,_
-parser.trouvé,$1,$1,_,_,-,>,-,-
+parser.retour,$1,$1,_,_,-,>,-,-
 
-parser.trouvé,[+*],[+*],_,_
-parser.trouvé,$1,$2,_,_,-,>,-,-
+parser.retour,[+*],[+*],_,_
+parser.retour,$1,$2,_,_,-,>,-,-
 
-parser.trouvé,[+*],_,_,_
+parser.retour,[+*],_,_,_
 parser,_,_,_,_,>,-,-,-
 
 parser,),_,_,_
@@ -164,12 +164,12 @@ parser,_,_,_,_
 parser.vérifier,_,_,_,_,-,<,-,-
 
 parser.vérifier,_,0,_,_
-calcul.rev,_,_,_,_,-,-,-,>
+calcul.retour,_,_,_,_,-,-,-,>
 
-calcul.rev,_,_,_,[01+*]
-calcul.rev,_,_,_,$4,-,-,-,>
+calcul.retour,_,_,_,[01+*]
+calcul.retour,_,_,_,$4,-,-,-,>
 
-calcul.rev,_,_,_,_
+calcul.retour,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
 calcul,_,_,_,_
@@ -224,24 +224,24 @@ mult.arg2,_,_,1,_
 mult.arg2,1,_,_,_,>,-,>,-
 
 mult.arg2,_,_,0,_
-mult.go,_,_,0,_,<,-,<,-
+mult.boucle,_,_,0,_,<,-,<,-
 
-mult.go,1,_,_,_
-mult.loop,_,_,_,_,-,<,-,-
+mult.boucle,1,_,_,_
+mult.recopier,_,_,_,_,-,<,-,-
 
-mult.loop,_,1,_,_
-mult.loop,_,1,1,_,-,<,<,-
+mult.recopier,_,1,_,_
+mult.recopier,_,1,1,_,-,<,<,-
 
-mult.loop,_,_,_,_
-mult.rewind,_,_,_,_,-,>,-,-
+mult.recopier,_,_,_,_
+mult.retour,_,_,_,_,-,>,-,-
 
-mult.rewind,_,1,_,_
-mult.rewind,_,1,_,_,-,>,-,-
+mult.retour,_,1,_,_
+mult.retour,_,1,_,_,-,>,-,-
 
-mult.rewind,_,_,_,_
-mult.go,_,_,_,_,<,-,-,-
+mult.retour,_,_,_,_
+mult.boucle,_,_,_,_,<,-,-,-
 
-mult.go,_,_,_,_
+mult.boucle,_,_,_,_
 mult.fin,_,_,_,_,-,<,-,-
 
 mult.fin,_,1,_,_
