@@ -21,7 +21,9 @@
 <div id="simulator" class="section">
   <h1><i class="fas fa-robot"></i> Simulateur<div class="tm-name" id="tm-name"></div></h1>
   <div class="input-panel panel section">
-    {% if include.init-word %}
+    {% if include.supercool-input %}
+    <input class="input-field" type='text' id='input-str' value='{{include.supercool-input}}'/>
+    {% elsif include.init-word %}
     <input class="input-field" type='text' id='input-str' value='{{include.init-word}}'/>
     {% else %}
     <input class="input-field" type='text' id='input-str'/>

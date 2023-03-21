@@ -124,10 +124,10 @@ q0,_,$1,>,<
 {% endcapture %}
 
 {% capture supercool%}
-nom   : Interpréteur
-initial   : début
-final : fin
-sortie : 1
+nom     : Interpréteur
+initial : début
+final   : fin
+sortie  : 1
 
 début,[1(],_,_,_
 parser,$1,0,_,0,-,>,-,<
@@ -297,4 +297,4 @@ convertir,_,_,_,_,-,-,>,-
 
 {% endcapture %}
 
-{% include turing-simulator.html init-word = "ababaaabaaa" init-machine = init-machine supercool=supercool %}
+{% include turing-simulator.html init-word = "ababaaabaaa" init-machine = init-machine supercool=supercool supercool-input = "(((111+1)*11)+(11*111))" %}
