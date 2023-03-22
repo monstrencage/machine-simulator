@@ -2,154 +2,154 @@
     color:transparent;
     background:transparent;
 }
-.editor mark{
+.src-display mark{
     background:unset
 }
 /* Color themes for the editor */
 
 /* Light theme */
-.editor.light .editor-display .colon{
+.src.light .src-display .colon{
     color: darkgreen
 }
-.editor.light .editor-display .colon.err{
+.src.light .src-display .colon.err{
     color: red
 }
-.editor.light .editor-display .comments{
+.src.light .src-display .comments{
     color: peru
 }
-.editor.light .editor-display .comments.err{
+.src.light .src-display .comments.err{
     color: crimson
 }
-.editor.light .editor-display .plain-txt{
+.src.light .src-display .plain-txt{
     color: #3d4144
 }
-.editor.light .editor-display .plain-txt.err{
+.src.light .src-display .plain-txt.err{
     color: crimson
 }
-.editor.light .editor-display .int{
+.src.light .src-display .int{
     color: darkmagenta
 }
-.editor.light .editor-display .int.err{
+.src.light .src-display .int.err{
     color: crimson
 }
-.editor.light .editor-display .state{
+.src.light .src-display .state{
     color: dodgerblue
 }
-.editor.light .editor-display .state.err{
+.src.light .src-display .state.err{
     color: crimson
 }
-.editor.light .editor-display .symb{
+.src.light .src-display .symb{
     color: darkslategray
 }
-.editor.light .editor-display .symb.err{
+.src.light .src-display .symb.err{
     color: crimson
 }
-.editor.light .editor-display .dir{
+.src.light .src-display .dir{
     color: chocolate
 }
-.editor.light .editor-display .dir.err{
+.src.light .src-display .dir.err{
     color: crimson
 }
-.editor.light .editor-display .ppt{
+.src.light .src-display .ppt{
     color: darkgreen
 }
-.editor.light .editor-display .ppt.err{
+.src.light .src-display .ppt.err{
     color: crimson
 }
-.editor.light .editor-display .comma{
+.src.light .src-display .comma{
     color: deepskyblue
 }
-.editor.light .editor-display .comma.err{
+.src.light .src-display .comma.err{
     color: red
 }
-.editor.light .editor-display .line-idx{
+.src.light .src-display .line-idx{
     color: #506882
 }
-.editor.light, .light .editor-display {
+.src.light, .light .src-display {
     color: #3d4144;
     background-color: white
 }
-.editor.light{
+.src.light{
     border-color: white
 }
-.editor.light .input-field{
+.src.light .input-field{
     caret-color: #3d4144
 }
 
-.editor.light .input-field.visible{
+.src.light .input-field.visible{
     color: #3d4144;
     background-color: white
 }
 
 /* Dark theme */
-.editor.dark .editor-display .colon{
+.src.dark .src-display .colon{
     color: seagreen
 }
-.editor.dark .editor-display .colon.err{
+.src.dark .src-display .colon.err{
     color: red
 }
-.editor.dark .editor-display .comments{
+.src.dark .src-display .comments{
     color: burlywood
 }
-.editor.dark .editor-display .comments.err{
+.src.dark .src-display .comments.err{
     color: pink
 }
-.editor.dark .editor-display .plain-txt{
+.src.dark .src-display .plain-txt{
     color: #eeffff
 }
-.editor.dark .editor-display .plain-txt.err{
+.src.dark .src-display .plain-txt.err{
     color: pink
 }
-.editor.dark .editor-display .int{
+.src.dark .src-display .int{
     color: violet
 }
-.editor.dark .editor-display .int.err{
+.src.dark .src-display .int.err{
     color: pink
 }
-.editor.dark .editor-display .state{
+.src.dark .src-display .state{
     color: lightblue
 }
-.editor.dark .editor-display .state.err{
+.src.dark .src-display .state.err{
     color: pink
 }
-.editor.dark .editor-display .symb{
+.src.dark .src-display .symb{
     color: white
 }
-.editor.dark .editor-display .symb.err{
+.src.dark .src-display .symb.err{
     color: pink
 }
-.editor.dark .editor-display .dir{
+.src.dark .src-display .dir{
     color: orange
 }
-.editor.dark .editor-display .dir.err{
+.src.dark .src-display .dir.err{
     color: pink
 }
-.editor.dark .editor-display .ppt{
+.src.dark .src-display .ppt{
     color: springgreen
 }
-.editor.dark .editor-display .ppt.err{
+.src.dark .src-display .ppt.err{
     color: pink
 }
-.editor.dark .editor-display .comma{
+.src.dark .src-display .comma{
     color: skyblue
 }
-.editor.dark .editor-display .comma.err{
+.src.dark .src-display .comma.err{
     color: red
 }
-.editor.dark .editor-display .line-idx {
+.src.dark .src-display .line-idx {
     color : #506882
 }
-.editor.dark, .dark .editor-display {
+.src.dark, .dark .src-display {
     color: #eeffff;
     background-color: #263238
 }
-.editor.dark{
+.src.dark{
     border-color: #263238
 }
-.editor.dark .input-field{
+.src.dark .input-field{
     caret-color: #eeffff 
 }
-.editor.dark .input-field.visible{
+.src.dark .input-field.visible{
     color: #eeffff ;
     background-color: #263238
 }
@@ -202,7 +202,7 @@ input, .table-tape .tape{
     color: #3d4144;
 }
 /* not really colors, but more aboute being pretty. */
-textarea, input, .tm-cell-content, .tape , .compilation-msg, .editor-display{
+textarea, input, .tm-cell-content, .tape , .compilation-msg, .src-display{
     font-family: Monaco, Consolas, "Lucida Console", monospace;
 }
 

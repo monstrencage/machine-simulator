@@ -8,7 +8,11 @@
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/{{ stylesheet }}.css">
   {% endfor %}
 {% endif %}
-
+{% if layout.custom_css %}
+  {% for stylesheet in layout.custom_css %}
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/{{ stylesheet }}.css">
+  {% endfor %}
+{% endif %}
 {% if page.external_js %}
   {% for js_url in page.external_js %}
 <script
@@ -17,9 +21,24 @@
 </script>
   {% endfor %}
 {% endif %}
-
+{% if layout.external_js %}
+  {% for js_url in layout.external_js %}
+<script
+  type="text/javascript"
+  src="{{ js_url }}">
+</script>
+  {% endfor %}
+{% endif %}
 {% if page.custom_js %}
   {% for js_file in page.custom_js %}
+<script
+  type="text/javascript"
+  src="{{ site.baseurl }}/assets/js/{{ js_file }}.js">
+</script>
+  {% endfor %}
+{% endif %}
+{% if layout.custom_js %}
+  {% for js_file in layout.custom_js %}
 <script
   type="text/javascript"
   src="{{ site.baseurl }}/assets/js/{{ js_file }}.js">

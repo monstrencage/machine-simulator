@@ -1,8 +1,10 @@
 main:
   - title: "Simulateur"
     url: "/"
+  - title: "Exemples"
+    url: "/machines/"
   - title: "Aide"
-    url: help
+    url: help.html
   - title: "À propos"
-    url: about
+    url: about.html
   

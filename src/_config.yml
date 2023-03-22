@@ -79,3 +79,16 @@ author:
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+# Collections
+collections:
+  machines:
+    output: true
+
+defaults:
+  -
+    scope:
+      path: ''
+      type: "machines"
+    values:
+      layout: machines

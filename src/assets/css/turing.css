@@ -56,8 +56,11 @@ div.pop-up{
     margin-left:.5em;
 }
 
- /* editor */
-#editor .panel{
+ /* editor & render */
+.render.section textarea.src{
+    display:none
+}
+.machine-src .panel{
     display: inline-block;
     width: fit-content;
     padding:1em;
@@ -65,15 +68,16 @@ div.pop-up{
     margin: .2em;
 }
 
-#editor .control-panel {
+.editor.section .control-panel {
     width: 100%;
     padding: .5em 0;
 }
 
-#editor .btn.txt i{
+.machine-src .btn.txt i{
     margin-right:.5em
 }
-#editor textarea {
+
+.editor.section textarea {
     overflow: hidden;
     padding: 0;
     border: 0;
@@ -81,26 +85,21 @@ div.pop-up{
     resize: none;
     border-radius:0;
     box-shadow:none;
-    line-height: 22px;
+    /* line-height: 22px; */
     display:block;
     position: absolute;
     top: 20px;
     left: calc(10px + 2.2em);
-    /* background:transparent; */
-    /* color:transparent; */
 }
 
-#editor .line span{
+.machine-src .line span{
     margin:0;
     padding:0;
     display:inline;
 }
 
-/* #editor .line .comment::after{ */
-/*     display:none */
-/* } */
 
-#editor .editor.panel{
+.editor.machine-src .src.panel{
     display: inline-block;
     gap: 10px;
     padding: 20px 10px;
@@ -110,22 +109,29 @@ div.pop-up{
     overflow: scroll;
     position: relative;
 }
+.render.machine-src .src.panel{
+    display: inline-block;
+    gap: 10px;
+    padding: 20px 10px;
+    height: fit-content;
+    position: relative;
+}
 
-#editor .editor.panel, #editor .compilation-msg.panel{
+.machine-src .src.panel, .machine-src .compilation-msg.panel{
     width:100%;
 }
 
-#editor .compilation-msg p{
+.machine-src .compilation-msg p{
     margin-bottom:0;
     word-break:break-word;
     whitespace:normal
 }
-#editor .compilation-msg span{
+.machine-src .compilation-msg span{
     display:list-item;
     margin-left: 1em;
 }
 
-#editor .panel h3{
+.machine-src .panel h3{
     margin-top:.1em
 }  
 
@@ -145,7 +151,7 @@ div.pop-up{
     display:inline-block;
     padding-right:.5em;
 }
-.editor-display a.line-idx:hover{
+.src-display a.line-idx:hover{
     text-decoration:unset
 }
 
@@ -153,7 +159,7 @@ div.pop-up{
 .line{
     padding-left:.66em;
 }
-.editor-display{
+.editor .src-display{
     /* line-height: 22px; */
     /* display:table; */
     position:absolute;
@@ -161,10 +167,18 @@ div.pop-up{
     top:20px;
     margin-top:0;
 }
-.editor-display pre {
+.render .src-display{
+    /* line-height: 22px; */
+    /* display:table; */
+    /* position:absolute; */
+    /* left:10px; */
+    /* top:20px; */
+    margin-top:0;
+}
+.src-display pre {
     display: table-row;
 }
-.editor-display pre code {
+.src-display pre code {
     display: table-cell;
 }
 
@@ -172,12 +186,12 @@ div.pop-up{
     vertical-align:super;
 }
 
-.text-sample, textarea, input, .editor-display, #editor textarea {
+.text-sample, textarea, input, .src-display, .machine-src textarea {
     font-size: large;
     line-height: 1.8;
 }
 
-/* .editor-display .emptyspan::after{ */
+/* .src-display .emptyspan::after{ */
 /*     content: "0"; */
 /*     display:inline; */
 /*     color:transparent; */

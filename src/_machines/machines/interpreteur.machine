@@ -1,0 +1,204 @@
+nom     : Interpréteur
+initial : début
+final   : fin
+sortie  : 1
+
+// On initialise les rubans 2 et 4 avec un 0, représentant le fond d'une pile.  
+début,[1(],_,_,_
+parser,$1,0,_,0,-,>,-,<
+
+// 1. Mise en notation polonaise
+// Les parenthèses ouvrantes ajoutent des ? sur une pile
+// que l'on maintient sur le ruban 2.
+parser,(,_,_,_
+parser,_,?,_,_,>,>,-,-
+
+// Les 1 sont transcrits directement sur le ruban 4.
+parser,1,_,_,_
+parser,_,_,_,1,>,-,-,<
+
+// Lorsequ'une opération est détectée, on écrit un 0 sur
+// le ruban 4 (pour séparer les deux opérandes de l'opération), ...
+parser,[+*],_,_,_
+parser,$1,_,_,0,-,<,-,<
+
+// ... on recherche le ? le plus récent sur le ruban 2...
+parser,[+*],[+*],_,_
+parser,$1,$2,_,_,-,<,-,-
+
+// ... et on le remplace par l'opérateur en question.
+parser,[+*],?,_,_
+parser.retour,$1,$1,_,_,-,>,-,-
+
+// On prend soin ensuite de replacer la tête de lecture au
+// sommet de la pile, c'est à dire à droite. 
+parser.retour,[+*],[+*],_,_
+parser.retour,$1,$2,_,_,-,>,-,-
+
+parser.retour,[+*],_,_,_
+parser,_,_,_,_,>,-,-,-
+
+// Pour une parenthèse fermante, on regarde l'opérateur au
+// sommet de la pile...
+parser,),_,_,_
+parser,_,_,_,_,-,<,-,-
+
+// ... et on le recopie sur le ruban 4.
+parser,_,[+*],_,_
+parser,_,_,_,$2,>,-,-,<
+
+// Une fois l'entrée lue en entier...
+parser,_,_,_,_
+parser,_,_,_,_,-,<,-,-
+
+// ... on efface le 0 de fond de pile du ruban 2...
+parser,_,0,_,_
+calcul.retour,_,_,_,_,-,-,-,>
+
+// ... et on positionne la tête de lecture du ruban 4 tout à droite
+// de l'expression transformée.
+
+calcul.retour,_,_,_,[01+*]
+calcul.retour,_,_,_,$4,-,-,-,>
+
+calcul.retour,_,_,_,_
+calcul,_,_,_,_,-,-,-,<
+
+// 2. Calcul
+// Le calcul procède en lisant le ruban 4 de droite à gauche.
+// Les 0 et les 1 son recopiés sur le ruban 3.
+calcul,_,_,_,[01]
+calcul,_,_,$4,_,-,-,<,<
+
+// Lorsequ'on lit un opérateur, on va sur l'état correspondant, pour
+// effectuer le calcul spécifié.
+calcul,_,_,_,+
+addition,_,_,_,_,-,-,>,-
+
+calcul,_,_,_,*
+mult,_,_,_,_,-,-,>,-
+
+// 3. Addition
+// L'addition des deux premiers nombres de la pile est très simple.
+// Si le premier argument est nul, i.e. la pile commence par un 0,
+// alors il suffit d'effacer ce symbole.
+addition,_,_,0,_
+calcul,_,_,_,_,-,-,-,<
+
+// Sinon, on efface le premier 1, ...
+addition,_,_,1,_
+addition.arg1,_,_,_,_,-,-,>,-
+
+// ... on cherche le 0 séparant premier et second argument, ...
+addition.arg1,_,_,1,_
+addition.arg1,_,_,1,_,-,-,>,-
+
+// ... et on le remplace par un 1.
+addition.arg1,_,_,0,_
+addition.fin,_,_,1,_,-,-,<,-
+
+// Il ne reste ensuite qu'à repositionner la tête de lecture.
+addition.fin,_,_,1,_
+addition.fin,_,_,1,_,-,-,<,-
+
+addition.fin,_,_,_,_
+calcul,_,_,_,_,-,-,-,<
+
+// 4. Multiplication
+// More comments soon...
+mult,_,_,0,_
+mult.efface,_,_,_,_,-,-,>,-
+
+mult.efface,_,_,1,_
+mult.efface,_,_,_,_,-,-,>,-
+
+mult.efface,_,_,0,_
+calcul,_,_,0,_,-,-,<,<
+
+mult,_,_,1,_
+mult.arg1,_,1,_,_,-,>,>,-
+
+mult.arg1,_,_,1,_
+mult.arg1,_,1,_,_,-,>,>,-
+
+mult.arg1,_,_,0,_
+mult.arg2,_,_,_,_,-,-,>,-
+
+mult.arg2,_,_,1,_
+mult.arg2,1,_,_,_,>,-,>,-
+
+mult.arg2,_,_,0,_
+mult.boucle,_,_,0,_,<,-,<,-
+
+mult.boucle,1,_,_,_
+mult.recopier,_,_,_,_,-,<,-,-
+
+mult.recopier,_,1,_,_
+mult.recopier,_,1,1,_,-,<,<,-
+
+mult.recopier,_,_,_,_
+mult.retour,_,_,_,_,-,>,-,-
+
+mult.retour,_,1,_,_
+mult.retour,_,1,_,_,-,>,-,-
+
+mult.retour,_,_,_,_
+mult.boucle,_,_,_,_,<,-,-,-
+
+mult.boucle,_,_,_,_
+mult.fin,_,_,_,_,-,<,-,-
+
+mult.fin,_,1,_,_
+mult.fin,_,_,_,_,-,<,-,-
+
+mult.fin,_,_,_,_
+calcul,_,_,_,_,-,-,-,<
+
+calcul,_,_,_,_
+convertir,0,_,_,_,>,-,>,-
+
+convertir,_,_,0,_
+fin,_,_,_,_,<,-,-,-
+
+convertir,_,_,1,_
+incrémenter,_,_,_,_,<,-,-,-
+
+incrémenter,0,_,_,_
+incr.retour,1,_,_,_,>,-,-,-
+
+incrémenter,_,_,_,_
+incr.retour,1,_,_,_,>,-,-,-
+
+incrémenter,1,_,_,_
+incr.retour,2,_,_,_,>,-,-,-
+
+incrémenter,2,_,_,_
+incr.retour,3,_,_,_,>,-,-,-
+
+incrémenter,3,_,_,_
+incr.retour,4,_,_,_,>,-,-,-
+
+incrémenter,4,_,_,_
+incr.retour,5,_,_,_,>,-,-,-
+
+incrémenter,5,_,_,_
+incr.retour,6,_,_,_,>,-,-,-
+
+incrémenter,6,_,_,_
+incr.retour,7,_,_,_,>,-,-,-
+
+incrémenter,7,_,_,_
+incr.retour,8,_,_,_,>,-,-,-
+
+incrémenter,8,_,_,_
+incr.retour,9,_,_,_,>,-,-,-
+
+incrémenter,9,_,_,_
+incrémenter,0,_,_,_,<,-,-,-
+
+incr.retour,[0123456789],_,_,_
+incr.retour,$1,_,_,_,>,-,-,-
+
+incr.retour,_,_,_,_
+convertir,_,_,_,_,-,-,>,-
+
