@@ -35,7 +35,7 @@
 
 <script>
   // window.onload = function (){
-  if (window.location.href.search(/[?]loadMachine$/)){
+  if (window.location.href.search(/[?]loadMachine$/) > -1){
       let machineField = document.querySelector("#editor .input-field")
       let inputWordField = document.querySelector("#simulator .input-field")
       machineField.value = localStorage.getItem("machine-simulator.machine")
