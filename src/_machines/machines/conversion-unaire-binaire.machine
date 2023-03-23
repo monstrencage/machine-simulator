@@ -1,0 +1,52 @@
+name:Convertisseur
+init:conv0
+accept:convOK
+output: 2
+
+// Tout d'abord, on déplace l'entrée sur le second ruban.
+conv0,1,_
+conv0,_,1,>,>
+
+// On initialise ensuite le premier ruban avec 0, avant de lancer
+// la boucle principale.
+conv0,_,_
+conv1,0,_,<,<
+
+// À chaque itération, on efface le 1 le plus à droite du second ruban, ...
+conv1,_,1
+conv_incr0,_,_,>,-
+
+// ... et on incrémente le nombre binaire écrit sur le premier ruban.
+conv_incr0,0,_
+conv_incr0,0,_,>,-
+
+conv_incr0,1,_
+conv_incr0,1,_,>,-
+
+conv_incr0,_,_
+conv_incr1,_,_,<,-
+
+conv_incr1,0,_
+conv_incr2,1,_,<,-
+
+conv_incr1,1,_
+conv_incr1,0,_,<,-
+
+conv_incr1,_,_
+conv_incrOK,1,_,<,-
+
+conv_incr2,0,_
+conv_incr2,0,_,<,-
+
+conv_incr2,1,_
+conv_incr2,1,_,<,-
+
+conv_incr2,_,_
+conv_incrOK,_,_,-,-
+
+conv_incrOK,_,_
+conv1,_,_,-,<
+
+// Lorsque le second ruban est vide, le calcul est terminé.
+conv1,_,_
+convOK,_,_,>,-

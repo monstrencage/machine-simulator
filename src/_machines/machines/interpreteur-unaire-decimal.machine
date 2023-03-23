@@ -105,37 +105,47 @@ addition.fin,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
 // 4. Multiplication
-// More comments soon...
+// Si le premier argument est nul, il convient de renvoyer 0,
+// et donc d'effacer le 0 séparant les deux arguments, ...
 mult,_,_,0,_
 mult.efface,_,_,_,_,-,-,>,-
 
+// ... ainsi que le deuxième argument lui-même.
 mult.efface,_,_,1,_
 mult.efface,_,_,_,_,-,-,>,-
 
 mult.efface,_,_,0,_
 calcul,_,_,0,_,-,-,<,<
 
+// Dans le cas contraire, on déplace le premier argument sur
+// le ruban 2, ...
 mult,_,_,1,_
 mult.arg1,_,1,_,_,-,>,>,-
 
 mult.arg1,_,_,1,_
 mult.arg1,_,1,_,_,-,>,>,-
 
+// ... puis le deuxième argument sur le ruban 1.
 mult.arg1,_,_,0,_
 mult.arg2,_,_,_,_,-,-,>,-
 
 mult.arg2,_,_,1,_
 mult.arg2,1,_,_,_,>,-,>,-
 
+// Ensuite, on commence une boucle.
 mult.arg2,_,_,0,_
 mult.boucle,_,_,0,_,<,-,<,-
 
+// À chaque itération, on efface le 1 le plus à droite
+// du premier ruban, ...
 mult.boucle,1,_,_,_
 mult.recopier,_,_,_,_,-,<,-,-
 
+// ... on recopie le contenu du second ruban sur le troisième, ...
 mult.recopier,_,1,_,_
 mult.recopier,_,1,1,_,-,<,<,-
 
+// ... et on se repositionne sur le second ruban.
 mult.recopier,_,_,_,_
 mult.retour,_,_,_,_,-,>,-,-
 
@@ -145,24 +155,34 @@ mult.retour,_,1,_,_,-,>,-,-
 mult.retour,_,_,_,_
 mult.boucle,_,_,_,_,<,-,-,-
 
+// Lorsque le premier ruban est vidé, on efface le second ruban, ...
 mult.boucle,_,_,_,_
 mult.fin,_,_,_,_,-,<,-,-
 
 mult.fin,_,1,_,_
 mult.fin,_,_,_,_,-,<,-,-
 
+// ... et on poursuit le calcul.
 mult.fin,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
+// 5. Conversion unaire -> décimal.
+// Lorsque le calcul est fini, le ruban 3 contient le résultat en unaire,
+// avec un zéro à droite, et la tête de lecture tout à gauche. Les autres
+// rubans sont vides.
+// Pour convertir le résultat en notation décimale, on initialise
+// le premier ruban avec 0, ...
 calcul,_,_,_,_
 convertir,0,_,_,_,>,-,>,-
 
-convertir,_,_,0,_
-fin,_,_,_,_,<,-,-,-
-
+// ... puis, on entre dans une boucle. À chaque itération, on efface le 1
+// le plus à gauche du ruban 3, ...
 convertir,_,_,1,_
 incrémenter,_,_,_,_,<,-,-,-
 
+// ... et on incrémente le résultat sur le ruban 1.
+// Pour les chiffres de 0 à 8, il s'agit simplement de remplacer le chiffre
+// par son successeur, ...
 incrémenter,0,_,_,_
 incr.retour,1,_,_,_,>,-,-,-
 
@@ -193,12 +213,20 @@ incr.retour,8,_,_,_,>,-,-,-
 incrémenter,8,_,_,_
 incr.retour,9,_,_,_,>,-,-,-
 
+// ... et pour le chiffre 9, on le remplace par 0 et on essaie d'incrémenter
+// à partir de la position suivante (pour propager la retenue).
 incrémenter,9,_,_,_
 incrémenter,0,_,_,_,<,-,-,-
 
+// L'itération se termine en repositionnant la tête de lecture du premier ruban
+// à droite du résultat.
 incr.retour,[0123456789],_,_,_
 incr.retour,$1,_,_,_,>,-,-,-
 
 incr.retour,_,_,_,_
 convertir,_,_,_,_,-,-,>,-
 
+// Lorsque le zéro à droite du résultat sur le ruban 3 est atteint, le calcul
+// est terminé.
+convertir,_,_,0,_
+fin,_,_,_,_,<,-,-,-

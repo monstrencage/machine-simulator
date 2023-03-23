@@ -34,6 +34,15 @@
 </div>
 
 <script>
+  // window.onload = function (){
+  if (window.location.href.search(/[?]loadMachine$/)){
+      let machineField = document.querySelector("#editor .input-field")
+      let inputWordField = document.querySelector("#simulator .input-field")
+      machineField.value = localStorage.getItem("machine-simulator.machine")
+      inputWordField.value = localStorage.getItem("machine-simulator.input-value")
+      // }
+  }
+  
   let editorElt = new EditorElt("editor-panel",
                                 'compilation-panel')
   

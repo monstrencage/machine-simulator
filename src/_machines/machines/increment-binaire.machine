@@ -1,0 +1,38 @@
+name:Incrément
+init:incr0
+accept:incrOK
+output:1
+
+// On commence par se positionner à droite de l'entrée.
+incr0,0
+incr0,0,>
+
+incr0,1
+incr0,1,>
+
+incr0,_
+incr1,_,<
+
+// On parcourt ensuite l'entrée en remplaçant tous les 1
+// par des 0.
+incr1,1
+incr1,0,<
+
+// Jusqu'à trouver le premier 0 ou case vide, que l'on
+// remplace par 1.
+incr1,0
+incr2,1,<
+
+incr1,_
+incr2,0,<
+
+// Pour finir, on repositionne la tête de lecture sur la
+// première case non vide à gauche.
+incr2,0
+incr2,0,<
+
+incr2,1
+incr2,1,<
+
+incr2,_
+incrOK,_,>

@@ -1,0 +1,40 @@
+name:Traducteur infixe-suffixe
+init:trad0
+accept:tradOK
+output: 1
+
+// Les 1 sont déplacés vers le ruban 3.
+trad0,1,_,_
+trad0,_,_,1,>,-,>
+
+// Les parenthèses ouvrantes sont oubliées.
+// (attention: si l'entrée n'est pas bien formattée, cette
+//  machine ne le détectera pas forcément! On considère son
+//  comportement comme non spécifié pour les entrées illicites).
+trad0,(,_,_
+trad0,_,_,_,>,-,-
+
+// Les opérateurs sont ajoutés à une pile sur le ruban 2, et
+// en les lisant on ajoute un 0 sur le ruban 3, pour marquer la
+// séparation entre les deux arguments.
+trad0,[+*],_,_
+trad0,_,$1,0,>,>,>
+
+// En voyant une parenthèse fermante...
+trad0,),_,_
+trad1,),_,_,-,<,-
+
+// ... on réccupère au sommet de la pile l'opérateur correspondant.
+trad1,),[+*],_
+trad0,_,_,$2,>,-,>
+
+// Lorsque la lecture est terminée, ...
+trad0,_,_,_
+trad2,_,_,_,-,-,<
+
+// ... on déplace le résultat du ruban 3 au ruban 1.
+trad2,_,_,[10+*]
+trad2,$3,_,_,<,-,<
+
+trad2,_,_,_
+tradOK,_,_,_,>,-,-

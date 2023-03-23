@@ -1,0 +1,58 @@
+name:Multiplicateur
+init:mult0
+accept:multOK
+output:1
+
+// On déplace le premier argument sur le second ruban.
+mult0,1,_,_
+mult0,_,1,_,>,>,-
+
+mult0,0,_,_
+mult1,_,_,_,>,-,-
+
+// Puis le second argument est envoyé sur le troisème ruban.
+mult1,1,_,_
+mult1,_,_,1,>,-,>
+
+// Commence alors la boucle principale.
+mult1,_,_,_
+mult2,_,_,_,-,-,<
+
+// À chaque itération, on efface le 1 le plus à droite du
+// troisième ruban, ...
+mult2,_,_,1
+mult3,_,_,_,-,<,-
+
+// ... et on recopie le contenu du deuxième ruban sur le premier.
+mult3,_,1,_
+mult3,1,1,_,>,<,-
+
+// Avant de commencer l'itération suivante, on repositionne la
+// tête de lecture du second ruban à droite de son contenu.
+mult3,_,_,_
+mult4,_,_,_,-,>,-
+
+mult4,_,1,_
+mult4,_,1,_,-,>,-
+
+mult4,_,_,_
+mult2,_,_,_,-,-,<
+
+// Lorsque le ruban 3 est vide, ...
+mult2,_,_,_
+mult5,_,_,_,<,-,-
+
+// ... on repositionne la tête de lecture du premier ruban tout
+// à gauche de son contenu, ...
+mult5,1,_,_
+mult5,1,_,_,<,-,-
+
+mult5,_,_,_
+mult6,_,_,_,-,<,-
+
+// ... et on efface le contenu du deuxième ruban.
+mult6,_,1,_
+mult6,_,_,_,-,<,-
+
+mult6,_,_,_
+multOK,_,_,_,>,-,-

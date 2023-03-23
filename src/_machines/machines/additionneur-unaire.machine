@@ -1,0 +1,45 @@
+name:Additionneur
+init:add0
+accept:addOK
+output:1
+
+// On parcourt le premier argument, ...
+add0,1
+add0,1,>
+
+// ... jusqu'à trouver le 0 séparant les deux argument.
+add0,0
+add1,0,>
+
+// On lit alors le second argument, ...
+add1,1
+add1,1,>
+
+// ... jusqu'à arriver à droite du mot d'entrée.
+add1,_
+add2,_,<
+
+// On peut alors effacer le 1 le plus à droite, ...
+add2,1
+add3,_,<
+
+// ... sauf si le second argument est nul. Dans ce dernier
+// cas, on se contente d'effacer le 0 séparant les deux arguement.
+add2,0
+add4,_,<
+
+// Si on a pu effacer le 1 de droite, on cherche encore le 0
+// séparant les deux arguement, cette fois en lisant de droite à gauche...
+add3,1
+add3,1,<
+
+// ... et on le remplace par 1.
+add3,0
+add4,1,<
+
+// Il ne reste alors qu'à se repositionner à gauche de l'entrée.
+add4,1
+add4,1,<
+
+add4,_
+addOK,_,>

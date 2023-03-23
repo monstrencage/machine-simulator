@@ -9,6 +9,7 @@ custom_css:
 
 external_js:
 - "https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
+
 custom_js:
 - turing
 - render

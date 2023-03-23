@@ -252,7 +252,7 @@ class Editor {
         this.#colorButton.onclick = this.toggle.bind(this)
         this.updateBtn()
 
-        this.quickUpdate()
+        // this.quickUpdate()
     }
 
     updateBtn(){

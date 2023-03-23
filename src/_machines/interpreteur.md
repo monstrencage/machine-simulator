@@ -1,7 +1,7 @@
 ---
-title: Interpréteur d'expressions arithmétiques
+title: Interpréteur d'expressions arithmétiques (unaire → décimal)
 init-word: "(((111+1)*11)+(11*111))"
-machine: interpreteur
+machine: interpreteur-unaire-decimal
 excerpt: Évalue des expressions arithmétiques écrites en unaire, pour produire le résultat en décimal.
 ---
 Cette machine prend en entrée une expression arithmétique avec les nombres en unaire, c'est à dire générée par la grammaire suivante:
@@ -10,7 +10,7 @@ Cette machine prend en entrée une expression arithmétique avec les nombres en 
 e,f ::= nb | (e + f) | (e * f)
 ```
 Où `nb` est la représentation unaire d'un nombre: le nombre *n* est représentée par une séquence de `1` de longueur *n*.
-Par exemple, l'expression *2 &times; 3* s'écrit `(11 * 111)`. Notez que *0* (zéro) s'écrit comme une chaîne vide, puisqu'il s'agit d'une séquence de `1` de longueur *0*. On écrit donc *0 + (2 &times; 0)* comme ceci : `( + ( 2 * ) )`. 
+Par exemple, l'expression *2 &times; 3* s'écrit `(11 * 111)`. Notez que *0* (zéro) s'écrit comme une chaîne vide, puisqu'il s'agit d'une séquence de `1` de longueur *0*. On écrit donc *0 + (2 &times; 0)* comme ceci : `( + ( 11 * ) )`. 
 
 La machine calcule le résultat de l'expression donnée en entrée, et le convertit en décimal.
 

@@ -184,14 +184,16 @@ class Render {
         this.#render = renderElt
         this.#palette = new PaletteList()
         this.#parser = myParser        
+
         this.#colorButton = new RenderButton(this.#render.inputPanel, "", "")
         this.#colorButton.style.position = "absolute"
         this.#colorButton.style.top = "20px"
         this.#colorButton.style.right = "10px"
         this.#colorButton.onclick = this.toggle.bind(this)
+
         this.updateBtn()
 
-        this.fullUpdate()
+        // this.fullUpdate()
     }
 
     updateBtn(){

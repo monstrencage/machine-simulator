@@ -5,12 +5,20 @@
 
 {% if page.custom_css %}
   {% for stylesheet in page.custom_css %}
+    {% if stylesheet.path %}
+<link rel="stylesheet" href="{{ site.baseurl }}/{{ stylesheet.path }}.css">
+    {% else %}
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/{{ stylesheet }}.css">
+    {% endif %}
   {% endfor %}
 {% endif %}
 {% if layout.custom_css %}
   {% for stylesheet in layout.custom_css %}
+    {% if stylesheet.path %}
+<link rel="stylesheet" href="{{ site.baseurl }}/{{ stylesheet.path }}.css">
+    {% else %}
 <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/{{ stylesheet }}.css">
+    {% endif %}
   {% endfor %}
 {% endif %}
 {% if page.external_js %}
