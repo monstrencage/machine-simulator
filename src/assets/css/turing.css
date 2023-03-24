@@ -1,16 +1,41 @@
+.page .page__inner-wrap {
+  font-size: 19px;
+  line-height: 1.2;
+  margin-top:0;
+}
+.layout--machines h1.page__title, h1{
+    margin: 1em 0;
+}
 
- /* title */
+/* title */
 h1 i{
     margin-right:.5em
 }
-.section h1{
-    margin: 1em
+/* .section h1{ */
+/*     margin: 1em  */
+/* } */
+
+/* section.render h1{ */
+/*     margin-bottom:0; */
+/* } */
+
+.layout--splash .feature__wrapper{
+    margin-bottom:0;
+}
+.layout--splash .feature__wrapper + div.section{
+    padding-top:0;
 }
 
 .section {
     padding: 1em;
     margin: auto;
     max-width: 45em;
+}
+
+.layout--machines .section {
+    padding: 1em 0;
+    margin: auto;
+    max-width: unset;
 }
 
 
@@ -60,6 +85,7 @@ div.pop-up{
 .render.section textarea.src{
     display:none
 }
+
 .machine-src .panel{
     display: inline-block;
     width: fit-content;
@@ -73,8 +99,9 @@ div.pop-up{
     padding: .5em 0;
 }
 
-.machine-src .btn.txt i{
-    margin-right:.5em
+button.btn.txt i{
+    margin-right:.5em;
+    vertical-align:baseline;
 }
 
 .editor.section textarea {
@@ -109,10 +136,10 @@ div.pop-up{
     overflow: scroll;
     position: relative;
 }
-.render.machine-src .src.panel{
+.render.machine-src .src.panel {
     display: inline-block;
     gap: 10px;
-    padding: 20px 10px;
+    padding: 0;
     height: fit-content;
     position: relative;
 }
@@ -174,6 +201,8 @@ div.pop-up{
     /* left:10px; */
     /* top:20px; */
     margin-top:0;
+    font-size:medium;
+    line-height: 1.3;
 }
 .src-display pre {
     display: table-row;
@@ -186,7 +215,7 @@ div.pop-up{
     vertical-align:super;
 }
 
-.text-sample, textarea, input, .src-display, .machine-src textarea {
+.text-sample, textarea, input, .machine-src textarea {
     font-size: large;
     line-height: 1.8;
 }
@@ -218,7 +247,7 @@ div.pop-up{
 #simulator .input-panel *{
     margin-top:auto;
     margin-bottom:auto;
-    vertical-align:middle;
+    /* vertical-align:middle; */
 }
 
 #simulator .panel.input-panel input{

@@ -187,7 +187,7 @@ class Render {
 
         this.#colorButton = new RenderButton(this.#render.inputPanel, "", "")
         this.#colorButton.style.position = "absolute"
-        this.#colorButton.style.top = "20px"
+        this.#colorButton.style.top = "0"
         this.#colorButton.style.right = "10px"
         this.#colorButton.onclick = this.toggle.bind(this)
 

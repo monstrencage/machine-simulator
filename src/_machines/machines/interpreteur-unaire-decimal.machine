@@ -51,20 +51,19 @@ parser,_,_,_,$2,>,-,-,<
 parser,_,_,_,_
 parser,_,_,_,_,-,<,-,-
 
-// ... on efface le 0 de fond de pile du ruban 2...
+// ... et on efface le 0 de fond de pile du ruban 2.
 parser,_,0,_,_
 calcul.retour,_,_,_,_,-,-,-,>
 
-// ... et on positionne la tête de lecture du ruban 4 tout à droite
-// de l'expression transformée.
-
+// 2. Calcul
+// Avant le calcul à proprement parler, on positionne la tête
+// de lecture du ruban 4 tout à droite de l'expression transformée.
 calcul.retour,_,_,_,[01+*]
 calcul.retour,_,_,_,$4,-,-,-,>
 
 calcul.retour,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
-// 2. Calcul
 // Le calcul procède en lisant le ruban 4 de droite à gauche.
 // Les 0 et les 1 son recopiés sur le ruban 3.
 calcul,_,_,_,[01]
