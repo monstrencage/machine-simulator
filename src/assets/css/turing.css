@@ -148,6 +148,10 @@ button.btn.txt i{
     width:100%;
 }
 
+.machine-src .compilation-msg.panel{
+    max-height:15em;
+    overflow-y:scroll;
+}
 .machine-src .compilation-msg p{
     margin-bottom:0;
     word-break:break-word;
