@@ -2,9 +2,8 @@ class RenderButton {
     #button
     #ico
     
-    constructor (button, title, icoClass){
-        this.#button = document.createElement("button")
-        button.appendChild(this.#button)
+    constructor (elt){
+        this.#button = elt
 
         this.#button.className = 'btn btn--primary'
 
@@ -12,8 +11,6 @@ class RenderButton {
         this.#button.appendChild(ico)
 
         this.#ico = ico
-        this.icoClass = icoClass
-        this.title = title
     }
 
     set title(txt){
@@ -112,6 +109,11 @@ class RenderElt{
         
         this.output = this.outputFlag.querySelector('.compilation-msg')
 
+        this.colorButton = new RenderButton(this.inputPanel.querySelector(".color-btn"))
+        // this.#colorButton.style.position = "absolute"
+        // this.#colorButton.style.top = "0"
+        // this.#colorButton.style.right = "10px"
+
         let txtin = this.input
     }
 
@@ -175,7 +177,6 @@ class Render {
     #render
     #parser
     #ok
-    #colorButton
     #palette
     latency = 500
     
@@ -185,11 +186,7 @@ class Render {
         this.#palette = new PaletteList()
         this.#parser = myParser        
 
-        this.#colorButton = new RenderButton(this.#render.inputPanel, "", "")
-        this.#colorButton.style.position = "absolute"
-        this.#colorButton.style.top = "0"
-        this.#colorButton.style.right = "10px"
-        this.#colorButton.onclick = this.toggle.bind(this)
+        this.#render.colorButton.onclick = this.toggle.bind(this)
 
         this.updateBtn()
 
@@ -197,8 +194,8 @@ class Render {
     }
 
     updateBtn(){
-        this.#colorButton.title = this.#palette.nextName
-        this.#colorButton.icoClass = this.#palette.nextLogo
+        this.#render.colorButton.title = this.#palette.nextName
+        this.#render.colorButton.icoClass = this.#palette.nextLogo
     }
 
     toggle(){

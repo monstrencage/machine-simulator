@@ -207,11 +207,13 @@ class EditorElt{
     }
 
     set size(s){
+        this.input.style.height = "1px"
         this.input.style.height = this.input.scrollHeight + "px"
         this.input.style.width = `${s}px`
     }
 
     resize(){
+        this.input.style.height = "1px"
         this.input.style.height = this.input.scrollHeight + "px"
         this.input.style.width = `${this.display.clientWidth}px`
     }

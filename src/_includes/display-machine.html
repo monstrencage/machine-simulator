@@ -15,10 +15,13 @@
 <div id="render" class="section render machine-src">
   <h1><i class="fa fa-edit"></i>Spécification de la machine</h1>
   <div class="src panel" id="source-panel">
+    <div class="control-panel">
+      <button class="btn btn--primary txt" onclick="loadToSimulator()"><i class="fas fa-share"></i>Charger dans l'éditeur</button>
+      <button class="btn btn--primary color-btn"></button>
+    </div>
     <pre class="src-display" id="source-display">
       <!-- <span></span> -->
     </pre>
-    <button class="btn btn--primary txt" style="float:right;position:absolute;top:0; right:calc(20px + 3em)" onclick="loadToSimulator()"><i class="fas fa-share"></i>Charger dans l'éditeur</button>
     <textarea class='src src-field'>{% if include.init-machine %}{{ include.init-machine }}{% endif %}
       </textarea>
   </div>
