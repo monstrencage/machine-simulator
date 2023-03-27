@@ -11,9 +11,7 @@
     <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
     <p class="compilation-msg"></p>
   </div>
-  <div class="control-panel panel">
-    <button class="btn btn--primary txt" id="compile-btn"><!-- -->
-      <i class="fa fa-cog"></i>Charger la machine</button>
+  <div class="control-panel panel" id="editor-control-panel">
   </div><!-- -->
 </div>
 
@@ -43,57 +41,40 @@
   }
   
   let editorElt = new EditorElt("editor-panel",
-                                'compilation-panel')
+                                'compilation-panel',
+                                "editor-control-panel")
   
   let editor = new Editor(editorElt, new TMParser(), QuickParser)
-  
+
+  let inputElts = {
+      inputField : document.getElementById("input-str"),
+      inputBtn : document.getElementById("load-btn")
+
+  }
   const simulator = new Simulator("simulator-panel",
+                                  inputElts,
                                   GraphTM,
                                   "tm-name",
                                   TapeVis,
                                   TuringEnv)
 
-  
-  function load(input, simulator){
-          simulator.inputword = input.value
-          input.blur()      
+  function launchCompile(){
+      editor.startCompile()
+      setTimeout(compile, 20)
   }
-  function compile(editor, input, simulator){
+
+  function compile (){
       let output = editor.value
       if (output){
           simulator.machine = output
-          load(input, simulator);
+          simulator.load();
       }
+      editor.stopCompile()
   }
 
-  function link(editor, input, inputBtn,simulator, compileBtn){
-      
-      input.onkeydown =
-          event => {
-              if (event.key === 'Enter') { load(input,simulator) }
-          }
-      
-      inputBtn.onclick = e => {
-          load(input,simulator)
-          simulator.focus()
-      }
+  editorElt.outputBtn.onclick = launchCompile
 
-      compileBtn.onclick = e => {
-          compile(editor,input,simulator)
-          if (editor.ok){input.scrollIntoView()}
-      }
-
-      compile(editor, input, simulator)
-  }
-
-  link(
-      editor,
-      document.getElementById("input-str"),
-      document.getElementById("load-btn"),
-      simulator,
-      document.getElementById("compile-btn")
-  )
+  launchCompile()
   
-
 
 </script>

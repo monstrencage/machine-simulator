@@ -350,12 +350,14 @@ class Simulator{
 #tmName
 #speedo
 #status
-
+#inputElts
+    
 #run = false
 #keeprunning = false
 #finished = false
 #forwards = true
     constructor(mainDisplay,
+                inputElts,
                 graphClass,
                 tmName,
                 tapeClass,
@@ -443,6 +445,23 @@ class Simulator{
         
         this.#popup = new PopUp(popupDiv)
 
+        this.#inputElts = inputElts
+        this.#inputElts.inputField.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                this.load()
+            }
+        })
+        this.#inputElts.inputBtn.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                this.load()
+                this.focus()
+            }
+        })
+        this.#inputElts.inputBtn.addEventListener('click', event => {
+            this.load()
+            this.focus()
+        })
+        
         document.addEventListener(
             'keydown', event => {
                 let elt = document.activeElement
@@ -464,6 +483,11 @@ class Simulator{
 
     }
 
+    load(){
+        this.inputword = this.#inputElts.inputField.value
+        this.#inputElts.inputField.blur()
+    }
+    
     set machine(mytm){
         this.#graph.upd(mytm)
         this.#myenv = new this.#envClass(mytm, '')

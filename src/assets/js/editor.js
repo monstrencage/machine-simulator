@@ -1,8 +1,10 @@
 class EditorButton {
-    #button
-    #ico
+#button
+#ico
+#txt
+#span = false
     
-    constructor (button, title, icoClass){
+    constructor (button, title, icoClass, txt=false){
         this.#button = document.createElement("button")
         button.appendChild(this.#button)
 
@@ -14,8 +16,40 @@ class EditorButton {
         this.#ico = ico
         this.icoClass = icoClass
         this.title = title
+
+        if (txt){
+            this.#txt = true
+            this.#button.classList.add("txt")
+            this.#span = document.createElement("span")
+            this.#button.appendChild(this.#span)
+            this.#span.innerHTML = txt
+        }
     }
 
+    disable(){
+        this.#button.disabled = true
+    }
+    enable(){
+        this.#button.disabled = false
+    }
+    
+    set text(txt){
+        if (txt){
+            if (! this.#txt){
+                this.#txt = true
+                this.#button.classList.add("txt")
+                this.#span = document.createElement("span")
+                this.#button.appendChild(this.#span)
+            }
+            this.#span.innerHTML = txt
+        } else {
+            if (this.#txt){
+                this.#txt = false
+                this.#button.removeChild(this.#span)
+            }
+        }
+    }
+    
     set title(txt){
         this.#button.title = txt
     }
@@ -144,14 +178,17 @@ class PaletteList{
 
 class EditorElt{
     
-    constructor(inputId, outputId){
+    constructor(inputId, outputId, ctrlId){
         this.inputPanel = document.getElementById(inputId)
         this.outputFlag = document.getElementById(outputId)
+        let ctrl = document.getElementById(ctrlId)
         
         this.input = this.inputPanel.querySelector(".input-field")
         this.display = this.inputPanel.querySelector(".src-display")
         
         this.output = this.outputFlag.querySelector('.compilation-msg')
+        
+        this.outputBtn = new EditorButton(ctrl, "Charger la machine", "fas fa-cog", "Charger la machine")
 
         let txtin = this.input
         this.input.addEventListener('keydown', event => {
@@ -164,6 +201,20 @@ class EditorElt{
                 event.preventDefault()
             }
         })
+    }
+
+    suspendBtn(){
+        this.output.innerHTML = ""
+        console.log('starting compilation')
+        this.outputBtn.text = "Chargement..."
+        this.outputBtn.icoClass = "fas fa-cog fa-spin"
+        this.outputBtn.disable()
+    }
+    releaseBtn(){
+        console.log('compilation finished')
+        this.outputBtn.text = "Charger la machine"
+        this.outputBtn.icoClass = "fas fa-cog"
+        this.outputBtn.enable()
     }
 
     get value(){
@@ -310,6 +361,14 @@ class Editor {
         }
         console.timeEnd('processing')
     }
+
+    startCompile(){
+        this.#editor.suspendBtn()
+    }
+    stopCompile(){
+        this.#editor.releaseBtn()
+    }
+    
     get value (){
         this.fullUpdate()
         if (this.#ok){
