@@ -4,6 +4,7 @@ classes: wide
 author_profile: true
 
 custom_css:
+- general
 - turing
 - turing-colors
 

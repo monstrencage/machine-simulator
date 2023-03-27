@@ -1,35 +1,6 @@
-.page .page__inner-wrap {
-  font-size: 19px;
-  line-height: 1.2;
-  margin-top:0;
-}
+
 .layout--machines h1.page__title, h1{
     margin: 1em 0;
-}
-
-/* title */
-h1 i{
-    margin-right:.5em
-}
-/* .section h1{ */
-/*     margin: 1em  */
-/* } */
-
-/* section.render h1{ */
-/*     margin-bottom:0; */
-/* } */
-
-.layout--splash .feature__wrapper{
-    margin-bottom:0;
-}
-.layout--splash .feature__wrapper + div.section{
-    padding-top:0;
-}
-
-.section {
-    padding: 1em;
-    margin: auto;
-    max-width: 45em;
 }
 
 .layout--machines .section {
@@ -78,7 +49,7 @@ div.pop-up{
 }
 
 .pop-up h2 i{
-    margin-left:.5em;
+    margin-right:.5em;
 }
 
  /* editor & render */
@@ -109,11 +80,6 @@ div.pop-up{
 .editor.section .control-panel {
     width: 100%;
     padding: .5em 0;
-}
-
-button.btn.txt i{
-    margin-right:.5em;
-    vertical-align:baseline;
 }
 
 .editor.section textarea {

@@ -323,10 +323,11 @@ class PopUp{
     activate(title, statusCls, msg){
         this.#outer.classList.remove("hidden")
 
-        this.#title.innerHTML = title
+        this.#title.innerHTML = ""
         let status = document.createElement("i")
         status.className = statusCls
         this.#title.appendChild(status)
+        this.#title.innerHTML += title
         this.#content.innerHTML = msg
     }
 
@@ -484,8 +485,13 @@ class Simulator{
     }
 
     load(){
-        this.inputword = this.#inputElts.inputField.value
-        this.#inputElts.inputField.blur()
+        let w = this.#inputElts.inputField.value
+        if (w.search(/\s/) < 0){
+            this.inputword = w
+            this.#inputElts.inputField.blur()
+        }else{
+            this.#popup.activate("Entrée incorrecte :","fas fa-times-circle","Le mot d'entrée ne peut pas contenir d'espaces. Utilisez '_' si vous souhaitez insérer des cases vides dans le mot d'entrée.")
+        }
     }
     
     set machine(mytm){
@@ -623,7 +629,7 @@ class Simulator{
     }
     
     notifyResult(){
-        this.#popup.activate("Exécution terminée :", this.#status,
+        this.#popup.activate("Exécution terminée :", this.#status.className,
                              this.#myenv.outputMsg)
     }
 
