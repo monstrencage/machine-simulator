@@ -7,10 +7,8 @@ custom_css:
 - turing
 - turing-colors
 
-external_js:
-- "https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
-
 custom_js:
+- vis/vis-network.min
 - turing
 - render
 - parserElts
