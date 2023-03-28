@@ -4,7 +4,7 @@ final   : fin
 sortie  : 1
 
 // On initialise les rubans 2 et 4 avec un 0, représentant le fond d'une pile.  
-début,[1(],_,_,_
+début,[_1(],_,_,_
 parser,$1,0,_,0,-,>,-,<
 
 // 1. Mise en notation polonaise

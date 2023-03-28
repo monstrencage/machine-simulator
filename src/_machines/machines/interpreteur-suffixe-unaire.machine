@@ -1,6 +1,7 @@
 name:Interpréteur suffixe
 init:exec0
 accept:execOK
+output:1
 
 exec0,1,_,_,_
 exec1,1,0,_,_,-,>,-,-

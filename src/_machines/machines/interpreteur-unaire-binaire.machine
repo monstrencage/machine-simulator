@@ -1,6 +1,7 @@
 name:interpreter
 init:trad0
 accept:interprOK
+output:1
 
 trad0,1,_,_,_
 trad0,_,_,1,_,>,-,>,-
