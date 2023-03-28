@@ -3,6 +3,8 @@ title: Interpréteur d'expressions arithmétiques (unaire → décimal)
 init-word: "(((111+1)*11)+(11*111))"
 machine: interpreteur-unaire-decimal
 excerpt: Évalue des expressions arithmétiques écrites en unaire, pour produire le résultat en décimal.
+etats: 20
+rubans: 4
 ---
 Cette machine prend en entrée une expression arithmétique avec les nombres en unaire, c'est à dire générée par la grammaire suivante:
 

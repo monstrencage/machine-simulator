@@ -1,0 +1,32 @@
+name: #a > #b
+init:q0
+accept:a>b
+
+// on scanne le mot, en écrivant les a sur le deuxième ruban
+// et les b sur le troisième
+q0,a,_,_
+q0,_,a,_,>,>,-
+
+q0,b,_,_
+q0,_,_,b,>,-,>
+
+// lorsequ'on a fini...
+q0,_,_,_
+ok?,_,_,_,-,<,<
+
+// ... on rembobine les deux derniers rubans, 
+// en lisant à chaque étape un a (ruban 2) et un b (ruban 3)
+ok?,_,a,b
+ok?,_,_,_,-,<,<
+
+// si on épuise les b en ayant toujours des a, le mot est accepté
+ok?,_,a,_
+a>b,_,a,_,-,-,-
+
+// si on a vidé en même temps les a et les b, il y en avait le même nombre
+ok?,_,_,_
+a=b,_,_,_,-,-,-
+
+// si il reste des b, il y avait plus de b que de a.
+ok?,_,_,b
+a<b,_,_,b,-,-,-

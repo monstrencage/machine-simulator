@@ -1,0 +1,66 @@
+name: #a > #b
+init:q0
+accept:a>b
+
+// on scanne le mot en ignorant les a et les X
+q0,[aX]
+q0,$1,>
+
+// si on arrive au bout du mot, on sait que le ruban
+// ne contient que des a et des X, et on passe à l'état ok?
+q0,_
+ok?,_,<
+
+// si on voit un b, on le remplace par X, et on va vers
+// l'état a? pour chercher un a
+q0,b
+a?,X,>
+
+// dans l'état a?, on cherche le a vers la droite,
+// en ignorant b et X
+a?,[bX]
+a?,$1,>
+
+// si on trouve un a, on l'efface et on va à l'état <<
+a?,a
+<<,X,<
+
+// si on arrive au bout du mot, on se met à chercher vers la gauche ...
+a?,_
+?a,_,<
+
+// ... en ignorant les b et les X
+?a,[bX]
+?a,$1,<
+
+// si on trouve un a, on l'efface et on va à l'état <<
+?a,a
+<<,X,<
+
+// si on parvient au début du mot, alors il n'y a plus de a, 
+// et donc le mot d'entrée avait plus de b que de a
+?a,_
+b>a,_,>
+
+// dans l'état <<, on rembobine le ruban (vers la gauche) ...
+<<,[abX]
+<<,$1,<
+
+// ... et quand on revient au début, on retourne à l'état q0, 
+// pour recommencer à chercher des b
+<<,_
+q0,_,>
+
+// dans l'état ok?, on lit le mot de droite à gauche, en ignorant les X
+ok?,X
+ok?,X,<
+
+// dès qu'on trouve un a, on sait qu'il reste au moins un a sur le ruban;
+// on peut alors accepter
+ok?,a
+a>b,a,-
+
+// si on arrive au début du mot, alors il ne reste plus de a, 
+// et donc le mot en entrée contenait autant de a que de b.
+ok?,_
+a=b,_,>

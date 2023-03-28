@@ -20,7 +20,46 @@ h1 i{
     max-width: 45em;
 }
 
-button.btn.txt i{
+button.btn.txt i, i.txt{
     margin-right:.5em;
     vertical-align:baseline;
+}
+
+.layout--machines .machine-details{
+    width:100%;
+    text-align:right
+}
+
+.layout--machines .machine-details{
+    margin-bottom:1em;
+}
+
+.machine-details > div{
+    display:inline-block
+}
+
+.machine-item > div{
+    display:inline-block
+}
+.machine-item > div > div{
+    display:block;
+}
+
+.machine-item .icon{
+    width:2em;
+    text-align:center;
+    margin-right:.5em;
+    padding-top:.3em;
+    vertical-align:top
+}
+
+.machine-item .entry{
+    max-width:calc(100% - 2.5em);
+    min-width:calc(100% - 2.5em);
+    width:calc(100% - 2.5em)
+}
+
+.machine-item{
+    display:block;
+    margin-bottom:.75em;
 }

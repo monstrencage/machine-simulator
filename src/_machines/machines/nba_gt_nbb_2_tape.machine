@@ -1,0 +1,47 @@
+name:  #a > #b
+init: q0
+accept: a>b
+
+// On commence par initialiser le deuxième ruban,
+// en introduisant le symbole 0.
+q0,[ab],_
+q+,$1,0,-,- // On va ensuite dans l'état q+.
+// (on pourrait aussi aller dans l'état q-, puisque 0=-0).
+
+
+// ensuite, dans les états q+ et q-, on lit le mot sur
+// le premier ruban de gauche à droite, en incrémente
+// le compteur avec des a et en le décrémentant avec des b.
+q+,a,[0_]
+q+,a,$2,>,>
+
+q+,b,_
+q+,b,_,>,<
+
+q+,b,0
+q-,b,0,>,>
+
+q-,a,_
+q-,a,_,>,<
+
+q-,a,0
+q+,a,0,>,>
+
+q-,b,[_0]
+q-,b,$2,>,>
+
+//lorsequ'on a finit de lire l'entrée :
+// * si le compteur est à la position 0, il y a autant de a que de b
+q+,_,0
+a=b,_,+,<,-
+
+q-,_,0
+a=b,_,_,<,-
+
+// * si le compteur a une valeur strictement positive on accepte 
+q+,_,_
+a>b,_,_,<,-
+
+// * s'il a une valeur strictement négative il y avait plus de b que de a.
+q-,_,_
+a<b,_,_,<,-

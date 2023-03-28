@@ -18,6 +18,7 @@ custom_js:
 - simulator
 
 ---
+{% include machine-details.html machine = page %}
 
 {{page.content | markdownify }}
 

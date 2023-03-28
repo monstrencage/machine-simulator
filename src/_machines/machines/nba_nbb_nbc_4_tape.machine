@@ -1,0 +1,47 @@
+name: #a = #b = #c
+init: q0
+accept: a=b=c
+
+// on scanne le mot, en écrivant les a sur le deuxième ruban,
+// les b sur le troisième, et les c sur le quatrième.
+q0,a,_,_,_
+q0,_,a,_,_,>,>,-,-
+
+q0,b,_,_,_
+q0,_,_,b,_,>,-,>,-
+
+q0,c,_,_,_
+q0,_,_,_,c,>,-,-,>
+
+// lorsequ'on a fini...
+q0,_,_,_,_
+ok?,_,_,_,_,-,<,<,<
+
+// ... on rembobine les trois derniers rubans, 
+// en lisant à chaque étape un a, un b, et un c.
+ok?,_,a,b,c
+ok?,_,_,_,_,-,<,<,<
+
+// si on a vidé en même temps les a, les b, et les c,
+// il y en avait le même nombre
+ok?,_,_,_,_
+a=b=c,_,_,_,_,-,-,-,-
+
+// sinon, il y a un déséquilibre.
+ok?,_,a,b,_
+c<<a..b,_,a,b,_,-,-,-,-
+
+ok?,_,a,_,c
+b<<a..c,_,a,_,c,-,-,-,-
+
+ok?,_,_,b,c
+a<<b..c,_,_,b,c,-,-,-,-
+
+ok?,_,a,_,_
+b..c<<a,_,a,_,_,-,-,-,-
+
+ok?,_,_,b,_
+a..c<<b,_,_,b,_,-,-,-,-
+
+ok?,_,_,_,c
+a..b<<c,_,_,_,c,-,-,-,-
