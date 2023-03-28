@@ -384,6 +384,7 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
     padding:.25em;
     border:unset;
     height:unset;
+    white-space: nowrap;
 }
 .table-tape table {
     display:table;
@@ -395,6 +396,7 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
 .table-tape .past-tape{
     text-align:right;
     width: 50%;
+    min-width: 1.5em;
 }
 .table-tape .tape.current-tape{
     text-align:center;
@@ -404,6 +406,7 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
 .table-tape .future-tape{
     text-align:left;
     width: 50%;
+    min-width: 1.5em;
 }
 
 .table-tape .tape.current-tape.empty{
