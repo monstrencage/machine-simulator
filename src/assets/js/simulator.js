@@ -138,6 +138,30 @@ function makespaces(s){
     return s.replaceAll(' ','<span class="emptysymb">#</span>')
 }
 
+function formatTape(str){
+    res = ""
+    for (const s of str){
+        res += formatSymb(s)
+    }
+    return res
+}
+function formatSymb(s){
+    switch(s){
+    case ' ':
+        return '<span class="emptysymb">#</span>'
+        break;
+    case '<':
+        return '<span>&lt</span>'
+        break;
+    case '>':
+        return '<span>&gt</span>'
+        break;
+    default:
+        return `<span>${s}</span>`
+        break;
+    }
+}
+
 
 class TapeVis{
     #display
@@ -268,11 +292,11 @@ class TapeVis{
 
         for (var i = 0; i < this.#tapeElts.length; i++){
             this.#tapeElts[i].past.innerHTML =
-                makespaces(content[i].past)
+                formatTape(content[i].past)
             this.#tapeElts[i].current.innerHTML =
-                makespaces(content[i].present)
+                formatSymb(content[i].present)
             this.#tapeElts[i].future.innerHTML =
-                makespaces(content[i].future)
+                formatTape(content[i].future)
         }
         this.focus()
     }
