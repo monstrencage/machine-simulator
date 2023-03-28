@@ -38,47 +38,21 @@
   
   let render = new Render(renderElt, new TMParser())
   
+  let inputElts = {
+      inputField : document.getElementById("input-str"),
+      inputBtn : document.getElementById("load-btn")
+
+  }
   const simulator = new Simulator("simulator-panel",
+                                  inputElts,
                                   GraphTM,
                                   "tm-name",
                                   TapeVis,
                                   TuringEnv)
-
   
-  function load(input, simulator){
-          simulator.inputword = input.value
-          input.blur()      
-  }
-  // function compile(editor, input, simulator){
-  //     let output = editor.value
-  //     if (output){
-  //         simulator.machine = output
-  //         load(input, simulator);
-  //     }
-  // }
-
-  function link(render, input, inputBtn,simulator){
-      
-      input.onkeydown =
-          event => {
-              if (event.key === 'Enter') { load(input,simulator) }
-          }
-      
-      inputBtn.onclick = e => {
-          load(input,simulator)
-          simulator.focus()
-      }
-
-      simulator.machine = render.value
-      load(input, simulator)
-  }
-
-  link(
-      render,
-      document.getElementById("input-str"),
-      document.getElementById("load-btn"),
-      simulator
-  )
+  simulator.machine = render.value
+  simulator.load()
+  
   
   function loadToSimulator(){
       let machine = document.querySelector("#render .src-field").value
