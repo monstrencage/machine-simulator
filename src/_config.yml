@@ -49,6 +49,9 @@ author:
   avatar: assets/images/tronche.jpg
   location: Créteil, France
   links:
+  - label: "home"
+    icon: "fas fa-home"
+    url: "https://paul.brunet-zamansky.fr"
   - label: "dblp"
     icon: "ai ai-dblp"
     url: "http://www.informatik.uni-trier.de/~ley/pers/hd/b/Brunet:Paul.html"
