@@ -8,12 +8,49 @@ function transitionToEdge(tr){
         title: tr.src
     }
 }
+class EdgeSet {
+#content
+#reference
+    constructor(){
+        this.#content = new Map()
+        this.#reference = new Map()
+    }
+    add(tr){
+        let edgeId = `${tr.etat_read}:${tr.etat_write}`
+        let edgeLabel = `${tr.testString}/${tr.actionString}`
+        this.#reference.set(tr.id,edgeId)
+        // console.log(`adding ${tr.id} to ${edgeId}, current size:${this.#content.size}`)
+        if (this.#content.has(edgeId)){
+            this.#content.get(edgeId).label += `\n${edgeLabel}`
+            this.#content.get(edgeId).title += `\n${tr.src}`
+        } else {
+            this.#content.set(edgeId,{
+                id: edgeId,
+                from : `q_${tr.etat_read}`,
+                to: `q_${tr.etat_write}`,
+                arrows: "to",
+                label: edgeLabel,
+                title: tr.src
+            })
+        }
+    }
+    
+    extract(edges){
+        
+        for (const e of this.#content.values()){
+            // console.log(`edge ${e.id}: ${e.label}`)
+            edges.add(e)
+        }
+        return this.#reference
+    }
+}
 
 class GraphTM {
     #color_normal = '#6f777d'
     #color_highlight = 'darkred'
     #nodes = new vis.DataSet([])
-    #edges = new vis.DataSet([])
+#edges = new vis.DataSet([])
+#edgeRef = new Map() 
     #current_node = "initial"
     #high_trans = "e_init"
     #options = {
@@ -41,30 +78,47 @@ class GraphTM {
     }
 
     upd(tm){
-        var states = new Array(), transitions = new Array()
+        this.#nodes = new vis.DataSet([])
         for (let q of tm.states){
-            states.push({id: `q_${q}`, label:q})
+            this.#nodes.add({
+                id: `q_${q}`,
+                label:q})
         }
-        states.push({id: "initial", shape:"dot", size:1},
-                    {id: "final", shape:"dot", size:1})
-        transitions.push({id: "e_init", from: "initial", to: `q_${tm.init}`,
-                          arrows: "to"},
-                         {id: "e_final", from: `q_${tm.finalState}`, to: "final",
-                          arrows: "to"})
-        for (const t of tm.transList){
-            transitions.push(transitionToEdge(t))
-        }
-        this.#nodes = new vis.DataSet(states)
-        this.#edges = new vis.DataSet(transitions)
+        this.#nodes.add({
+            id: "initial",
+            shape:"dot",
+            size:1})
+        this.#nodes.add({
+            id: "final",
+            shape:"dot",
+            size:1})
+
+        const edgeSet = new EdgeSet()
+        for (const t of tm.transList){ edgeSet.add(t) }
+        this.#edges = new vis.DataSet([])
+        this.#edgeRef = edgeSet.extract(this.#edges)
+        this.#edges.add({
+            id: "e_init",
+            from: "initial",
+            to: `q_${tm.init}`,
+            arrows: "to"})
+        this.#edges.add({
+            id: "e_final",
+            from: `q_${tm.finalState}`,
+            to: "final",
+            arrows: "to"})
+
         this.#graph.setData({nodes: this.#nodes, edges: this.#edges})
+
         this.#graph.redraw()
+
         this.#current_node = "initial"
+
         this.#high_trans = "e_init"
 
     }
     
-    highlight(etat, eid){
-        let nid = `q_${etat}`
+    highlight(nid, tid){
         if (this.#current_node != nid){
             this.#nodes.updateOnly([
                 {
@@ -75,6 +129,12 @@ class GraphTM {
                     color:this.#color_highlight
                 }
             ])
+        }
+        let eid = ""
+        if (this.#edgeRef.has(tid)){
+            eid = this.#edgeRef.get(tid)
+        } else {
+            eid = tid
         }
         if (this.#high_trans != eid){
             this.#edges.updateOnly([

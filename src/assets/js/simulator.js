@@ -596,12 +596,15 @@ class Simulator{
     
     highlight_current(){
         var eid
-        if (this.#myenv.history.length > 0){
+        let nid = `q_${this.#myenv.etat}`
+        if (this.#finished && this.#myenv.accepted){
+            eid = 'e_final'
+        } else if (this.#myenv.history.length > 0){
             eid = this.#myenv.history[this.#myenv.history.length - 1].trans.id
         }else{
             eid = 'e_init'
         }
-        this.#graph.highlight(this.#myenv.etat, eid)
+        this.#graph.highlight(nid, eid)
     }
 
     update_status(){
