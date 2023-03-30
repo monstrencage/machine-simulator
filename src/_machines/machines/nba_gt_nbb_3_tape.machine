@@ -19,11 +19,13 @@ ok?,_,_,_,-,<,<
 ok?,_,a,b
 ok?,_,_,_,-,<,<
 
-// si on épuise les b en ayant toujours des a, le mot est accepté
+// si on épuise les b en ayant toujours des a,
+// le mot est accepté
 ok?,_,a,_
 a>b,_,a,_,-,-,-
 
-// si on a vidé en même temps les a et les b, il y en avait le même nombre
+// si on a vidé en même temps les a et les b,
+// il y en avait le même nombre
 ok?,_,_,_
 a=b,_,_,_,-,-,-
 

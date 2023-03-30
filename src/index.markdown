@@ -31,10 +31,12 @@ custom_js:
 
 {% capture init-machine %}
 // La spécification commence par un en-tête:
-name   : Exemple // optionnel 
-init   : q0      // Voici comment on définit l'état initial,
+name   : Exemple // (optionnel) 
+init   : q0      // Voici comment on définit
+                 // l'état initial,
 accept : q2      // et l'état final.
-output : 2       // optionnel : indique le ruban de sortie. 
+output : 2       // (optionnel)
+                 // Indique le ruban de sortie.
 
 // Ensuite, viennnent les transitions:
 q0,a,_     // condition d'activation
@@ -45,24 +47,29 @@ q0,_,a,>,< // effet
 //   différente de ','.
 
 // Noms d'états acceptés :
-//   toute chaîne de caractères ne contenant ni ',' ni ':'.
+//   toute chaîne de caractères ne contenant pas
+//   les symboles ',' ni ':'.
 
 // Directions de déplacement :
 //   - : reste en place
 //   > : déplace la tête de lecture vers la droite
 //   < : déplace la tête de lecture vers la gauche
 
-q0,b,_     // Cette transition peut être activée lorsque
-           // l'état courant est q0, que le premier ruban
-           // affiche le symbole b, et que le second ruban 
-           // affiche une case vide. 
-q1,b,_,>,< // Lors de son exécution, elle change l'état courant
-           // en q1, efface le b du premier ruban, écrit un a 
-           // sur le second, et déplace la première tête de 
-           // lecture vers la droite.
+q0,b,_     // Cette transition peut être activée
+           // lorsque l'état courant est q0, que
+           // le premier ruban affiche le symbole b,
+           // et que le second ruban affiche une
+           // case vide. 
+q1,b,_,>,< // Lors de son exécution, elle change 
+           // l'état courant en q1, efface le b du
+           // premier ruban, écrit un a sur le second,
+           // et déplace la première tête de 
+           // lecture vers la droite et la seconde
+           // vers la gauche.
 
-// Les expressions avec un dollar sur la seconde ligne d'une
-// transition font référence au contenu du ruban d'entrée. 
+// Les expressions avec un dollar sur la seconde
+// ligne d'une transition font référence au contenu 
+// du ruban d'entrée. 
 // Par exemple, la transition ci-dessous :
 
 q1,a,_
@@ -79,9 +86,10 @@ q1,_,_
 q2,_,_,-,-
 
 
-// Les expressions (non-vides) entre crochets sur la première ligne
-// d'une transition permettent d'activer la transition dès que la 
-// tête de lecture du ruban correspondant se trouve sur un symbole 
+// Les expressions (non-vides) entre crochets sur
+// la première ligne d'une transition permettent 
+// d'activer la transition dès que la tête de lecture
+// du ruban correspondant se trouve sur un symbole 
 // appartenant à la liste entre crochets.
 // Par exemple, la transition ci-dessous:
 
@@ -102,13 +110,15 @@ q3,_ ,a,>,>
 // q0,1,a
 // q3,_,a,>,>
 
-// Ces constructions peuvent être combinées. Cela permet par exemple
-// d'écrire une transition comme ceci:
+// Ces constructions peuvent être combinées. 
+// Cela permet par exemple d'écrire une transition
+// comme ceci:
 
 q3,[01],[_a]
 q0,_,$1,>,<
 
-// qui peut également être réalisée par les transitions suivantes:
+// qui peut également être réalisée par 
+// les transitions suivantes:
 
 // q3,0,_
 // q0,_,0,>,<

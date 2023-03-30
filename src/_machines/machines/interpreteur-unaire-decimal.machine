@@ -3,7 +3,8 @@ initial : début
 final   : fin
 sortie  : 1
 
-// On initialise les rubans 2 et 4 avec un 0, représentant le fond d'une pile.  
+// On initialise les rubans 2 et 4 avec un 0,
+// représentant le fond d'une pile.  
 début,[_1(],_,_,_
 parser,$1,0,_,0,-,>,-,<
 
@@ -18,7 +19,7 @@ parser,1,_,_,_
 parser,_,_,_,1,>,-,-,<
 
 // Lorsequ'une opération est détectée, on écrit un 0 sur
-// le ruban 4 (pour séparer les deux opérandes de l'opération), ...
+// le ruban 4 (pour séparer les deux opérandes), ...
 parser,[+*],_,_,_
 parser,$1,_,_,0,-,<,-,<
 
@@ -56,21 +57,23 @@ parser,_,0,_,_
 calcul.retour,_,_,_,_,-,-,-,>
 
 // 2. Calcul
-// Avant le calcul à proprement parler, on positionne la tête
-// de lecture du ruban 4 tout à droite de l'expression transformée.
+// Avant le calcul à proprement parler, on positionne
+// la tête de lecture du ruban 4 tout à droite de
+// l'expression transformée.
 calcul.retour,_,_,_,[01+*]
 calcul.retour,_,_,_,$4,-,-,-,>
 
 calcul.retour,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
-// Le calcul procède en lisant le ruban 4 de droite à gauche.
-// Les 0 et les 1 son recopiés sur le ruban 3.
+// Le calcul procède en lisant le ruban 4
+// de droite à gauche. Les 0 et les 1 sont
+// recopiés sur le ruban 3.
 calcul,_,_,_,[01]
 calcul,_,_,$4,_,-,-,<,<
 
-// Lorsequ'on lit un opérateur, on va sur l'état correspondant, pour
-// effectuer le calcul spécifié.
+// Lorsequ'on lit un opérateur, on va sur l'état
+// correspondant, pour effectuer le calcul spécifié.
 calcul,_,_,_,+
 addition,_,_,_,_,-,-,>,-
 
@@ -78,9 +81,10 @@ calcul,_,_,_,*
 mult,_,_,_,_,-,-,>,-
 
 // 3. Addition
-// L'addition des deux premiers nombres de la pile est très simple.
-// Si le premier argument est nul, i.e. la pile commence par un 0,
-// alors il suffit d'effacer ce symbole.
+// L'addition des deux premiers nombres de la pile
+// est très simple. Si le premier argument est nul,
+// i.e. la pile commence par un 0, alors il suffit
+// d'effacer ce symbole.
 addition,_,_,0,_
 calcul,_,_,_,_,-,-,-,<
 
@@ -88,7 +92,7 @@ calcul,_,_,_,_,-,-,-,<
 addition,_,_,1,_
 addition.arg1,_,_,_,_,-,-,>,-
 
-// ... on cherche le 0 séparant premier et second argument, ...
+// ... on cherche le 0 séparant premier et second argument...
 addition.arg1,_,_,1,_
 addition.arg1,_,_,1,_,-,-,>,-
 
@@ -140,7 +144,7 @@ mult.boucle,_,_,0,_,<,-,<,-
 mult.boucle,1,_,_,_
 mult.recopier,_,_,_,_,-,<,-,-
 
-// ... on recopie le contenu du second ruban sur le troisième, ...
+// ... on recopie le second ruban sur le troisième...
 mult.recopier,_,1,_,_
 mult.recopier,_,1,1,_,-,<,<,-
 
@@ -154,7 +158,7 @@ mult.retour,_,1,_,_,-,>,-,-
 mult.retour,_,_,_,_
 mult.boucle,_,_,_,_,<,-,-,-
 
-// Lorsque le premier ruban est vidé, on efface le second ruban, ...
+// Lorsque le premier ruban est vidé, on efface le second...
 mult.boucle,_,_,_,_
 mult.fin,_,_,_,_,-,<,-,-
 
@@ -166,22 +170,24 @@ mult.fin,_,_,_,_
 calcul,_,_,_,_,-,-,-,<
 
 // 5. Conversion unaire -> décimal.
-// Lorsque le calcul est fini, le ruban 3 contient le résultat en unaire,
-// avec un zéro à droite, et la tête de lecture tout à gauche. Les autres
+// Lorsque le calcul est fini, le ruban 3 contient
+// le résultat en unaire, avec un zéro à droite,
+// et la tête de lecture tout à gauche. Les autres
 // rubans sont vides.
-// Pour convertir le résultat en notation décimale, on initialise
-// le premier ruban avec 0, ...
+// Pour convertir le résultat en notation décimale,
+// on initialise le premier ruban avec 0, ...
 calcul,_,_,_,_
 convertir,0,_,_,_,>,-,>,-
 
-// ... puis, on entre dans une boucle. À chaque itération, on efface le 1
-// le plus à gauche du ruban 3, ...
+// ... puis, on entre dans une boucle.
+// À chaque itération, on efface le 1 le plus à gauche
+// du ruban 3, ...
 convertir,_,_,1,_
 incrémenter,_,_,_,_,<,-,-,-
 
 // ... et on incrémente le résultat sur le ruban 1.
-// Pour les chiffres de 0 à 8, il s'agit simplement de remplacer le chiffre
-// par son successeur, ...
+// Pour les chiffres de 0 à 8, il s'agit simplement
+// de remplacer le chiffre par son successeur, ...
 incrémenter,0,_,_,_
 incr.retour,1,_,_,_,>,-,-,-
 
@@ -212,20 +218,21 @@ incr.retour,8,_,_,_,>,-,-,-
 incrémenter,8,_,_,_
 incr.retour,9,_,_,_,>,-,-,-
 
-// ... et pour le chiffre 9, on le remplace par 0 et on essaie d'incrémenter
-// à partir de la position suivante (pour propager la retenue).
+// ... et pour le chiffre 9, on le remplace par 0
+// et on essaie d'incrémenter à partir de la position
+// suivante (pour propager la retenue).
 incrémenter,9,_,_,_
 incrémenter,0,_,_,_,<,-,-,-
 
-// L'itération se termine en repositionnant la tête de lecture du premier ruban
-// à droite du résultat.
+// L'itération se termine en repositionnant la tête de
+// lecture du premier ruban à droite du résultat.
 incr.retour,[0123456789],_,_,_
 incr.retour,$1,_,_,_,>,-,-,-
 
 incr.retour,_,_,_,_
 convertir,_,_,_,_,-,-,>,-
 
-// Lorsque le zéro à droite du résultat sur le ruban 3 est atteint, le calcul
-// est terminé.
+// Lorsque le zéro à droite du résultat sur le ruban 3
+// est atteint, le calcul est terminé.
 convertir,_,_,0,_
 fin,_,_,_,_,<,-,-,-

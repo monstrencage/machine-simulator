@@ -31,17 +31,20 @@ q-,b,[_0]
 q-,b,$2,>,>
 
 //lorsequ'on a finit de lire l'entrée :
-// * si le compteur est à la position 0, il y a autant de a que de b
+// * si le compteur est à la position 0,
+//   il y a autant de a que de b
 q+,_,0
 a=b,_,+,<,-
 
 q-,_,0
 a=b,_,_,<,-
 
-// * si le compteur a une valeur strictement positive on accepte 
+// * si le compteur a une valeur strictement positive
+//   on accepte 
 q+,_,_
 a>b,_,_,<,-
 
-// * s'il a une valeur strictement négative il y avait plus de b que de a.
+// * s'il a une valeur strictement négative
+//   il y avait plus de b que de a.
 q-,_,_
 a<b,_,_,<,-

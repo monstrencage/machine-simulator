@@ -23,13 +23,15 @@ add2,_,<
 add2,1
 add3,_,<
 
-// ... sauf si le second argument est nul. Dans ce dernier
-// cas, on se contente d'effacer le 0 séparant les deux arguement.
+// ... sauf si le second argument est nul.
+// Dans ce dernier cas, on se contente d'effacer
+// le 0 séparant les deux arguements.
 add2,0
 add4,_,<
 
-// Si on a pu effacer le 1 de droite, on cherche encore le 0
-// séparant les deux arguement, cette fois en lisant de droite à gauche...
+// Si on a pu effacer le 1 de droite, on cherche encore
+// le 0 séparant les deux arguements, cette fois en lisant
+// de droite à gauche...
 add3,1
 add3,1,<
 
@@ -37,7 +39,8 @@ add3,1,<
 add3,0
 add4,1,<
 
-// Il ne reste alors qu'à se repositionner à gauche de l'entrée.
+// Il ne reste alors qu'à se repositionner
+// à gauche de l'entrée.
 add4,1
 add4,1,<
 

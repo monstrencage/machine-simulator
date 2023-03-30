@@ -2,50 +2,55 @@ name:Test de correction syntaxique
 init:test0
 accept:testOK
 
-// La machine parcourt son entrée de gauche à droite, en maintenant une
-// pile sur le second ruban.
+// La machine parcourt son entrée de gauche à droite,
+// en maintenant une pile sur le second ruban.
 // À chaque parenthèse ouvrante, un 1 est déposé sur la pile.
-// Un symbole 1 sur la pile représente donc une parenthèse ouvrante pour
-// laquelle on n'a pas encore trouvé l'opérateur associé.
+// Un symbole 1 sur la pile représente donc une parenthèse
+// ouvrante pour laquelle on n'a pas encore trouvé
+// l'opérateur associé.
 test0,(,_
 test0,(,1,>,>
 
-// En lisant un opérateur ou une parenthèse fermante, on va inspecter la pile. 
+// En lisant un opérateur ou une parenthèse fermante,
+// on va inspecter la pile. 
 test0,[+*)],_
 test1,$1,_,-,<
 
-// Pour un opérateur, on veut trouver un 1 au sommet de la pile, et le
-// remplacer par un 2.
-// Un symbole 2 sur la pile représente donc une parenthèse ouvrante pour
+// Pour un opérateur, on veut trouver un 1 au sommet
+// de la pile, et le remplacer par un 2. Un symbole 2 sur
+// la pile représente donc une parenthèse ouvrante pour
 // laquelle on a déjà trouvé l'opérateur associé.
 test1,[+*],1
 test0,$1,2,>,>
 
-// Pour une parenthèse fermante, on veut trouver un 2 au sommet de la pile.
-// Si c'est le cas, on l'efface, puisque la sous-expression qui lui correspond
-// est maintenant complète.
+// Pour une parenthèse fermante, on veut trouver un 2
+// au sommet de la pile. Si c'est le cas, on l'efface,
+// puisque la sous-expression qui lui correspond est
+// maintenant complète.
 test1,),2
 test0,),_,>,-
 
-// En lisant un 1, on vérifie que l'on est dans un des deux cas
-// de figure suivants:
+// En lisant un 1, on vérifie que l'on est dans un des
+// deux cas de figure suivants:
 test0,1,_
 test2,1,_,>,-
 
 test2,1,_
 test2,1,_,>,-
 
-// 1. soit on lit un nombre seul (i.e. l'entrée était de la forme `11...1`) 
+// 1. soit on lit un nombre seul
+// (i.e. l'entrée était de la forme `11...1`) 
 test2,_,_
 test4,_,_,<,<
 
 // 2. soit le nombre lu est un argument dans une opération.
-// Dans ce dernier cas, on vérifie la validité de l'opérateur ou de la
-// parenthèse fermante comme précédemment.
+// Dans ce dernier cas, on vérifie la validité de l'opérateur
+// ou de la parenthèse fermante comme précédemment.
 test2,[+*)],_
 test1,$1,_,-,<
 
-// Une fois l'entrée lue en entier, on repositionne la tête de lecture...
+// Une fois l'entrée lue en entier, on repositionne
+// la tête de lecture...
 test0,_,_
 test4,_,_,<,<
 

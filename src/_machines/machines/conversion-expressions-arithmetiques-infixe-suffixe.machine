@@ -8,15 +8,16 @@ trad0,1,_,_
 trad0,_,_,1,>,-,>
 
 // Les parenthèses ouvrantes sont oubliées.
-// (attention: si l'entrée n'est pas bien formattée, cette
-//  machine ne le détectera pas forcément! On considère son
-//  comportement comme non spécifié pour les entrées illicites).
+// (attention: si l'entrée n'est pas bien formattée,
+//  cette machine ne le détectera pas forcément!
+//  On considère son comportement comme non spécifié
+//  pour les entrées illicites).
 trad0,(,_,_
 trad0,_,_,_,>,-,-
 
-// Les opérateurs sont ajoutés à une pile sur le ruban 2, et
-// en les lisant on ajoute un 0 sur le ruban 3, pour marquer la
-// séparation entre les deux arguments.
+// Les opérateurs sont ajoutés à une pile sur le ruban 2,
+// et en les lisant on ajoute un 0 sur le ruban 3, pour
+// marquer la séparation entre les deux arguments.
 trad0,[+*],_,_
 trad0,_,$1,0,>,>,>
 
@@ -24,7 +25,8 @@ trad0,_,$1,0,>,>,>
 trad0,),_,_
 trad1,),_,_,-,<,-
 
-// ... on réccupère au sommet de la pile l'opérateur correspondant.
+// ... on réccupère au sommet de la pile
+// l'opérateur correspondant.
 trad1,),[+*],_
 trad0,_,_,$2,>,-,>
 
