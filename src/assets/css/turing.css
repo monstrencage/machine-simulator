@@ -150,7 +150,7 @@ div.pop-up{
 
 .line-idx span{
     /* float:right */
-    font-size:small
+    font-size:smaller
 }
 
 .line-idx{
@@ -198,8 +198,8 @@ div.pop-up{
 }
 
 textarea, input, .machine-src .src-display, .machine-src textarea {
-    font-size: large;
-    line-height: 1.8;
+    font-size: .9em;
+    line-height: 1.5;
 }
 
 /* .src-display .emptyspan::after{ */
