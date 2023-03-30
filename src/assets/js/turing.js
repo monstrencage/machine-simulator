@@ -368,14 +368,6 @@ class TuringMachine {
     
 }
 
-// function uncomment(ln){
-//     var m = ln.match(/(.*)\/\/.*/);
-//     if (m){
-//         return (m[1].trim())
-//     }else{
-//         return (ln.trim())
-//     }
-// }
 
 
 function invDir(direction){
