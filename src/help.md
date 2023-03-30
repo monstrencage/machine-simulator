@@ -20,11 +20,12 @@ custom_css:
 Ce simulateur de Machines de Turing vous permet de visualiser l'exécution d'une machine de Turing *déterministe* manipulant un nombre arbitraire de rubans *bi-infinis*.
 Pour ce faire, spécifiez une machine dans l'éditeur. 
 La syntaxe du langage de spécification est décrite plus bas.
-Vous pouvez ensuite compiler cette machine pour l'exécuter, à l'aide du bouton <button class="btn btn__primary txt" disabled><i class="fas fa-cog"></i>Charger machine</button>.
+Vous pouvez ensuite compiler cette machine pour l'exécuter, à l'aide du bouton <button class="btn btn--primary txt" disabled><i class="fas fa-cog"></i>Charger machine</button>.
 
+# Éditeur
 La spécification de la machine se fait en deux parties : l'en-tête et la liste de transitions.
 
-# En-tête
+## En-tête
 L'en-tête de la machine est composé de paires `propriété : valeur`. 
 Ces propriétés peuvent être spécifiées en français ou en anglais : il y a donc deux choix pour chaque mot-clé. 
 Si la décence et le bon goût exigent une certaine cohérence dans le choix d'une langue fixe pour toutes les propriétés, le compilateur est plus laxiste et permet de spécifier certaines propriétés dans une langue, et d'autres dans une autre.
@@ -34,7 +35,7 @@ Les propriétés prises en charge (pour le moment) sont les suivantes :
 - `name/nom` (optionnel) : défini le nom de la machine pour affichage;
 - `output/sortie` (optionnel) : défini le ruban de sortie. La valeur de cette propriété doit être un entier compris entre 1 et le nombre de rubans de la machine. Par exemple, pour une machine à trois rubans, les valeurs possibles sont 1, 2, et 3.
 
-# Transitions
+## Transitions
 Après l'en-tête, le compilateur cherche une liste de transitions.
 Il détecte le nombre de rubans à partir des transitions, et rejette une spécification si le nombre de rubans varie d'une transition à l'autre.
 Une transition est spécifiée comme suit :
@@ -51,10 +52,19 @@ Les états, symboles, et directions sont des chaînes de caractères ne contenan
 
 Notons que le symbole `_` est réservé pour la valeur initiale contenue dans les cases du ruban. Dans le simulateur, ce symbole est représenté par un espace. Il peut néanmoins être utilisé dans le mot d'entrée (par exemple pour définir une entrée coupée en plusieurs mots).
 
-# Syntaxe étendue
+
+Considérons par exemple la transition suivante :
+```
+q0,b,_
+q1,b,_,>,<
+```
+Cette transition, qui suppose une machine à deux rubans, peut être activée lorsque l'état courant est `q0`, que le premier ruban affiche le symbole `b`, et que le second ruban  affiche une case vide. 
+Lors de son exécution, elle change l'état courant en `q1`, efface le `b` du premier ruban, écrit un `a` sur le second, et déplace la première tête de  lecture vers la droite et la seconde vers la gauche.
+
+## Syntaxe étendue
 Les transitions peuvent utiliser une syntaxe plus riche, pour rendre la spécification plus concise (et donc plus lisible).
 
-## En sortie : référence à l'entrée
+### En sortie : référence à l'entrée
 Sur la ligne de sortie d'une transition (la seconde), on peut utiliser en lieu d'un symbole de ruban une référence à un symbole d'entrée.
 Pour cela, on utilise la notation `$n`, où `n` est un entier compris entre 1 et le nombre de rubans.
 Lorsque cette transition sera exécutée, le symbole présent sur le ruban `n` sera substitué à la référence.
@@ -69,7 +79,7 @@ p,a,b
 q,b,a,>,>
 ```
 
-## En entrée : plage de symboles
+### En entrée : plage de symboles
 Sur la ligne d'entrée d'une transition (la première), on peut utiliser en lieu d'un symbole de ruban une liste de symboles entre crochets.
 Cette transition pourra être exécutée si le symbole courrant appartient à la liste spécifiée. 
 Par exemple, la transition :
@@ -86,7 +96,7 @@ p,b
 q,_,>
 ```
 
-## Les deux à la fois : avec de grand pouvoirs...
+### Les deux à la fois : avec de grand pouvoirs...
 Ces deux extensions peuvent être combinées, ce qui permet dans certains cas de réduire significativement la longueur des spécifications.
 Par exemple, pour échanger le contenu de deux rubans, le premier contenant des `a` et des `b`, et le second des `0` et des `1`, on peut utiliser la spécification suivante :
 ```
@@ -108,3 +118,46 @@ q,b,1
 q,1,b,>,>
 ```
 Attention néanmoins en utilisant cette syntaxe, en particulier avec listes de symboles incluant `_`...
+
+# Simulateur
+
+Une fois la machine souhaitée spécifiée, on peut la charger dans le simulateur grâce au bouton <button class="btn btn--primary txt" disabled><i class="fas fa-cog"></i>Charger machine</button> présent en bas de l'éditeur.
+Le graphe de la machine est alors généré, et est affiché dans une fenêtre dans la partie inférieure du simulateur (sous les rubans).
+
+Il convient alors de saisir un mot d'entrée, qui peut être chargé à l'aide du bouton <button class="btn btn--primary txt" disabled><i class="fas fa-undo"></i>Charger mot d'entrée</button>.
+Ce mot est alors écrit sur le premier ruban de la machine, et la tête de lecture de ce ruban est placée sur le symbole le plus à gauche de ce mot (si l'entrée est non vide).
+
+On peut alors simuler l'exécution de la machine, en utilisant les boutons de contrôle :
+- <button class="btn btn--primary" title="Étape suivante" disabled><i class="fas fa-step-forward"></i></button> : Effectue une étape de calcul.
+- <button class="btn btn--primary" title="Exécuter" disabled><i class="fas fa-fast-forward"></i></button> : Effectue des étapes de calcul autant que possible, en enchaînant une étape après l'autre.
+- <button class="btn btn--primary" title="Étape précédente" disabled><i class="fas fa-step-backward"></i></button> : Annule la dernière étape de calcul, en revenant à la configuration précédente.
+- <button class="btn btn--primary" title="Rembobiner" disabled><i class="fas fa-fast-backward"></i></button> : Exécute la machine à rebour, en annulant successivement les dernières transitions exécutées.
+- <button class="btn btn--primary" title="Arrêter l'exécution" disabled><i class="fas fa-stop"></i></button> : Interrompt l'exécution, qu'elle se déroule normalement (<button class="btn btn--primary" title="Exécuter" disabled><i class="fas fa-fast-forward"></i></button>) ou bien à rebour (<button class="btn btn--primary" title="Rembobiner" disabled><i class="fas fa-fast-backward"></i></button>).
+- <button class="btn btn--primary" title="Débloquer les rubans" disabled><i class="fas fa-lock"></i></button> : Normalement, pendant l'exécution de la machine, la fenêtre de visualisation des rubans reste focalisée sur les têtes de lecture. Ce bouton permet de débloquer cela, afin de pouvoir inspecter une autre partie du ruban pendant l'exécution. Lorsque cette fonctionnalité est activée, le bouton devient <button class="btn btn--primary" title="Centrer automatiquement les rubans" disabled><i class="fas fa-lock-open"></i></button>, permettant ainsi de revenir au comportement par défaut.
+
+Un dernier instrument de contrôle est proposé: le règlage de la vitesse d'exécution automatique. 
+Ce règlage s'effectue à l'aide de la glissière :
+<div id="dummy_speedo" class="speedo dummy">
+  <div class="elt">
+    <i class="fas fa-tachometer-alt"></i>
+    vitesse :<div class="speedtxt">confortable</div>
+  </div>
+  <input class="speedo" type="range" list="speeds"
+  min="0" max="5" value="2" disabled />
+  <datalist id="speeds">
+    <option value="0" label="très lente"></option>
+    <option value="1" label="tranquille"></option>
+    <option value="2" label="confortable"></option>
+    <option value="3" label="rapide"></option>
+    <option value="4" label="véloce"></option>
+    <option value="5" label="youhouhou!"></option>
+  </datalist>
+</div>
+
+La vitesse choisie correspond à une durée entre deux étapes. Les vitesses proposées correspondent aux durées de latence suivantes:
+- **très lente** : 2 secondes entre chaque étape
+- **tranquille** : 1 seconde entre chaque étape
+- **confortable** : 3/4 de seconde entre chaque étape
+- **rapide** : 1/2 seconde entre chaque étape
+- **véloce** : 1/10 de seconde entre chaque étape
+- **youhouhou!** : pas de latence, le simulateur va aussi vite qu'il peut.

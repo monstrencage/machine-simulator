@@ -63,3 +63,42 @@ button.btn.txt i, i.txt{
     display:block;
     margin-bottom:.75em;
 }
+
+
+.dummy.speedo, .dummy.speedo .speedo, .dummy.speedo datalist{
+    width: 20em;
+    
+}
+.dummy.speedo{
+    margin : 0 auto 1em;
+    display:block
+}
+.dummy.speedo .speedo {
+    display: block;
+    margin: auto;
+    padding: .5em 0.2em;
+    width: 19.6em
+}
+
+.dummy.speedo .elt {
+    margin: .5em;
+    width: 100%;
+    text-align: center;
+}
+.dummy.speedo .speedtxt {
+    display: inline;
+    margin-left: .5em;
+}
+
+.dummy.speedo datalist{
+    display: flex;
+    flex-direction: column;
+    writing-mode: sideways-lr;
+    justify-content: space-between;
+}
+
+.dummy.speedo datalist option{
+    padding:.5em 0 0 0;
+    text-align:right;
+    font-style:italic;
+}
