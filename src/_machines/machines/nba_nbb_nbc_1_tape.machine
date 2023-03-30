@@ -21,9 +21,9 @@ ok?,_,<
 b?,[acX]
 b?,$1,>
 
-// Si on trouve un b, on l'efface et on va en q2.
+// Si on trouve un b, on l'efface et on va en c?.
 b?,b
-q2,X,>
+c?,X,>
 
 // Si on arrive au bout du mot sans avoir trouvé de b, on va en ?b.
 b?,_
