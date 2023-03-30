@@ -22,7 +22,8 @@ title: Turing Simulator
 email: paul.brunet@u-pec.fr
 description: Simulateur de machines de Turing
 baseurl: "/machine-simulator" # the subpath of your site, e.g. /blog
-url: "https://monstrencage.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+#url: "https://monstrencage.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://machines.brunet-zamansky.fr"
 github_username:  monstrencage
 github: [metadata]
 
