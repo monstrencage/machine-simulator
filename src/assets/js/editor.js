@@ -201,6 +201,8 @@ class EditorElt{
                 event.preventDefault()
             }
         })
+
+        this.resize()
     }
 
     suspendBtn(){
@@ -222,9 +224,9 @@ class EditorElt{
     }
 
     reset(colors){
-        this.display.innerHTML = ""
-        this.output.innerHTML = ""
-        this.outputFlag.classList.remove("alert")
+        // this.display.innerHTML = ""
+        // this.output.innerHTML = ""
+        // this.outputFlag.classList.remove("alert")
 
         console.log(`color change :\n current classes ${this.inputPanel.className}\n${colors.previous.css} -> ${colors.css}`)
         this.inputPanel.classList.remove(colors.previous.css)
@@ -266,7 +268,7 @@ class EditorElt{
     resize(){
         this.input.style.height = "1px"
         this.input.style.height = this.input.scrollHeight + "px"
-        this.input.style.width = `${this.display.clientWidth}px`
+        this.input.style.width = this.input.scrollWidth + "px"
     }
 
     set errorTitle(s){
@@ -303,6 +305,7 @@ class Editor {
         this.#colorButton.style.right = "10px"
         this.#colorButton.style.float = "right"
         this.#colorButton.onclick = this.toggle.bind(this)
+
         this.updateBtn()
 
         // this.quickUpdate()
@@ -311,13 +314,14 @@ class Editor {
     updateBtn(){
         this.#colorButton.title = this.#palette.nextName
         this.#colorButton.icoClass = this.#palette.nextLogo
+        this.#editor.reset(this.#palette)
     }
 
     toggle(){
         this.#palette.change()
         // alert(this.#palette.colors.name)
         this.updateBtn()
-        this.quickUpdate()
+        // this.quickUpdate()
     }
 
     fullUpdate(){
@@ -363,9 +367,11 @@ class Editor {
     }
 
     startCompile(){
+        this.#editor.input.classList.add("visible")
         this.#editor.suspendBtn()
     }
     stopCompile(){
+        this.#editor.input.classList.remove("visible")
         this.#editor.releaseBtn()
     }
     

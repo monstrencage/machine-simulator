@@ -1,11 +1,9 @@
 <div id="editor" class="section editor machine-src">
   <h1><i class="fa fa-edit"></i> Éditeur</h1>
   <div class="src panel" id="editor-panel">
-    <pre class="src-display" id="editor-display">
-      <!-- <span></span> -->
-    </pre>
-      <textarea id='src' wrap='off' spellcheck='false' class="input-field">{% if include.init-machine %}{{ include.init-machine }}{% endif %}
-      </textarea>
+    <pre class="src-display" id="editor-display"></pre>
+    <textarea id='src' wrap='off' spellcheck='false' class="input-field visible">{% if include.init-machine %}{{ include.init-machine }}{% endif %}
+    </textarea>
   </div>
   <div class="compilation-msg panel" id="compilation-panel">
     <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
@@ -71,6 +69,7 @@
       }
       editor.stopCompile()
   }
+
 
   editorElt.outputBtn.onclick = launchCompile
 
