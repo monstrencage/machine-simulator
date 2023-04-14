@@ -1,0 +1,96 @@
+name: #a = #b = #c
+init:q0
+accept:qok
+
+// Dans l'état initial on cherche des a. 
+// On lit donc le mot vers la droite, en ignorant les b, les c, et les X.
+// Quand on voit un a, on l'efface et on va dans l'état 1
+q0,a
+q1,X,>
+
+q0,[bcX]
+q0,$1,>
+
+// Si on arrive au bout du ruban, on sait qu'il n'y a plus de a.
+// On va alors dans l'état q4.
+q0,_
+q4,_,<
+
+// Dans l'état q1, on cherche un b vers la droite.
+// On ignore donc les a, c, et X.
+q1,[acX]
+q1,$1,>
+
+// Si on trouve un b, on l'efface et on va en q2.
+q1,b
+q2,X,>
+
+// Si on arrive au bout du mot sans avoir trouvé de b, on va en q1'.
+q1,_
+q1',_,<
+
+// En q1', on cherche le b vers la gauche, puis en va dans l'état q2.
+q1',[acX]
+q1',$1,<
+
+q1',b
+q2,X,>
+
+// Si on arrive au début du mot sans avoir trouvé de b,
+// c'est qu'il n'y en a plus sur le ruban.
+// On peut en déduire que le mot d'entrée avait strictement
+// plus de a que de b.
+q1',_
+qa>b,_,-
+
+// Dans les états q2 et q2', on cherche un c d'abord
+// vers la droite (q2), puis si besoin vers la gauche (q2').
+// Si on trouve c, on l'efface et on va dans l'état q3.
+q2,[abX]
+q2,$1,>
+
+q2,c
+q3,X,<
+
+q2,_
+q2',_,<
+
+q2',[abX]
+q2',$1,<
+
+q2',c
+q3,X,<
+
+// Si après avoir parcouru le mot en entier on n'a pas trouvé de c,
+// c'est qu'il n'y en a plus.
+// Le mot d'entrée avait donc plus de a que de c.
+q2',_
+qa>c,_,-
+
+// En 3, on rembobine le ruban...
+q3,[abcX]
+q3,$1,<
+
+// ... jusqu'à trouver le début du mot. On recommence alors de l'état q0.
+q3,_
+q0,_,>
+
+// On arrive en q4 après avoir scanné le mot dans l'état q0,
+// sans avoir trouvé de a.
+// Il reste à vérifier qu'on a tout effacé.
+// Pour ce faire on scanne le mot de la droite vers la gauche en q4.
+
+// Si on trouve un b, il y avait plus de b que de a.
+q4,b
+qb>a,b,-
+
+// Si on trouve un c, il y avait plus de c que de a.
+q4,c
+qc>a,c,-
+
+// Si on arrive au début en n'ayant vu que des X, alors on accepte.
+q4,X
+q4,X,<
+
+q4,_
+qok,_,>

@@ -1,0 +1,79 @@
+name: Plus de a que de b (1 ruban)
+init:q0
+accept:qok
+
+// on scanne le mot en ignorant les a et les X
+q0,a
+q0,a,>
+
+q0,X
+q0,X,>
+
+// si on arrive au bout du mot, on sait que le ruban ne contient que des a et des X,
+// et on passe à l'état q3
+q0,_
+q3,_,<
+
+// si on voit un b, on le remplace par X, et on va vers l'état q1 pour chercher un a
+q0,b
+q1,X,>
+
+// dans l'état q1, on cherche le a vers la droite, en ignorant b et X
+q1,b
+q1,b,>
+
+q1,X
+q1,X,>
+
+// si on trouve un a, on l'efface et on va à l'état q2
+q1,a
+q2,X,<
+
+// si on arrive au bout du mot, on se met à chercher vers la gauche ...
+q1,_
+q4,_,<
+
+// ... en ignorant les b et les X
+q4,b
+q4,b,<
+
+q4,X
+q4,X,<
+
+// si on trouve un a, on l'efface et on va à l'état q2
+q4,a
+q2,X,<
+
+// si on parvient au début du mot, alors il n'y a plus de a, 
+// et donc le mot d'entrée avait plus de b que de a
+q4,_
+plus_de_b,_,>
+
+// dans l'état q2, on rembobine le ruban (vers la gauche) ...
+q2,a
+q2,a,<
+
+q2,b
+q2,b,<
+
+q2,X
+q2,X,<
+
+// ... et quand on revient au début, on retourne à l'état q0, 
+// pour recommencer à chercher des b
+q2,_
+q0,_,>
+
+// dans l'état q3, on lit le mot de droite à gauche, en ignorant les X
+q3,X
+q3,X,<
+
+// dès qu'on trouve un a, on sait qu'il reste au moins un a sur le ruban;
+// on peut alors accepter
+q3,a
+qok,a,-
+
+// si on arrive au début du mot, alors il ne reste plus de a, 
+// et donc le mot en entrée contenait autant de a que de b.
+q3,_
+q5,_,>

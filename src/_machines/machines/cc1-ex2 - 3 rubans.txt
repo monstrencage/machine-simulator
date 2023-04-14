@@ -1,0 +1,31 @@
+name: Plus de a que de b (3 rubans)
+init:0
+accept:ok
+
+// on scanne le mot, en écrivant les a sur le deuxième ruban et les b sur le troisième
+0,a,_,_
+0,_,a,_,>,>,-
+
+0,b,_,_
+0,_,_,b,>,-,>
+
+// lorsequ'on a fini...
+0,_,_,_
+1,_,_,_,-,<,<
+
+// ... on rembobine les deux derniers rubans, 
+// en lisant à chaque étape un a (ruban 2) et un b (ruban 3)
+1,_,a,b
+1,_,_,_,-,<,<
+
+// si on épuise les b en ayant toujours des a, le mot est accepté
+1,_,a,_
+ok,_,a,_,-,-,-
+
+// si on a vidé en même temps les a et les b, il y en avait le même nombre
+1,_,_,_
+meme_nb,_,_,_,-,-,-
+
+// si il reste des b, il y avait plus de b que de a.
+1,_,_,b
+plus_de_b,_,_,b,-,-,-

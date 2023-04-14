@@ -1,0 +1,62 @@
+name: Plus de a que de b (2 rubans)
+init:i
+accept:ok
+//dans cette machine, le deuxième ruban sert de compteur.
+//on code ce compteur avec un symbole '0' sur la position initiale
+//la distance entre ce symbole et la position de la tête de lecture correspond à la valeur du compteur
+//la machine que l'on construit a un état '+' et un état '-', pour donner le signe de l'entier stocké
+//autrement dit:
+// * dans l'état +, incrémenter le compteur revient à déplacer la tête de lecture vers la droite
+// * dans l'état +, décrémenter le compteur revient à déplacer la tête de lecture vers la gauche si on est (strictement) à droite de la position '0'
+// * dans l'état +, si la tête pointe sur la position '0', alors pour décrémenter le compteur il faut aller dans l'état - et déplace la tête vers la droite;
+// * dans l'état -, décrémenter le compteur revient à déplacer la tête de lecture vers la droite
+// * dans l'état -, incrémenter le compteur revient à déplacer la tête de lecture vers la gauche si on est (strictement) à droite de la position '0'
+// * dans l'état -, si la tête pointe sur la position '0', alors pour incrémenter le compteur il faut aller dans l'état + et déplace la tête vers la droite.
+
+// Dans la machine qui suit, on commence par initialiser le deuxième ruban, en introduisant le symbole 0.
+// On va ensuite dans l'état + (on pourrait aussi aller dans l'état -, puisque 0=-0).
+i,a,_
++,a,0,-,-
+i,b,_
++,b,0,-,-
+
+// ensuite, dans les états + et -, on lit le mor sur le premier ruban de gauche à droite, en incrémente le compteur avec des a et en le décrémentant avec des b.
++,a,_
++,a,_,>,>
+
++,a,0
++,a,0,>,>
+
++,b,_
++,b,_,>,<
+
++,b,0
+-,b,0,>,>
+
+-,a,_
+-,a,_,>,<
+
+-,a,0
++,a,0,>,>
+
+-,b,_
+-,b,_,>,>
+
+-,b,0
+-,b,0,>,>
+
+//lorsequ'on a finit de lire l'entrée :
+// * si le compteur est à la position 0, il y a autant de a que de b
++,_,0
+meme_nb,_,+,<,-
+
+-,_,0
+meme_nb,_,_,<,-
+
+// * si le compteur a une valeur strictement positive on accepte 
++,_,_
+ok,_,_,<,-
+
+// * s'il a une valeur strictement négative il y avait plus de b que de a.
+-,_,_
+plus_de_b,_,_,<,-
