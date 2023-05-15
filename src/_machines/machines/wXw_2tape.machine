@@ -1,0 +1,27 @@
+nom: Détecter les carrés séparés d'un X
+initial : q0
+final : ok
+
+q0,a,_
+q0,_,a,>,>
+
+q0,b,_
+q0,_,b,>,>
+
+q0,X,_
+q1,X,_,-,<
+
+q1,X,[ab]
+q1,X,$2,-,<
+
+q1,X,_
+q2,_,_,>,>
+
+q2,a,a
+q2,_,_,>,>
+
+q2,b,b
+q2,_,_,>,>
+
+q2,_,_
+ok,_,_,-,-

@@ -1,0 +1,36 @@
+nom: puissances de deux en unaire
+initial: q0
+final: ok
+
+q0,_
+nope,_,-
+
+q0,a
+q1,A,>
+
+q1,_
+ok,_,-
+
+q1,a
+q2,a,<
+
+q2,A
+q3,X,>
+
+q3,A
+q3,A,>
+
+q3,a
+q4,A,<
+
+q4,A
+q4,A,<
+
+q4,X
+q2,A,<
+
+q2,_
+q1,_,>
+
+q1,A
+q1,A,>

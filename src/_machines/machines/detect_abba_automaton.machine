@@ -1,0 +1,36 @@
+nom: Motif abba
+initial: q0
+final: ok
+
+q0,a
+q1,a,>
+
+q0,b
+q0,b,>
+
+q1,a
+q1,a,>
+
+q1,b
+q2,b,>
+
+q2,a
+q1,a,>
+
+q2,b
+q3,b,>
+
+q3,a
+q4,a,-
+
+q3,b
+q0,b,>
+
+q4,a
+q4,a,>
+
+q4,b
+q4,b,>
+
+q4,_
+ok,_,-

@@ -1,0 +1,40 @@
+nom: longueur
+initial: start
+final: done
+sortie:2
+
+start,$,_
+empty?,_,0,>,>
+
+empty?,$,_
+done,_,_,-,-
+
+empty?,[01],_
+incr,_,_,-,<
+
+incr,_,0
+next,_,1,>,>
+
+incr,_,1
+incr,_,0,-,<
+
+incr,_,_
+next,_,1,>,>
+
+next,[01_],[01]
+next,_,$2,>,>
+
+next,[01_],_
+next,_,_,>,-
+
+next,$,[01]
+next,$,$2,-,>
+
+next,$,_
+finished?,_,_,>,-
+
+finished?,_,_
+done,_,_,-,-
+
+finished?,[01],_
+incr,_,_,<,<
