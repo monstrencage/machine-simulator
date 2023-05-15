@@ -1,0 +1,28 @@
+nom: rev
+initial: start
+final: done
+sortie:2
+
+start,$,_
+elt,_,$,>,<
+
+elt,_,_
+done,_,_,-,-
+
+elt,[01],_
+elt,$1,_,>,-
+
+elt,$,_
+copy_elt,$,_,<,-
+
+copy_elt,[01],_
+copy_elt,_,$1,<,<
+
+copy_elt,_,_
+next,_,_,>,-
+
+next,_,_
+next,_,_,>,-
+
+next,$,_
+elt,_,$,>,<
