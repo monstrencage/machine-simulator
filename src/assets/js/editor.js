@@ -362,6 +362,7 @@ class Editor {
             for (const e of errors.values())
                 this.#editor.addMsg(e.print(function (i) {return `idx-${i}`}))
         } else {
+            this.#editor.outputFlag.classList.remove("alert")
             this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."
             this.#ok = true
         }
@@ -382,6 +383,7 @@ class Editor {
         let p = this.fullUpdate()
         if (this.#ok){
             p.compile()
+            this.#editor.outputFlag.classList.remove("alert")
             this.#editor.msg = `Compilation réussie ! <br/> ${p.value.summary}`
             return p.value
         } else {
@@ -421,6 +423,7 @@ class Editor {
             }
             this.#ok = false
         } else {
+            this.#editor.outputFlag.classList.remove("alert")
             this.#editor.msg = "Aucune erreur trouvée, prêt à compiler."
             this.#ok = true
         }
