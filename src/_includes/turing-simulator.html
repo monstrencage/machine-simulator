@@ -42,7 +42,7 @@
                                 'compilation-panel',
                                 "editor-control-panel")
   
-  let editor = new Editor(editorElt, new TMParser(), QuickParser)
+  let editor = new Editor(editorElt, TMParser, QuickParser)
 
   let inputElts = {
       inputField : document.getElementById("input-str"),

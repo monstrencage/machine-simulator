@@ -328,7 +328,9 @@ class Editor {
         console.time('processing')
         this.#ok = false
         let src_txt = this.#editor.value
-        this.#parser.reset()
+        let parser = new this.#parser()
+        
+        this.#editor.display.innerHTML = ""
 
         // alert (this.#palette.constructor.name)
         this.#editor.reset(this.#palette)
@@ -337,7 +339,7 @@ class Editor {
         var m = src_txt.match(/^([^\n]*)\n/)
         while (m){
             errors = errors.concat(
-                this.#parser.processLine(m[1])
+                parser.processLine(m[1])
                     .html(this.#editor.display)
             )
             src_txt = src_txt.substring(m[0].length)
@@ -348,11 +350,11 @@ class Editor {
         }
         // alert(src_txt)
         errors = errors.concat(
-            this.#parser.processLine(src_txt)
+            parser.processLine(src_txt)
                 .html(this.#editor.display)
         )
         this.#editor.resize()
-        errors = errors.concat(this.#parser.checkSpec())
+        errors = errors.concat(parser.checkSpec())
 
         if (errors.length > 0){
             this.#editor.errorTitle = "Spécification incorrecte"
@@ -364,6 +366,7 @@ class Editor {
             this.#ok = true
         }
         console.timeEnd('processing')
+        return parser
     }
 
     startCompile(){
@@ -376,11 +379,11 @@ class Editor {
     }
     
     get value (){
-        this.fullUpdate()
+        let p = this.fullUpdate()
         if (this.#ok){
-            this.#parser.compile()
-            this.#editor.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
-            return this.#parser.value
+            p.compile()
+            this.#editor.msg = `Compilation réussie ! <br/> ${p.value.summary}`
+            return p.value
         } else {
             return false
         }
