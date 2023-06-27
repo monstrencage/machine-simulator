@@ -64,7 +64,8 @@
   function compile (){
       let output = editor.value
       if (output){
-          simulator.machine = output
+          simulator.machine = output.machine
+          simulator.ndet = output.ndet
           simulator.load();
       }
       editor.stopCompile()

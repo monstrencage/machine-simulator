@@ -367,7 +367,7 @@ class Editor {
             this.#ok = true
         }
         console.timeEnd('processing')
-        return parser
+        return parser.value
     }
 
     startCompile(){
@@ -382,10 +382,9 @@ class Editor {
     get value (){
         let p = this.fullUpdate()
         if (this.#ok){
-            p.compile()
             this.#editor.outputFlag.classList.remove("alert")
-            this.#editor.msg = `Compilation réussie ! <br/> ${p.value.summary}`
-            return p.value
+            this.#editor.msg = `Compilation réussie ! <br/> ${p.machine.summary}`
+            return p
         } else {
             return false
         }

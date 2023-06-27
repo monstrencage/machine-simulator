@@ -32,6 +32,12 @@
 .src.light .src-display .int.err{
     color: crimson
 }
+.src.light .src-display .bool{
+    color: darkslateblue
+}
+.src.light .src-display .bool.err{
+    color: crimson
+}
 .src.light .src-display .state{
     color: dodgerblue
 }
@@ -104,6 +110,12 @@
     color: violet
 }
 .src.dark .src-display .int.err{
+    color: pink
+}
+.src.dark .src-display .bool{
+    color: plum
+}
+.src.dark .src-display .bool.err{
     color: pink
 }
 .src.dark .src-display .state{

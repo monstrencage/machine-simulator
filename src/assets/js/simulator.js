@@ -381,6 +381,8 @@ class Simulator{
 #keeprunning = false
 #finished = false
 #forwards = true
+#ndet = false
+    
     constructor(mainDisplay,
                 inputElts,
                 graphClass,
@@ -526,6 +528,15 @@ class Simulator{
             this.#tmName.innerHTML = ` : ${mytm.name}`
         }else{
             this.#tmName.getElementById("tm-name").innerHTML = ""
+        }
+    }
+
+    set ndet(nd){
+        this.#ndet = nd
+        if (nd){
+            console.log("non deterministic machine")
+        } else {
+            console.log("deterministic machine")
         }
     }
 

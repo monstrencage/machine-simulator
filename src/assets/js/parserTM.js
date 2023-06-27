@@ -97,10 +97,10 @@ class TMParser {
             output: 0,
             outputLn: 0,
             name: "",
-            input_trans : false
+            input_trans : false,
+            ndet : false
         }
         this.idx = 0
-        this.tm = new TuringMachine(1,"q","q", Array())
     }
 
     reset(){
@@ -110,7 +110,8 @@ class TMParser {
             output: 0,
             outputLn: 0,
             name: "",
-            input_trans : false
+            input_trans : false,
+            ndet : false
         }
         this.idx = 0
     }
@@ -166,19 +167,20 @@ class TMParser {
         return errors
     }
 
-    compile(){
-        if (this.idx == 0){
-            this.tm = new TuringMachine(this.spec.nb,
-                                        this.spec.q0,
-                                        this.spec.qf,
-                                        this.spec.trans,
-                                        this.spec.output,
-                                        this.spec.name)      
-        }
-    }
-
     get value(){
-        return this.tm
+        if (this.idx == 0){
+            return {
+                machine : new TuringMachine(this.spec.nb,
+                                            this.spec.q0,
+                                            this.spec.qf,
+                                            this.spec.trans,
+                                            this.spec.output,
+                                            this.spec.name),
+                ndet : this.spec.ndet
+            }
+        } else {
+            return false
+        }
     }
 }
 
@@ -254,6 +256,9 @@ class QuickParser {
                 case "name":
                 case "nom":
                     output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
+                    break;
+                case "non-det":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="bool">${parts[2]}</mark>${output}`
                     break;
                 default:
                     output = `<mark class="ppt err">${parts[1]}</mark><mark class="colon err">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`

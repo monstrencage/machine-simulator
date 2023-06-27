@@ -250,6 +250,26 @@ function formatIntElt(elt){
         elt.value = parseInt(elt.value)
     }
 }
+function formatBoolElt(elt){
+    elt.value = elt.value.trim()
+    elt.semCat = 'bool'
+    switch (elt.value){
+    case "oui":
+    case "yes":
+    case "true":
+    case "vrai":
+        elt.value = true
+        break;
+    case "non":
+    case "no":
+    case "false":
+    case "faux":
+        elt.value = false
+        break;
+    default:
+        elt.falsify = "Cette valeur doit être un booléen."
+    }
+}
 function formatStateElt(elt){
     elt.value = elt.value.trim()
     elt.semCat = 'state'
@@ -325,6 +345,7 @@ function formatPptElt(elt){
     case "output":
     case "name":
     case "nom":
+    case "non-det":
         break;
     default:
         elt.falsify = "Propritété inconnue."
@@ -370,6 +391,12 @@ function parseOptLn(line, spec){
                 formatTxtElt(val)
                 if (val.ok) {
                     spec.name = val.value
+                }
+                break;
+            case "non-det":
+                formatBoolElt(val)
+                if (val.ok) {
+                    spec.ndet = val.value
                 }
                 break;
             default:
