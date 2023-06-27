@@ -245,14 +245,15 @@ class Render {
             this.#ok = true
         }
         console.timeEnd('processing')
+        return this.#parser.value
+
     }
 
     get value (){
-        this.fullUpdate()
+        let p = this.fullUpdate()
         if (this.#ok){
-            this.#parser.compile()
             this.#render.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
-            return this.#parser.value
+            return p
         } else {
             return false
         }

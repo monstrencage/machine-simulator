@@ -638,7 +638,7 @@ class Simulator{
         if (mytm.name != ""){
             this.#tmName.innerHTML = ` : ${mytm.name}`
         }else{
-            this.#tmName.getElementById("tm-name").innerHTML = ""
+            this.#tmName.innerHTML = ""
         }
     }
 
