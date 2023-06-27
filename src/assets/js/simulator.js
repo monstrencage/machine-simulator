@@ -307,10 +307,9 @@ class TapeVis{
 class PopUp{
 #outer
 #title
-#content
 #status
     
-    constructor(elt){
+    constructor(elt, closable=true){
         this.#outer = elt
 
         let div = document.createElement("div")
@@ -321,23 +320,42 @@ class PopUp{
         popup.className = "pop-up"
         this.#outer.appendChild(popup)
         
-        this.#title = document.createElement("h2")
-        popup.appendChild(this.#title)
+        let title = document.createElement("h2")
+        popup.appendChild(title)
 
-        let button = document.createElement("button")
-        popup.appendChild(button)
-        button.className = "close"
-        button.title = "Fermer"
+        this.#status = document.createElement("i")
+        title.appendChild(this.#status)
 
-        let ico = document.createElement("i")
-        ico.className = "fas fa-times"
-        button.appendChild(ico)
+        this.#title = document.createElement("div")
+        title.appendChild(this.#title)
 
-        this.#content = document.createElement("div")
-        popup.appendChild(this.#content)
+        if(closable){
+            let button = document.createElement("button")
+            popup.appendChild(button)
+            button.className = "close"
+            button.title = "Fermer"
+            
+            let ico = document.createElement("i")
+            ico.className = "fas fa-times"
+            button.appendChild(ico)
 
-        button.onclick = this.close.bind(this)
-        
+            button.onclick = this.close.bind(this)
+        }
+       
+        this.content = document.createElement("div")
+        popup.appendChild(this.content)
+
+         
+    }
+    set title(txt){
+        this.#title.innerHTML = txt
+    }
+    set status(cls){
+        this.#status.className = cls
+    }
+    
+    open() {
+        this.#outer.classList.remove("hidden")
     }
 
     close (){
@@ -345,14 +363,11 @@ class PopUp{
     }
 
     activate(title, statusCls, msg){
-        this.#outer.classList.remove("hidden")
+        this.open()
+        this.title = title
+        this.status = statusCls
 
-        this.#title.innerHTML = ""
-        let status = document.createElement("i")
-        status.className = statusCls
-        this.#title.appendChild(status)
-        this.#title.innerHTML += title
-        this.#content.innerHTML = msg
+        this.content.innerHTML = msg
     }
 
     get hidden(){
@@ -360,6 +375,93 @@ class PopUp{
     }
 }
 
+class navClass extends PopUp{
+#options
+#transtbl
+#callback
+    
+    constructor(elt, callback){
+        super(elt, false)
+        
+        this.#callback = callback
+        
+        this.status = "fas fa-question-circle"
+        this.title = "Choix non-déterministe"
+
+        // let form = document.createElement("form")
+        // this.content.appendChild(form)
+        // let fields = document.createElement("fieldset")
+        // form.appendChild(fields)
+
+        let innerTitle = document.createElement("legend")
+        innerTitle.innerHTML = "Les transitions suivantes sont disponibles :"
+        this.content.appendChild(innerTitle)
+
+        this.#options = document.createElement("div")
+        this.#options.className = "options"
+        this.content.appendChild(this.#options)
+        let submit = document.createElement("div")
+        this.content.appendChild(submit)
+
+        let btn = document.createElement("button")
+        btn.className = "btn btn--primary"
+        submit.appendChild(btn)
+
+        let ico = document.createElement("i")
+        ico.className = "fas fa-arrow-right"
+        btn.appendChild(ico)
+
+        btn.onclick = (event) => { this.submit() }
+    }
+    
+    submit(){
+        let tr = false
+        for (const opt of this.#transtbl){
+            // alert(`${opt.tr.id} (${opt.tr.toString()}) : ${document.getElementById(opt.elt).checked}`)
+            if (document.getElementById(opt.elt).checked){
+                tr = opt.tr
+            }
+        }
+        if (tr){
+            this.close()
+            this.#callback(tr)
+        }
+    }
+    
+
+    close (){
+        this.#transtbl = new Array()
+        this.#options.innerHTML = ""
+        super.close()
+    }
+
+    chooseTransition(trList){
+        this.open()
+        this.#transtbl = new Array()
+        
+        let i = 0
+        for(const tr of trList){
+            let radioElt = document.createElement("input")
+            radioElt.type = "radio"
+            radioElt.setAttribute("value",i)
+            radioElt.setAttribute("name","transition")
+            radioElt.id = `transition_${i}`
+            this.#transtbl.push(
+                {
+                    tr : tr,
+                    elt : radioElt.id
+                }
+            )
+            this.#options.appendChild(radioElt)
+            let lblElt = document.createElement("label")
+            lblElt.setAttribute("for", `transition_${i}`)
+            lblElt.innerHTML = tr.toString()
+            this.#options.appendChild(lblElt)
+            this.#options.innerHTML += "<br/>"
+            i += 1
+        }
+    }
+}
 
 class Simulator{
 #myenv = null
@@ -376,6 +478,7 @@ class Simulator{
 #speedo
 #status
 #inputElts
+#navElt
     
 #run = false
 #keeprunning = false
@@ -455,6 +558,11 @@ class Simulator{
         
         this.#speedo = new Speedo(speedDiv,true)
 
+        let navDiv = document.createElement("div")
+        navDiv.className = "ndet-nav section hidden"
+        this.#mainDisplay.appendChild(navDiv)
+        this.#navElt = new navClass(navDiv, this.perform.bind(this))
+        
         let tapeDiv = document.createElement("div")
         tapeDiv.className = "table-tape section"
         this.#mainDisplay.appendChild(tapeDiv)
@@ -494,7 +602,10 @@ class Simulator{
                 let elt = document.activeElement
                 if (! elt.classList.contains("input-field")){
                     if (event.key === 'Enter') {
-                        if (this.active.bind(this)){
+                        if (!this.#navElt.hidden){
+                            this.#navElt.submit()
+                        }
+                        else if (this.active){
                             this.toggleRun.bind(this)()
                         }else{
                             this.closeNotif().bind(this)
@@ -645,23 +756,47 @@ class Simulator{
         if (!this.#run){
             this.#run = true
             if (this.#forwards){
-                success = this.#myenv.step()
+                if (this.#ndet){
+                    let av_tr = this.#myenv.available_transitions
+                    if (av_tr.length == 0){
+                        success = false
+                    } else if (av_tr.length == 1){
+                        this.#myenv.do_step(av_tr[0])
+                        success = true
+                    } else {
+                        // this.freeze()
+                        this.#navElt.chooseTransition(av_tr)
+                        return false
+                    }
+                } else {
+                    success = this.#myenv.step()
+                }
             } else {
                 success = this.#myenv.back()
             }
-            this.#run = false
-            this.#keeprunning = this.#keeprunning && success
-            this.#mytape.update(this.#myenv)
-            this.#steps.innerHTML = this.#myenv.nb_steps
-            if (this.#keeprunning) {
-                this.highlight_current()
-                setTimeout(this.do_step.bind(this), this.#speedo.delay)
-            } else{
-                this.#finished = this.#forwards && !success
-                this.update_status()
-                if(this.#finished){
-                    this.notifyResult()
-                }
+
+            this.upd_after_step(success)
+        }
+    }
+
+    perform(tr){
+        this.#myenv.do_step(tr)
+        this.upd_after_step(true)
+    }
+
+    upd_after_step(success){
+        this.#run = false
+        this.#keeprunning = this.#keeprunning && success
+        this.#mytape.update(this.#myenv)
+        this.#steps.innerHTML = this.#myenv.nb_steps
+        if (this.#keeprunning) {
+            this.highlight_current()
+            setTimeout(this.do_step.bind(this), this.#speedo.delay)
+        } else{
+            this.#finished = this.#forwards && !success
+            this.update_status()
+            if(this.#finished){
+                this.notifyResult()
             }
         }
     }

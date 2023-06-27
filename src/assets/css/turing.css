@@ -45,11 +45,25 @@ div.pop-up{
 }
 
 .pop-up h2{
-    margin-top:unset
+    margin-top:unset;
 }
 
+.pop-up h2 div{
+    display: contents
+}
 .pop-up h2 i{
     margin-right:.5em;
+}
+
+.pop-up .options input,.pop-up .options label{
+    display: inline-block;
+}
+.pop-up .options input{
+    margin-right:.5em;
+}
+
+.pop-up form .options br{
+    display: block
 }
 
  /* editor & render */

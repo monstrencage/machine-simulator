@@ -402,17 +402,22 @@ class TuringEnv extends Config {
             for (const tr of trList){
                 var ok = true
                 var i = 0
-                while (ok && (i < this.machine.nb)){
-                    switch (tr.type){
+                // console.log("checking "+tr.toString())
+                while (ok && (i < this.machine.nb_tapes)){
+                    // console.log(`tape ${i} (type ${tr.symbols_read[i].type}), ${tr.symbols_read[i].value} vs ${r[i]}.`)
+                    switch (tr.symbols_read[i].type){
                     case "symb":
-                        ok = ok && tr.value == r[i]
+                        ok = ok && (tr.symbols_read[i].value == r[i])
                         break;
                     case "range":
-                        ok = ok && tr.value.has(r[i])
+                        ok = ok && (tr.symbols_read[i].value.has(r[i]))
+                        break;
+                    default:
                         break;
                     }
                     i++
                 }
+                // console.log(ok)
                 if (ok){
                     res.push(tr)
                 }
@@ -425,18 +430,22 @@ class TuringEnv extends Config {
     step() {
         const t = this.next_transition
         if (t){
-            let symbs = this.currentSymbs
-            this.execute(t);
-            this.history.push({
-                trans : t,
-                symbs : symbs
-            });
-            this.nb_steps ++;
-            this.upd_accepted();
+            this.do_step(t);
             return true;
         }else{
             return false
         }
+    }
+
+    do_step(t) {
+        let symbs = this.currentSymbs
+        this.execute(t);
+        this.history.push({
+            trans : t,
+            symbs : symbs
+        });
+        this.nb_steps ++;
+        this.upd_accepted();
     }
 
     get next_transition() {
