@@ -112,6 +112,28 @@ class Tape {
             future: this.future.string
         }
     }
+
+    get repr (){
+        return `${this.past.string} >${print_symb(this.currentSymb)}< ${this.future.string}`
+    }
+
+    static from_object (obj){
+        // console.log(Object.keys(obj))
+        let tape = new Tape()
+        tape.past = new InfStack(obj.past,false)
+        if (obj.present == ' '){
+            tape.current = '_'
+        }else{
+            tape.current = obj.present
+        }
+        tape.future = new InfStack(obj.future,true)
+
+        return tape
+    }
+}
+
+function printTapeContent(cnt){
+     return `${cnt.past} >${cnt.present}< ${cnt.future}`
 }
 
 function printWrites(wrts){
@@ -204,6 +226,43 @@ class Config {
         }
 
     }
+
+    get repr(){
+        let s = `etat : ${this.etat_courant}\n`
+        for (const t of this.tapes){
+            s += `${t.repr}\n`
+        }
+        return s
+    }
+
+    get snap (){
+        let tapes = new Array()
+        for (const t of this.tapes){
+            tapes.push(t.content)
+        }
+        return {
+            etat : this.etat_courant,
+            tapes : tapes
+        }
+    }
+
+    restore(snap){
+        // console.log("coucou1")
+    
+        this.etat_courant = snap.etat
+        // console.log("coucou2")
+    
+        this.tapes = new Array()
+        for (const t of snap.tapes){
+            // console.log(printTapeContent(t))
+            // console.log(`restore ${Object.keys(t)}`)
+            let tape = Tape.from_object(t)
+            this.tapes.push(tape)
+            // console.log(`restore - ${this.tapes.length}`)    
+            // console.log(tape.repr)
+        }
+    }
+    
 
     get currentSymbs(){
         var symbs = "";
@@ -437,15 +496,52 @@ class TuringEnv extends Config {
         }
     }
 
-    do_step(t) {
+    do_step(t, mark = false, tried = []) {
         let symbs = this.currentSymbs
+        let conf = this.snap
         this.execute(t);
         this.history.push({
             trans : t,
-            symbs : symbs
+            symbs : symbs,
+            config : conf,
+            marked : mark,
+            tried : [t.id]+tried
         });
         this.nb_steps ++;
         this.upd_accepted();
+    }
+
+    backtrack(){
+        console.log('backtracking...')
+        while (this.history.length > 0){
+            let c = this.history.pop()
+            // console.log(`${c.marked} trans no ${c.trans.id} - ${c.trans.toString()}`)
+            if (c.marked){
+                let snap = c.config
+                // console.log(snap.etat)
+                // for (const t of snap.tapes){
+                //     console.log(printTapeContent(t))
+                // }
+                this.restore(snap)
+
+                // console.log(this.repr)
+
+                let av = new Array()
+                for (const t of this.available_transitions){
+                    // console.log(t.id)
+                    if (! c.tried.includes(t.id)){
+                        av.push(t)
+                    }
+                }
+                if (av.length > 0){
+                    return {
+                        av : av,
+                        tried : c.tried
+                    }    
+                }
+            }
+        }
+        return false
     }
 
     get next_transition() {

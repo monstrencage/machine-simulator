@@ -379,6 +379,7 @@ class navClass extends PopUp{
 #options
 #transtbl
 #callback
+#tried = []
     
     constructor(elt, callback){
         super(elt, false)
@@ -424,7 +425,7 @@ class navClass extends PopUp{
         }
         if (tr){
             this.close()
-            this.#callback(tr)
+            this.#callback(tr, this.#tried)
         }
     }
     
@@ -435,10 +436,12 @@ class navClass extends PopUp{
         super.close()
     }
 
-    chooseTransition(trList){
+    chooseTransition(available){
         this.open()
         this.#transtbl = new Array()
-        
+
+        let trList = available.av
+        this.#tried = available.tried
         let i = 0
         for(const tr of trList){
             let radioElt = document.createElement("input")
@@ -606,14 +609,14 @@ class Simulator{
                             this.#navElt.submit()
                         }
                         else if (this.active){
-                            this.toggleRun.bind(this)()
+                            this.toggleRun()
                         }else{
-                            this.closeNotif().bind(this)
+                            this.closeNotif()
                         }
                     } else if (event.key === '+') {
-                        this.speedUp().bind(this)
+                        this.speedUp()
                     } else if (event.key === '-') {
-                        this.slowDown().bind(this)
+                        this.slowDown()
                     } 
                 }
             }
@@ -759,13 +762,24 @@ class Simulator{
                 if (this.#ndet){
                     let av_tr = this.#myenv.available_transitions
                     if (av_tr.length == 0){
-                        success = false
+                        if (this.#myenv.accepts()){
+                            success = false
+                        } else {
+                            this.#popup.activate("Backtracking","fas fa-undo","L'exécution est bloquée : on retourne au plus récent choix non-déterministe, et on essaie une autre exécution.")
+                            let br = this.#myenv.backtrack()
+                            if (br){
+                                this.#navElt.chooseTransition(br)
+                                return false
+                            } else {
+                                success = false
+                            }
+                        } 
                     } else if (av_tr.length == 1){
                         this.#myenv.do_step(av_tr[0])
                         success = true
                     } else {
                         // this.freeze()
-                        this.#navElt.chooseTransition(av_tr)
+                        this.#navElt.chooseTransition({ av : av_tr, tried : []})
                         return false
                     }
                 } else {
@@ -779,8 +793,8 @@ class Simulator{
         }
     }
 
-    perform(tr){
-        this.#myenv.do_step(tr)
+    perform(tr,tried){
+        this.#myenv.do_step(tr, true, tried)
         this.upd_after_step(true)
     }
 
