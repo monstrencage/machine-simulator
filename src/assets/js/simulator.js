@@ -659,6 +659,9 @@ class Simulator{
                         }else{
                             this.closeNotif()
                         }
+                    } else if (this.active && (!this.#keeprunning) && event.key === ' '){
+                        if (this.#forwards) this.step()
+                        else this.back()
                     } else if (event.key === '+') {
                         this.speedUp()
                     } else if (event.key === '-') {
@@ -671,6 +674,34 @@ class Simulator{
                                && (event.key === 'ArrowUp'
                                    || event.key === 'ArrowLeft')) {
                         this.#navElt.prevChoice()
+                    } else if (this.#navElt.hidden
+                               && this.#forwards
+                               && event.key === 'ArrowRight') {
+                        this.run()
+                    } else if (this.#navElt.hidden
+                               && this.#forwards
+                               && this.#keeprunning
+                               && event.key === 'ArrowLeft') {
+                        this.stop()
+                    } else if (this.#navElt.hidden
+                               && this.#forwards
+                               && (!this.#keeprunning)
+                               && event.key === 'ArrowLeft') {
+                        this.#forwards = false
+                    } else if (this.#navElt.hidden
+                               && (!this.#forwards)
+                               && this.#keeprunning
+                               && event.key === 'ArrowRight') {
+                        this.stop()
+                    } else if (this.#navElt.hidden
+                               && (!this.#forwards)
+                               && (!this.#keeprunning)
+                               && event.key === 'ArrowRight') {
+                        this.#forwards = true
+                    } else if (this.#navElt.hidden
+                               && (!this.#forwards)
+                               && event.key === 'ArrowLeft') {
+                        this.runback()
                     } 
                 }
             }
@@ -764,7 +795,7 @@ class Simulator{
     }
 
     get active(){
-        return this.#popup.hidden
+        return (this.#popup.hidden && this.#navElt.hidden)
     }
 
     toggleRun(){
