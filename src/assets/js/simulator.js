@@ -651,6 +651,7 @@ class Simulator{
                 let elt = document.activeElement
                 if (! elt.classList.contains("input-field")){
                     if (event.key === 'Enter') {
+                        event.preventDefault()
                         if (!this.#navElt.hidden){
                             this.#navElt.submit()
                         }
@@ -660,47 +661,58 @@ class Simulator{
                             this.closeNotif()
                         }
                     } else if (this.active && (!this.#keeprunning) && event.key === ' '){
+                        event.preventDefault()
                         if (this.#forwards) this.step()
                         else this.back()
                     } else if (event.key === '+') {
+                        event.preventDefault()
                         this.speedUp()
                     } else if (event.key === '-') {
+                        event.preventDefault()
                         this.slowDown()
                     } else if ((!this.#navElt.hidden)
                                && (event.key === 'ArrowDown'
                                    || event.key === 'ArrowRight')) {
+                        event.preventDefault()
                         this.#navElt.nextChoice()
                     } else if ((!this.#navElt.hidden)
                                && (event.key === 'ArrowUp'
                                    || event.key === 'ArrowLeft')) {
+                        event.preventDefault()
                         this.#navElt.prevChoice()
                     } else if (this.#navElt.hidden
                                && this.#forwards
                                && event.key === 'ArrowRight') {
+                        event.preventDefault()
                         this.run()
                     } else if (this.#navElt.hidden
                                && this.#forwards
                                && this.#keeprunning
                                && event.key === 'ArrowLeft') {
+                        event.preventDefault()
                         this.stop()
                     } else if (this.#navElt.hidden
                                && this.#forwards
                                && (!this.#keeprunning)
                                && event.key === 'ArrowLeft') {
+                        event.preventDefault()
                         this.#forwards = false
                     } else if (this.#navElt.hidden
                                && (!this.#forwards)
                                && this.#keeprunning
                                && event.key === 'ArrowRight') {
+                        event.preventDefault()
                         this.stop()
                     } else if (this.#navElt.hidden
                                && (!this.#forwards)
                                && (!this.#keeprunning)
                                && event.key === 'ArrowRight') {
+                        event.preventDefault()
                         this.#forwards = true
                     } else if (this.#navElt.hidden
                                && (!this.#forwards)
                                && event.key === 'ArrowLeft') {
+                        event.preventDefault()
                         this.runback()
                     } 
                 }
