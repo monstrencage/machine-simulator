@@ -356,6 +356,7 @@ class PopUp{
     
     open() {
         this.#outer.classList.remove("hidden")
+        this.#outer.scrollIntoView()
     }
 
     close (){
@@ -380,23 +381,20 @@ class navClass extends PopUp{
 #transtbl
 #callback
 #tried = []
+#innerTitle
     
     constructor(elt, callback){
         super(elt, false)
         
         this.#callback = callback
         
-        this.status = "fas fa-question-circle"
-        this.title = "Choix non-déterministe"
-
         // let form = document.createElement("form")
         // this.content.appendChild(form)
         // let fields = document.createElement("fieldset")
         // form.appendChild(fields)
 
-        let innerTitle = document.createElement("legend")
-        innerTitle.innerHTML = "Les transitions suivantes sont disponibles :"
-        this.content.appendChild(innerTitle)
+        this.#innerTitle = document.createElement("legend")
+        this.content.appendChild(this.#innerTitle)
 
         this.#options = document.createElement("div")
         this.#options.className = "options"
@@ -414,21 +412,26 @@ class navClass extends PopUp{
 
         btn.onclick = (event) => { this.submit() }
     }
-    
-    submit(){
-        let tr = false
+
+    get choice(){
         for (const opt of this.#transtbl){
             // alert(`${opt.tr.id} (${opt.tr.toString()}) : ${document.getElementById(opt.elt).checked}`)
             if (document.getElementById(opt.elt).checked){
-                tr = opt.tr
+                return opt
             }
         }
-        if (tr){
+    }
+    submit(){
+        let opt = this.choice
+        if (opt){
             this.close()
-            this.#callback(tr, this.#tried)
+            this.#callback(opt.tr, this.#tried)
         }
     }
-    
+
+    set msg (m){
+        this.#innerTitle.innerHTML = m
+    }
 
     close (){
         this.#transtbl = new Array()
@@ -436,12 +439,27 @@ class navClass extends PopUp{
         super.close()
     }
 
+    update(){
+        if (this.#tried.length > 0){
+            this.title = "Backtracking"
+            this.status = "fas fa-undo"
+            this.msg = "L'exécution est bloquée : on retourne au plus récent choix non-déterministe, et on essaie une autre exécution."
+        } else {
+            this.title = "Choix non-déterministe"
+            this.msg = "Les transitions suivantes sont disponibles :"
+            this.status = "fas fa-question-circle"
+       
+        }
+    }
+    
     chooseTransition(available){
         this.open()
         this.#transtbl = new Array()
 
         let trList = available.av
         this.#tried = available.tried
+        this.update()
+        var prev, first
         let i = 0
         for(const tr of trList){
             let radioElt = document.createElement("input")
@@ -449,13 +467,25 @@ class navClass extends PopUp{
             radioElt.setAttribute("value",i)
             radioElt.setAttribute("name","transition")
             radioElt.id = `transition_${i}`
-            this.#transtbl.push(
-                {
+            this.#options.appendChild(radioElt)
+            if (i == 0){
+                radioElt.setAttribute("checked",true)
+                first = {
                     tr : tr,
                     elt : radioElt.id
                 }
-            )
-            this.#options.appendChild(radioElt)
+                prev = first
+            } else {
+                prev.next = radioElt.id
+                this.#transtbl.push(prev)
+                
+                prev = {
+                    tr : tr,
+                    elt : radioElt.id,
+                    prev : prev.elt
+                }
+            }
+           
             let lblElt = document.createElement("label")
             lblElt.setAttribute("for", `transition_${i}`)
             lblElt.innerHTML = tr.toString()
@@ -463,6 +493,22 @@ class navClass extends PopUp{
             this.#options.innerHTML += "<br/>"
             i += 1
         }
+        first.prev = prev.elt
+        prev.next = first.elt
+        this.#transtbl.push(prev)
+    }
+
+    nextChoice(){
+        let oldOpt = this.choice
+        let newOpt = oldOpt.next
+        document.getElementById(oldOpt.elt).setAttribute("checked","false")
+        document.getElementById(newOpt).setAttribute("checked","true")        
+    }
+    prevChoice(){
+        let oldOpt = this.choice
+        let newOpt = oldOpt.prev
+        document.getElementById(oldOpt.elt).setAttribute("checked","false")
+        document.getElementById(newOpt).setAttribute("checked","true")        
     }
 }
 
@@ -617,6 +663,14 @@ class Simulator{
                         this.speedUp()
                     } else if (event.key === '-') {
                         this.slowDown()
+                    } else if ((!this.#navElt.hidden)
+                               && (event.key === 'ArrowDown'
+                                   || event.key === 'ArrowRight')) {
+                        this.#navElt.nextChoice()
+                    } else if ((!this.#navElt.hidden)
+                               && (event.key === 'ArrowUp'
+                                   || event.key === 'ArrowLeft')) {
+                        this.#navElt.prevChoice()
                     } 
                 }
             }
@@ -630,7 +684,9 @@ class Simulator{
             this.inputword = w
             this.#inputElts.inputField.blur()
         }else{
-            this.#popup.activate("Entrée incorrecte :","fas fa-times-circle","Le mot d'entrée ne peut pas contenir d'espaces. Utilisez '_' si vous souhaitez insérer des cases vides dans le mot d'entrée.")
+            this.#popup.activate("Entrée incorrecte :",
+                                 "fas fa-times-circle",
+                                 "Le mot d'entrée ne peut pas contenir d'espaces. Utilisez '_' si vous souhaitez insérer des cases vides dans le mot d'entrée.")
         }
     }
     
@@ -765,7 +821,6 @@ class Simulator{
                         if (this.#myenv.accepts()){
                             success = false
                         } else {
-                            this.#popup.activate("Backtracking","fas fa-undo","L'exécution est bloquée : on retourne au plus récent choix non-déterministe, et on essaie une autre exécution.")
                             let br = this.#myenv.backtrack()
                             if (br){
                                 this.#navElt.chooseTransition(br)
