@@ -252,7 +252,7 @@ class Render {
     get value (){
         let p = this.fullUpdate()
         if (this.#ok){
-            this.#render.msg = `Compilation réussie ! <br/> ${this.#parser.value.summary}`
+            this.#render.msg = `Compilation réussie ! <br/> ${p.machine.summary}`
             return p
         } else {
             return false
