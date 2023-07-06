@@ -1,35 +1,3 @@
----
-title: Simulateur de machines de Turing
-
-layout: splash
-
-header:
-  overlay_image: /assets/images/machine-wires-short.jpg
-  caption: "[Turing machine in Bletchley Park](https://www.flickr.com/photos/douglashoyt/8235850748) by [Douglas Hoyt](https://www.flickr.com/photos/douglashoyt/), licensed under [CC BY-NC-ND 2.0](https://creativecommons.org/licenses/by-nc-nd/2.0/)"
-  
-intro: 
-  - excerpt: >
-      Ce simulateur de Machines de Turing vous permet de visualiser l'exécution d'une machine de Turing *non-déterministe* manipulant un nombre arbitraire de rubans *bi-infinis*.
-      Pour ce faire, spécifiez une machine dans cet éditeur. Vous pouvez par exemple modifier l'exemple ci-dessous.
-
-
-custom_css:
-- general
-- turing
-- turing-colors
-
-custom_js:
-- vis/vis-network.min
-- turing
-- editor
-- parserElts
-- parserTM
-- graphOfTm
-- simulator
----
-{% include feature_row id="intro" type="center" %}
-
-{% capture init-machine %}
 // La spécification commence par un en-tête:
 name    : Exemple // (optionnel) 
 init    : q0      // Voici comment on définit
@@ -136,7 +104,3 @@ q0,_,$1,>,<
 // 
 // q3,1,a
 // q0,_,1,>,<
-
-{% endcapture %}
-
-{% include turing-simulator.html init-word = "ababaaabaaa" init-machine = init-machine %}
