@@ -196,7 +196,10 @@ class Transition {
         this.nb = sr.length
         this.symbols_read = sr
     }
-
+    static fromAuto(t){
+        return new Transition(t.id,t.src,t.in,t.out,[t.symb],[[t.symb,'>']])
+    }
+    
     get testString(){
         return printReads(this.symbols_read)
     }
@@ -208,7 +211,11 @@ class Transition {
     toString(){
         return `${this.etat_read} -[${this.testString}/${this.actionString}]-> ${this.etat_write}`
     }
-    
+
+    automatonToString(){
+        return `${this.etat_read} -- ${this.testString} --> ${this.etat_write}`
+    }
+
 }
 
 class Config {
@@ -427,7 +434,27 @@ class TuringMachine {
     
 }
 
+class Automaton extends TuringMachine{
+    constructor(q0,qf,trans,name=""){
+        super (1,q0,qf,[],0,name)
+        var tr_map = new Map();
+        for (const t of trans){
+            if (tr_map.has(t.in)){
+                tr_map.get(t.in).push(Transition.fromAuto(t))
+            }else{
+                tr_map.set(t.in, new Array(Transition.fromAuto(t)))
+            }
+        }
+        this.transitions = tr_map
+    }
 
+    get summary(){
+        let trans_list = this.transList.map(tr => tr.automatonToString()).join(",<br/>  ")
+        let etat_list = this.states
+        return `${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}, état final : ${this.finalState.replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet : ${prtset(this.alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
+    }
+
+}
 
 function invDir(direction){
     switch (direction){
