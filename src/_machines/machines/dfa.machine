@@ -1,0 +1,34 @@
+// La spécification commence par un en-tête:
+name   : Exemple // (optionnel) 
+init   : q0      // Voici comment on définit
+                 // l'état initial,
+accept : q1     // et l'état final.
+
+// Ensuite, viennnent les transitions:
+q0,a,q1
+
+// Symboles acceptés :
+//   toute chaîne de caractères de longueur 1
+//   différente de ','.
+
+// Noms d'états acceptés :
+//   toute chaîne de caractères ne contenant pas
+//   les symboles ',' ni ':'.
+
+q0,b,q2 
+
+// Les expressions (non-vides) entre crochets permettent 
+// d'activer la transition dès que le symbole courant
+// appartenient à la liste entre crochets.
+// Par exemple, la transition ci-dessous:
+
+q1,[ab],q0
+
+// est équivalente aux transitions suivantes:
+
+// q1,a,q0
+
+// q1,b,q0
+
+q2,[ab],q0
+

@@ -1,0 +1,66 @@
+<div id="simulator" class="section">
+  <h1><i class="fas fa-robot"></i> Simulateur<div class="tm-name" id="auto-name"></div></h1>
+  <div class="input-panel panel section">
+    {% if include.init-word %}
+    <input class="input-field" type='text' id='input-str' value='{{include.init-word}}'/>
+    {% else %}
+    <input class="input-field" type='text' id='input-str'/>
+    {% endif %}
+    <button id="load-btn" class="btn btn--primary txt"><i class="fa fa-undo"></i> Charger mot d'entrée</button>
+  </div>
+  <div class="section simulator-panel" id="simulator-panel" >
+    
+  </div>
+</div>
+<div id="render" class="section render machine-src">
+  <h1><i class="fa fa-edit"></i>Spécification de la machine</h1>
+  <div class="src panel" id="source-panel">
+    <div class="control-panel">
+      <button class="btn btn--primary txt" onclick="loadToSimulator()"><i class="fas fa-share"></i>Charger dans l'éditeur</button>
+      <button class="btn btn--primary color-btn"></button>
+    </div>
+    <pre class="src-display" id="source-display">
+      <!-- <span></span> -->
+    </pre>
+    <textarea class='src src-field'>{% if include.init-machine %}{{ include.init-machine }}{% endif %}
+      </textarea>
+  </div>
+  <div class="compilation-msg panel" id="compilation-panel">
+    <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
+    <p class="compilation-msg"></p>
+  </div>
+</div>
+<div class="hidden" id="my-simulator-url">{{site.url | append: site.baseurl | absolute_url}}</div>
+
+<script>
+  let renderElt = new RenderElt("source-panel",
+                                'compilation-panel')
+  
+  let render = new Render(renderElt, new AutoParser())
+  
+  let inputElts = {
+      inputField : document.getElementById("input-str"),
+      inputBtn : document.getElementById("load-btn")
+
+  }
+  const simulator = new Simulator("simulator-panel",
+                                  inputElts,
+                                  GraphAuto,
+                                  "auto-name",
+                                  TapeVis,
+                                  TuringEnv)
+  
+  simulator.machine = render.value.machine
+  simulator.load()
+  
+  
+  function loadToSimulator(){
+      let machine = document.querySelector("#render .src-field").value
+      let inputWord = document.querySelector("#simulator .input-field").value
+      let simulatorURL = document.getElementById("my-simulator-url").innerHTML
+      localStorage.setItem("machine-simulator.machine", machine)
+      localStorage.setItem("machine-simulator.input-value", inputWord)
+      location.replace(`${simulatorURL}/automaton.html?loadMachine`)
+  }
+
+</script>

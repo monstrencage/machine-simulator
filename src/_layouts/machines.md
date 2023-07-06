@@ -14,11 +14,20 @@ custom_js:
 - render
 - parserElts
 - parserTM
+- parserAutomaton
 - graphOfTm
 - simulator
 
 ---
+{% if page.type %}
+{% if page.type == "automate" %}
+{% include auto-details.html machine = page%}
+{% else %}
 {% include machine-details.html machine = page %}
+{% endif %} 
+{% else %}
+{% include machine-details.html machine = page %}
+{% endif %}
 
 {{page.content | markdownify }}
 
@@ -27,4 +36,12 @@ custom_js:
 {% include_relative {{machine-path}} %}
 {% endcapture %}
 
+{% if page.type %}
+{% if page.type == "automate" %}
+{% include display-automaton.html init-word = page.init-word init-machine = machine %}
+{% else %}
 {% include display-machine.html init-word = page.init-word init-machine = machine %}
+{% endif %}
+{% else %}
+{% include display-machine.html init-word = page.init-word init-machine = machine %}
+{% endif %}
