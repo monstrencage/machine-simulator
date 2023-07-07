@@ -940,14 +940,16 @@ class Simulator{
             this.#sizeBtn.icoClass = "fas fa-expand-arrows-alt"
             this.#sizeBtn.title = "Maximiser le simulateur"
             document.querySelector(".masthead").classList.remove("hidden")
-            document.querySelector(".sidebar").classList.remove("hidden")
+            let s = document.querySelector(".sidebar")
+            if (s) s.classList.remove("hidden")
             document.querySelector("#footer.page__footer").classList.remove("hidden")
         } else {
             this.#mainDisplay.classList.add("fullscreen")
             this.#sizeBtn.icoClass = "fas fa-compress-arrows-alt"
             this.#sizeBtn.title = "Minimiser le simulateur"
             document.querySelector(".masthead").classList.add("hidden")
-            document.querySelector(".sidebar").classList.add("hidden")
+            let s = document.querySelector(".sidebar")
+            if (s) s.classList.add("hidden")
             document.querySelector("#footer.page__footer").classList.add("hidden")
         }
     }
