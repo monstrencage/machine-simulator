@@ -355,6 +355,42 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
     position:relative;
 }
 
+#simulator .simulator-panel.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    margin: 0;
+    border:none;
+    display:flex;
+    flex-flow:column;
+}
+
+.fullscreen .section, .fullscreen.section{
+    max-width:unset;
+}
+.fullscreen .section{
+    flex: 0 1 auto;
+}
+.fullscreen .graph-visualizer{
+    flex: 1 1 auto;
+}
+
+#simulator .fullscreen .control-panel,
+#simulator .fullscreen .control-panel .elt,
+.fullscreen .speedo {
+    display: inline-block;
+    vertical-align: middle;
+}
+#simulator .fullscreen .control-panel {
+    width:100%
+}
+#simulator .fullscreen .control-panel .button-panel{
+    width: fit-content
+}
+
 
 .graph-visualizer{
     width:75%;
