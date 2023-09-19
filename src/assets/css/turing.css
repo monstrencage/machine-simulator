@@ -316,13 +316,12 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
 }
 
 #simulator .control-panel .elt {
-    margin: .5em;
     width:100%;
     text-align:center;
 }
 
 #simulator .button-panel .btn {
-    margin-left: 1em;
+    margin-left: .5em;
     display: inline-block;
     height: fit-content;
 }
