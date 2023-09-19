@@ -277,6 +277,25 @@ function formatStateElt(elt){
         elt.falsify = "Un nom d'état ne doit pas être vide, ni contenir  ',' ou ':'."
     }
 }
+
+function formatListStateElt(line){
+    let states = Array()
+    while (!line.isEmpty){
+        let q = line.splitRegex(/^([^,]*)(,.*)/)
+        if (!q) {
+            q = line.toElt()
+        } else {
+            let comma = line.splitRegex(/^(,)(.*)/)
+            comma.addClass('comma')
+        }
+        formatStateElt(q)
+        states.push(q.value)
+    }
+    return {
+        ok : true,
+        value: states
+    }
+}
 function formatSymbElt(elt){
     elt.value = elt.value.trim()
     elt.semCat = 'symb'
@@ -340,7 +359,6 @@ function formatPptElt(elt){
     case "initial":
     case "accept":
     case "final":
-        // case "finaux": // todo : multiple final states.
     case "sortie":
     case "output":
     case "name":
@@ -358,11 +376,11 @@ function parseOptLn(line, spec){
         formatPptElt(ppt)
         let colon = line.splitRegex(/^(:)(.*)$/)
         colon.semCat = "colon"
-        let val = line.toElt()
         if (ppt.ok) {
             switch(ppt.value){
             case "init":
             case "initial":
+                let val = line.toElt()
                 formatStateElt(val)
                 if (val.ok) {
                     spec.q0 = val.value
@@ -370,33 +388,34 @@ function parseOptLn(line, spec){
                 break;
             case "accept":
             case "final":
-                formatStateElt(val)
-                if (val.ok) {
-                    spec.qf = val.value
+                let valQ = formatListStateElt(line)
+                if (valQ.ok) {
+                    spec.qf = valQ.value
                 }
                 break;
-                // case "finaux": // todo : multiple final states.
-                //     break;     //
                 
             case "sortie":
             case "output":                
-                formatIntElt(val)
-                if (val.ok) {
-                    spec.output = val.value
+                let valO = line.toElt()
+                formatIntElt(valO)
+                if (valO.ok) {
+                    spec.output = valO.value
                     spec.outputLn = line.index
                 }
                 break;
             case "name":
             case "nom":
-                formatTxtElt(val)
-                if (val.ok) {
-                    spec.name = val.value
+                let valN = line.toElt()
+                formatTxtElt(valN)
+                if (valN.ok) {
+                    spec.name = valN.value
                 }
                 break;
             case "non-det":
-                formatBoolElt(val)
-                if (val.ok) {
-                    spec.ndet = val.value
+                let valND = line.toElt()
+                formatBoolElt(valND)
+                if (valND.ok) {
+                    spec.ndet = valND.value
                 }
                 break;
             default:

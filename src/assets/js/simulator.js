@@ -827,7 +827,7 @@ class Simulator{
         var eid
         let nid = `q_${this.#myenv.etat}`
         if (this.#finished && this.#myenv.accepted){
-            eid = 'e_final'
+            eid = `e_${this.#myenv.etat}_final`
         } else if (this.#myenv.history.length > 0){
             eid = this.#myenv.history[this.#myenv.history.length - 1].trans.id
         }else{
@@ -837,7 +837,6 @@ class Simulator{
     }
 
     update_status(){
-        this.highlight_current()
         this.#status.classList.remove('fa-check-circle')
         this.#status.classList.remove('fa-times-circle')
         this.#status.classList.remove('fa-pause-circle')
@@ -855,6 +854,7 @@ class Simulator{
         } else {
             this.#status.classList.add('fa-pause-circle')
         }
+        this.highlight_current()
     }
 
     do_step(){

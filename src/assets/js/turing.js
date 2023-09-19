@@ -357,7 +357,7 @@ class TuringMachine {
     constructor(nb, q0, qf, tr, output=0, name="") {
         this.nb_tapes = nb;
         this.init = q0;
-        this.finalState = qf;
+        this.finalStates = qf;
         this.output = output
         this.name = name
         var tr_map = new Map();
@@ -382,7 +382,9 @@ class TuringMachine {
     get states() {
         var states = new Set();
         states.add(this.init)
-        states.add(this.finalState)
+        for(const q of this.finalStates.values()){
+            states.add(q)
+        }
         for(const tr of this.transList.values()){
             states.add(tr.etat_read);
             states.add(tr.etat_write);
@@ -429,7 +431,7 @@ class TuringMachine {
     get summary(){
         let trans_list = this.transList.map(tr => tr.toString().replaceAll('<','&lt').replaceAll('<','&gt')).join(",<br/>  ")
         let etat_list = this.states
-        return `${this.nb_tapes} rubans<br/>${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}, état final : ${this.finalState.replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet : ${prtset(this.alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
+        return `${this.nb_tapes} rubans<br/>${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}, états finaux : ${prtset(this.finalStates).replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet : ${prtset(this.alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
     }
     
 }
@@ -451,7 +453,7 @@ class Automaton extends TuringMachine{
     get summary(){
         let trans_list = this.transList.map(tr => tr.automatonToString()).join(",<br/>  ")
         let etat_list = this.states
-        return `${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}, état final : ${this.finalState.replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet : ${prtset(this.alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
+        return `${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}, états finaux : ${prtset(this.finalStates).replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet : ${prtset(this.alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
     }
 
 }
@@ -474,7 +476,7 @@ class TuringEnv extends Config {
         super(tm.init, w, tm.nb_tapes);
         this.machine = tm;
         this.nb_steps = 0;
-        this.accepted = tm.init === tm.finalState;
+        this.accepted = tm.finalStates.includes(tm.init);
         this.timed_out = false;
         this.history = new Array ()
     }
@@ -623,7 +625,7 @@ this.nb_steps=${this.nb_steps}`)
     }
 
     upd_accepted() {
-        this.accepted = this.etat === this.machine.finalState;
+        this.accepted = this.machine.finalStates.includes(this.etat);
     }
 
     accepts() {
@@ -633,9 +635,9 @@ this.nb_steps=${this.nb_steps}`)
     reset(w){
         this.history = new Array();
         this.nb_steps = 0;
+        super.reset(this.machine.init, w);
         this.upd_accepted();
         this.timed_out = false;
-        super.reset(this.machine.init, w);
     }
 
     get outputMsg(){

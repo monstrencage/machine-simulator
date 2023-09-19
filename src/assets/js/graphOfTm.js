@@ -135,10 +135,6 @@ class GraphTM {
             id: "initial",
             shape:"dot",
             size:1})
-        this.#nodes.add({
-            id: "final",
-            shape:"dot",
-            size:1})
 
         const edgeSet = new EdgeSet()
         for (const t of tm.transList){ edgeSet.add(t) }
@@ -149,12 +145,19 @@ class GraphTM {
             from: "initial",
             to: `q_${tm.init}`,
             arrows: "to"})
-        this.#edges.add({
-            id: "e_final",
-            from: `q_${tm.finalState}`,
-            to: "final",
-            arrows: "to"})
-
+        
+        for (const q of tm.finalStates){
+            this.#nodes.add({
+                id: `final_${q}`,
+                shape:"dot",
+                size:1})    
+            this.#edges.add({
+                id: `e_${q}_final`,
+                from: `q_${q}`,
+                to: `final_${q}`,
+                arrows: "to"})
+        }
+        
         this.#graph.setData({nodes: this.#nodes, edges: this.#edges})
 
         this.#graph.redraw()
@@ -252,25 +255,29 @@ class GraphAuto {
             id: "initial",
             shape:"dot",
             size:1})
-        this.#nodes.add({
-            id: "final",
-            shape:"dot",
-            size:1})
 
         const edgeSet = new AutoEdgeSet()
         for (const t of tm.transList){ edgeSet.add(t) }
         this.#edges = new vis.DataSet([])
         this.#edgeRef = edgeSet.extract(this.#edges)
+
         this.#edges.add({
             id: "e_init",
             from: "initial",
             to: `q_${tm.init}`,
             arrows: "to"})
-        this.#edges.add({
-            id: "e_final",
-            from: `q_${tm.finalState}`,
-            to: "final",
-            arrows: "to"})
+
+        for (const q of tm.finalStates){
+            this.#nodes.add({
+                id: `final_${q}`,
+                shape:"dot",
+                size:1})    
+            this.#edges.add({
+                id: `e_${q}_final`,
+                from: `q_${q}`,
+                to: `final_${q}`,
+                arrows: "to"})
+        }
 
         this.#graph.setData({nodes: this.#nodes, edges: this.#edges})
 

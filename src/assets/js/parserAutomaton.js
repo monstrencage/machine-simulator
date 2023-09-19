@@ -10,7 +10,7 @@ function parseAutoTrans(line, spec){
         comma2.addClass('comma')
         let q1 = line.toElt()
         formatStateElt(q1)
-        spec.trans.push({in: q0.value, out:q1.value, symb:symb.value})
+        spec.trans.push({in: q0.value, out:q1.value, symb:symb.value, src:line.src, id:line.index})
         return true
     } else {
         return false
@@ -71,6 +71,9 @@ class AutoParser {
         }
         if (! this.spec.qf){
             errors.push(new Error("état final manquant."))
+        }
+        else if (this.spec.qf.length == 0){
+            errors.push(new Error("aucun état final."))
         }
         if (this.spec.trans.length == 0){
             errors.push(new Error("transitions manquantes."))

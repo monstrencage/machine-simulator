@@ -154,6 +154,9 @@ class TMParser {
         if (! this.spec.qf){
             errors.push(new Error("état final manquant."))
         }
+        else if (this.spec.qf.length == 0){
+            errors.push(new Error("état final manquant."))
+        }
         if (this.spec.trans.length == 0){
             errors.push(new Error("transitions manquantes."))
         }
