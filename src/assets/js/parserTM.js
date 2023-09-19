@@ -98,7 +98,8 @@ class TMParser {
             outputLn: 0,
             name: "",
             input_trans : false,
-            ndet : false
+            ndet : false,
+            eager : false
         }
         this.idx = 0
     }
@@ -111,7 +112,8 @@ class TMParser {
             outputLn: 0,
             name: "",
             input_trans : false,
-            ndet : false
+            ndet : false,
+            eager : false
         }
         this.idx = 0
     }
@@ -178,7 +180,8 @@ class TMParser {
                                             this.spec.qf,
                                             this.spec.trans,
                                             this.spec.output,
-                                            this.spec.name),
+                                            this.spec.name,
+                                            this.spec.eager),
                 ndet : this.spec.ndet
             }
         } else {
@@ -260,8 +263,8 @@ class QuickParser {
                 case "nom":
                     output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
                     break;
-                case "non-det":
-                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="bool">${parts[2]}</mark>${output}`
+                case "option":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
                     break;
                 default:
                     output = `<mark class="ppt err">${parts[1]}</mark><mark class="colon err">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`

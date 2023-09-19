@@ -903,14 +903,19 @@ class Simulator{
 
     upd_after_step(success){
         this.#run = false
-        this.#keeprunning = this.#keeprunning && success
+        
+        this.#finished = this.#forwards
+            && (((! this.#myenv.machine.eager) && this.#myenv.accepted )
+                || !success)
+        
+        this.#keeprunning = this.#keeprunning && success && !this.#finished
         this.#mytape.update(this.#myenv)
         this.#steps.innerHTML = this.#myenv.nb_steps
+        
         if (this.#keeprunning) {
             this.highlight_current()
             setTimeout(this.do_step.bind(this), this.#speedo.delay)
         } else{
-            this.#finished = this.#forwards && !success
             this.update_status()
             if(this.#finished){
                 this.notifyResult()

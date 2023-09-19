@@ -270,6 +270,18 @@ function formatBoolElt(elt){
         elt.falsify = "Cette valeur doit être un booléen."
     }
 }
+function formatOptElt(elt){
+    elt.value = elt.value.trim()
+    elt.semCat = 'plain-txt'
+    switch (elt.value){
+    case "non-det":
+    case "eager":
+        break;
+    default:
+        elt.falsify = "Cette option n'est pas reconnue."
+    }
+}
+
 function formatStateElt(elt){
     elt.value = elt.value.trim()
     elt.semCat = 'state'
@@ -363,7 +375,7 @@ function formatPptElt(elt){
     case "output":
     case "name":
     case "nom":
-    case "non-det":
+    case "option":
         break;
     default:
         elt.falsify = "Propritété inconnue."
@@ -411,15 +423,25 @@ function parseOptLn(line, spec){
                     spec.name = valN.value
                 }
                 break;
-            case "non-det":
-                let valND = line.toElt()
-                formatBoolElt(valND)
-                if (valND.ok) {
-                    spec.ndet = valND.value
+            case "option":
+                let valOpt = line.toElt()
+                formatOptElt(valOpt)
+                if (valOpt.ok){
+                    switch(valOpt.value){
+                    case "non-det":
+                        spec.ndet = true;
+                        break;
+                    case "eager":
+                        spec.eager = true;
+                        break;
+                    default:
+                        throw "Option inconnue"
+                        break;
+                    }
                 }
                 break;
             default:
-                throw "should not happen"
+                throw "Propriété inconnue"
                 break;
             }
         }

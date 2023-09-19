@@ -354,7 +354,7 @@ class Config {
 }
 
 class TuringMachine {
-    constructor(nb, q0, qf, tr, output=0, name="") {
+    constructor(nb, q0, qf, tr, output=0, name="", eager=false) {
         this.nb_tapes = nb;
         this.init = q0;
         this.finalStates = qf;
@@ -369,6 +369,7 @@ class TuringMachine {
             }
         }
         this.transitions = tr_map
+        this.eager = eager
     }
 
     get transList(){
@@ -438,7 +439,7 @@ class TuringMachine {
 
 class Automaton extends TuringMachine{
     constructor(q0,qf,trans,name=""){
-        super (1,q0,qf,[],0,name)
+        super (1,q0,qf,[],0,name,true)
         var tr_map = new Map();
         for (const t of trans){
             if (tr_map.has(t.in)){

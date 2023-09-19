@@ -81,6 +81,10 @@ class AutoParser {
         if (errors.length == 0){
             this.idx = 0
         }
+        if (this.spec.eager){
+            errors.push(new Error("l'option eager n'est pas disponible pour les automates."))
+            
+        }
         return errors
     }
 
@@ -156,8 +160,8 @@ class QuickAutoParser {
                 case "nom":
                     output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
                     break;
-                case "non-det":
-                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="bool">${parts[2]}</mark>${output}`
+                case "option":
+                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
                     break;
                 default:
                     output = `<mark class="ppt err">${parts[1]}</mark><mark class="colon err">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
