@@ -1,0 +1,9 @@
+<div class="machine-item">
+  <div class="icon">
+    <i class="fas fa-code"></i>
+  </div><div class="entry">
+    <div><a href={{include.machine.url | absolute_url}}>{{include.machine.title}}</a></div>
+    <div>{{include.machine.excerpt}}</div>
+    {% include auto-details.html machine = include.machine %}
+  </div>
+</div>
