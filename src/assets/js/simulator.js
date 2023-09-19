@@ -188,10 +188,8 @@ class TapeVis{
     #body
     #stateElt
     #tapeElts
-    #lockedView = true
-    #button
 
-    constructor(displayElt, nb, button){
+    constructor(displayElt, nb){
         this.#display = displayElt
         let table = document.createElement("table")
         this.#display.appendChild(table)
@@ -223,8 +221,6 @@ class TapeVis{
         for (var row, cell, i = 0; i < nb; i++){
             this.#tapeElts[i] = this.addRow(i)
         }
-            
-        this.button = button
     }
 
     addRow(i){
@@ -270,38 +266,6 @@ class TapeVis{
             this.#tapeElts[i] = this.addRow(i)
         }
     }
-
-    set button(button){
-        this.#button = button
-        this.#button.title = "Débloquer les rubans"
-        this.#button.icoClass = "fas fa-lock"
-        this.#button.onclick = this.toggleLock.bind(this)
-    }
-
-    toggleLock(){
-        this.#lockedView = ! this.#lockedView
-        this.updateView()
-    }
-
-    updateView(){
-        if(this.#lockedView){
-            this.#button.icoClass = "fas fa-lock"
-            this.#button.title = "Débloquer les rubans"
-            this.focus()
-        }else{
-          this.#button.icoClass = "fas fa-lock-open"
-          this.#button.title = "Centrer automatiquement les rubans"
-        }
-    }
-    
-    focus (){
-        if (this.#lockedView){
-            var bodyRect = this.#display.getBoundingClientRect(),
-                elemRect = this.#stateElt.getBoundingClientRect(),
-                offset = elemRect.left - bodyRect.left;
-            bodyRect.scrollLeft = offset
-      }
-    }
     
     update(myenv){
         let etat = myenv.etat,
@@ -318,7 +282,6 @@ class TapeVis{
             this.#tapeElts[i].future.innerHTML =
                 formatTape(content[i].future)
         }
-        this.focus()
     }
 
 }
@@ -629,8 +592,8 @@ class Simulator{
                                     "fas fa-stop", true)
         stopBtn.onclick = this.stop.bind(this)
         
-        let lockBtn = new SimButton(btnPanel, "Débloquer les rubans",
-                                    "fas fa-lock", true)
+        // let lockBtn = new SimButton(btnPanel, "Débloquer les rubans",
+        //                             "fas fa-lock", true)
         let sizeBtn = new SimButton(btnPanel, "Maximiser le simulateur",
                                     "fas fa-expand-arrows-alt", true)
         this.#sizeBtn = sizeBtn
@@ -650,7 +613,7 @@ class Simulator{
         let tapeDiv = document.createElement("div")
         tapeDiv.className = "table-tape section"
         this.#mainDisplay.appendChild(tapeDiv)
-        this.#mytape = new tapeClass(tapeDiv, 1, lockBtn)
+        this.#mytape = new tapeClass(tapeDiv, 1)
         
         let graphDiv = document.createElement("div")
         graphDiv.className = "graph-visualizer section"
