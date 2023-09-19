@@ -20,6 +20,26 @@ class SimButton {
         this.title = title
     }
 
+    disable(){
+        this.#button.disabled = true
+        this.#button.className = 'btn btn--inverse'
+    }
+
+    enable(){
+        this.#button.disabled = false
+        this.#button.className = 'btn btn--primary'
+    }
+
+    hide(){
+        this.disable()
+        this.#button.classList.add('hidden')
+    }
+
+    show(){
+        this.enable()
+        this.#button.classList.remove('hidden')
+    }
+    
     set title(txt){
         this.#button.title = txt
     }
@@ -308,7 +328,6 @@ class PopUp{
 #outer
 #title
 #status
-    
     constructor(elt, closable=true){
         this.#outer = elt
 
@@ -356,7 +375,7 @@ class PopUp{
     
     open() {
         this.#outer.classList.remove("hidden")
-        this.#outer.scrollIntoView()
+        // this.#outer.scrollIntoView()
     }
 
     close (){
@@ -525,10 +544,14 @@ class Simulator{
 #mytape
 #tmName
 #speedo
-#status
+#statusIco
+#dirIco
 #inputElts
 #navElt
+    
 #sizeBtn
+#runFBtn
+#runBBtn
     
 #run = false
 #keeprunning = false
@@ -571,10 +594,17 @@ class Simulator{
         let statusDiv = document.createElement("div")
         div.appendChild(statusDiv)
 
-        this.#status = document.createElement("i")
-        statusDiv.appendChild(this.#status)
-        this.#status.className = "fas fa-pause-circle"
-        
+        this.#statusIco = document.createElement("i")
+        statusDiv.appendChild(this.#statusIco)
+        this.#statusIco.className = "fas fa-pause"
+
+        let dirDiv = document.createElement("div")
+        div.appendChild(dirDiv)
+
+        this.#dirIco = document.createElement("i")
+        dirDiv.appendChild(this.#dirIco)
+        this.#dirIco.className = "fas fa-forward"
+
         
         let ctrl = document.createElement("div")
         ctrl.className = "control-panel"
@@ -583,18 +613,18 @@ class Simulator{
         let btnPanel = document.createElement("div")
         ctrl.appendChild(btnPanel)
         btnPanel.className = "elt button-panel"
-        let runbackBtn = new SimButton(btnPanel, "Rembobiner",
-                                       "fas fa-fast-backward", true)
-        runbackBtn.onclick = this.runback.bind(this)
+        this.#runBBtn = new SimButton(btnPanel, "Rembobiner",
+                                      "fas fa-fast-backward", true)
+        this.#runBBtn.onclick = this.runback.bind(this)
         let backBtn = new SimButton(btnPanel, "Étape précédente",
                                     "fas fa-step-backward", true)
         backBtn.onclick = this.back.bind(this)
         let stepBtn = new SimButton(btnPanel, "Étape suivante",
                                     "fas fa-step-forward", true)
         stepBtn.onclick = this.step.bind(this)
-        let runBtn = new SimButton(btnPanel, "Exécuter",
+        this.#runFBtn = new SimButton(btnPanel, "Exécuter",
                                    "fas fa-fast-forward", true)
-        runBtn.onclick = this.run.bind(this)
+        this.#runFBtn.onclick = this.run.bind(this)
         let stopBtn = new SimButton(btnPanel, "Arrêter l'exécution",
                                     "fas fa-stop", true)
         stopBtn.onclick = this.stop.bind(this)
@@ -621,7 +651,7 @@ class Simulator{
         tapeDiv.className = "table-tape section"
         this.#mainDisplay.appendChild(tapeDiv)
         this.#mytape = new tapeClass(tapeDiv, 1, lockBtn)
-
+        
         let graphDiv = document.createElement("div")
         graphDiv.className = "graph-visualizer section"
         this.#mainDisplay.appendChild(graphDiv)
@@ -665,10 +695,12 @@ class Simulator{
                         }else{
                             this.closeNotif()
                         }
-                    } else if (this.active && (!this.#keeprunning) && event.key === ' '){
+                    } else if (event.key === ' '){
                         event.preventDefault()
-                        if (this.#forwards) this.step()
-                        else this.back()
+                        if (this.active && (!this.#keeprunning)){
+                            if (this.#forwards) this.step()
+                            else this.back()
+                        }
                     } else if (event.key === '+') {
                         event.preventDefault()
                         this.speedUp()
@@ -702,6 +734,7 @@ class Simulator{
                                && event.key === 'ArrowLeft') {
                         event.preventDefault()
                         this.#forwards = false
+                        this.update_status()
                     } else if (this.#navElt.hidden
                                && (!this.#forwards)
                                && this.#keeprunning
@@ -714,6 +747,7 @@ class Simulator{
                                && event.key === 'ArrowRight') {
                         event.preventDefault()
                         this.#forwards = true
+                        this.update_status()
                     } else if (this.#navElt.hidden
                                && (!this.#forwards)
                                && event.key === 'ArrowLeft') {
@@ -782,6 +816,7 @@ class Simulator{
 
     run(){
         if (!this.#keeprunning && !this.#run){
+            this.#runFBtn.disable()
             this.#forwards = true
             this.#keeprunning = true
             this.update_status()
@@ -799,6 +834,7 @@ class Simulator{
 
     runback(){
         if (!this.#keeprunning && !this.#run){
+            this.#runBBtn.disable()
             this.#forwards = false
             this.#keeprunning = true
             this.update_status()
@@ -809,6 +845,8 @@ class Simulator{
     stop(){
         this.#run = false
         this.#keeprunning = false
+        this.#runBBtn.enable()
+        this.#runFBtn.enable()
     }
 
     get active(){
@@ -837,22 +875,31 @@ class Simulator{
     }
 
     update_status(){
-        this.#status.classList.remove('fa-check-circle')
-        this.#status.classList.remove('fa-times-circle')
-        this.#status.classList.remove('fa-pause-circle')
-        this.#status.classList.remove('fa-spin')
-        this.#status.classList.remove('fa-cog')
+        this.#statusIco.classList.remove('fa-check')
+        this.#statusIco.classList.remove('fa-times')
+        this.#statusIco.classList.remove('fa-pause')
+        this.#statusIco.classList.remove('fa-spin')
+        this.#statusIco.classList.remove('fa-cog')
+        if(this.#forwards){
+            this.#dirIco.classList.remove('fa-backward')
+            this.#dirIco.classList.add('fa-forward')
+        } else {
+            this.#dirIco.classList.remove('fa-forward')
+            this.#dirIco.classList.add('fa-backward')
+        }
         if (this.#run || this.#keeprunning){
-            this.#status.classList.add('fa-spin')
-            this.#status.classList.add('fa-cog')
+            this.#statusIco.classList.add('fa-spin')
+            this.#statusIco.classList.add('fa-cog')
         } else if (this.#finished){
+            this.#runBBtn.enable()
+            this.#runFBtn.enable()
             if (this.#myenv.accepted){
-                this.#status.classList.add('fa-check-circle')
+                this.#statusIco.classList.add('fa-check')
             } else { 
-                this.#status.classList.add('fa-times-circle')
+                this.#statusIco.classList.add('fa-times')
             }
         } else {
-            this.#status.classList.add('fa-pause-circle')
+            this.#statusIco.classList.add('fa-pause')
         }
         this.highlight_current()
     }
@@ -924,7 +971,7 @@ class Simulator{
     }
     
     notifyResult(){
-        this.#popup.activate("Exécution terminée :", this.#status.className,
+        this.#popup.activate("Exécution terminée :", this.#statusIco.className,
                              this.#myenv.outputMsg)
     }
 
