@@ -35,7 +35,8 @@ button.btn.txt i, i.txt{
 }
 
 .machine-details > div{
-    display:inline-block
+    display:inline-block;
+    margin-right:.25em
 }
 
 .machine-item > div{
