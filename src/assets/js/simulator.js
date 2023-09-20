@@ -69,8 +69,7 @@ const speeds = [["très lente", 2000],
 
 class Speedo{
     #delay
-    #slider
-    #speedtxt
+    #speedSelect
     
     constructor(elt, properElt = false, speed = 1000){
         this.#delay = speed
@@ -84,51 +83,41 @@ class Speedo{
         
         outer.className = "speedo"
 
-        let out = document.createElement("div")
+        let out = document.createElement("label")
         outer.appendChild(out)
         out.className = "elt"
         let ico = document.createElement("i")
         out.appendChild(ico)
         ico.className = "fas fa-tachometer-alt"
-        out.innerHTML += " vitesse :"
-        this.#speedtxt = document.createElement("div")
-        out.appendChild(this.#speedtxt)
-        this.#speedtxt.className = "speedtxt"
+        out.innerHTML += "vitesse"
 
-        this.#slider = document.createElement("input")
-        outer.appendChild(this.#slider)
+        out.setAttribute("for","speed-select")
+
+        this.#speedSelect = document.createElement("select")
+        outer.appendChild(this.#speedSelect)
         
-        this.#slider.className = "speedo"
-        this.#slider.setAttribute("type","range")
-        this.#slider.setAttribute("list","speeds")
-        this.#slider.setAttribute("min","0")
-        this.#slider.setAttribute("max",`${speeds.length - 1}`)
-        this.#slider.setAttribute("value","2")
-
-
-        let speedDataList = document.createElement("datalist")
-        speedDataList.id = "speeds"
-        outer.appendChild(speedDataList)
+        this.#speedSelect.id = "speed-select"
+        
         let i = 0
         for (const s of speeds){
             let opt = document.createElement("option")
-            speedDataList.appendChild(opt)
+            this.#speedSelect.appendChild(opt)
             
             opt.setAttribute("value", `${i}`)
             opt.setAttribute("label", `${s[0]}`)
             i += 1
         }
 
-        this.#slider.onchange = this.update.bind(this)
-
+        this.#speedSelect.onchange = this.update.bind(this)
+        this.#speedSelect.value = 2
+        
         this.update()
     }
 
     update (){
-        let value = Math.trunc(this.#slider.value)
+        let value = Math.trunc(this.#speedSelect.value)
         if (0 <= value && value < speeds.length){
             this.#delay = speeds[value][1]
-            this.#speedtxt.innerHTML = speeds[value][0]
         }
     }
 
@@ -137,17 +126,17 @@ class Speedo{
     }
 
     increment(){
-        let lvl = Math.trunc(this.#slider.value)
+        let lvl = Math.trunc(this.#speedSelect.value)
         if (lvl < speeds.length - 1){
-            this.#slider.value = lvl + 1
+            this.#speedSelect.value = lvl + 1
             this.update()
         }
     }
 
     decrement(){
-        let lvl = Math.trunc(this.#slider.value)
+        let lvl = Math.trunc(this.#speedSelect.value)
         if (lvl > 0){
-            this.#slider.value = lvl - 1
+            this.#speedSelect.value = lvl - 1
             this.update()
         }
     }

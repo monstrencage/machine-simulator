@@ -331,15 +331,24 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
     display: block;
 }
 
-#simulator .speedtxt{
-    display: inline;
-    margin-left:.5em;
+#simulator div.speedo {
+    width: fit-content;
+    display: block;
 }
 
-.speedo {
-    /* width: 20em; */
-    display: block;
-    margin:auto;
+#simulator .speedo label::after{
+    content: " : "
+}
+#simulator .speedo .elt i {
+    margin-right: .25em;
+}
+#simulator .speedo label.elt{
+    width:fit-content;
+    display:inline-block;
+    margin: 0 .25em 0 0;
+}
+#simulator .speedo select{
+    display:inline-block
 }
 
 #simulator .status-panel * {
@@ -379,7 +388,7 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
 
 #simulator .fullscreen .control-panel,
 #simulator .fullscreen .control-panel .elt,
-.fullscreen .speedo {
+.fullscreen div.speedo {
     display: inline-block;
     vertical-align: middle;
 }
