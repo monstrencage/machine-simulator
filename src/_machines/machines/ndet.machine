@@ -5,7 +5,7 @@ init    : q0      // Voici comment on définit
 accept  : q2      // et l'état final.
 output  : 2       // (optionnel)
                   // Indique le ruban de sortie.
-non-det : oui     // Indique une machine non-déterministe. 
+option  : non-det // Indique une machine non-déterministe. 
 
 // Ensuite, viennnent les transitions:
 q0,a,_     // condition d'activation

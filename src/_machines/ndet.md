@@ -6,4 +6,5 @@ excerpt: Exemple de machine non-déterministe
 etats: 5
 rubans: 2
 
+ndet: true
 ---
