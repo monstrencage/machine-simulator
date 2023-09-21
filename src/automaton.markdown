@@ -3,6 +3,9 @@ title: Simulateur d'automates
 
 layout: splash
 
+permalink: /automate/
+
+
 header:
   overlay_image: /assets/images/machine-wires-short.jpg
   caption: "[Turing machine in Bletchley Park](https://www.flickr.com/photos/douglashoyt/8235850748) by [Douglas Hoyt](https://www.flickr.com/photos/douglashoyt/), licensed under [CC BY-NC-ND 2.0](https://creativecommons.org/licenses/by-nc-nd/2.0/)"

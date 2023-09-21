@@ -1,6 +1,8 @@
 main:
-  - title: "Simulateur"
+  - title: "Machines de Turing"
     url: "/"
+  - title: "Automates"
+    url: "/automate/"
   - title: "Exemples"
     url: "/machines/"
   - title: "Aide"
