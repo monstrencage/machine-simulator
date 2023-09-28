@@ -15,21 +15,25 @@ custom_css:
 <h2> Machines de Turing</h2>
 
 {% for m in machines %}
-{% if m.type %}
-{% unless m.type == "automate" %}
+{%- unless m.hidden -%}
+{%- if m.type -%}
+{%- unless m.type == "automate" -%}
 {% include machine-item.html machine = m %}
-{% endunless %} 
-{% else %}
-{% include machine-item.html machine = m %}
-{% endif %}
+{%- endunless -%} 
+{%- else -%}
+{% include machine-item.html machine = m -%}
+{%- endif -%}
+{%- endunless -%}
 {% endfor %}
 
 <h2> Automates </h2>
 
 {% for m in machines %}
-{% if m.type %}
-{% if m.type == "automate" %}
-{% include auto-item.html machine = m %}
-{% endif %} 
-{% endif %}
+{%- unless m.hidden -%}
+{%- if m.type -%}
+{%- if m.type == "automate" -%}
+{% include auto-item.html machine = m -%}
+{%- endif -%} 
+{%- endif -%}
+{%- endunless -%}
 {% endfor %}
