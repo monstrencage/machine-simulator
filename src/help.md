@@ -135,7 +135,7 @@ Les explications ci-dessus couvrent la spécification de machines de Turing. Les
 
 ### En-tête
 
-Les options `sortie/output` et `option: eager` ne sont pas disponibles pour les automates.
+Les options `sortie/output` et `option: eager` ne sont pas disponibles pour les automates, pas plus que l'option `half tape/demi ruban`. 
 
 ### Transitions
 
