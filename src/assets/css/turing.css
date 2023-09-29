@@ -439,7 +439,21 @@ textarea, input, .machine-src .src-display, .machine-src textarea {
 
 
 
- /* tapes */
+/* tapes */
+
+.table-tape tr.tape.half, .table-tape td.tape.half {
+background: unset;
+padding: 0;
+}
+
+.half > .content {
+background: #263238;
+display: inline-block;
+vertical-align: baseline;
+text-align: end;
+padding: .25em;
+}
+
 .table-tape.section {
     position: relative;
     width:  100%;

@@ -37,11 +37,16 @@ function prtset(s){
 
 
 class InfStack{
+    
     constructor(init = '', forward = true){
         this.forward = forward
         this.content = init.split('')
     }
 
+    get empty(){
+        return false
+    }
+    
     pop (){
         if (this.content.length > 0){
             if (this.forward){
@@ -65,9 +70,50 @@ class InfStack{
     }
 }
 
+
+class Stack{
+    
+    constructor(init = '', forward = true){
+        this.forward = forward
+        this.content = init.split('')
+    }
+
+    get empty(){
+        return (this.content.length == 0)
+    }
+
+    pop (){
+        if (this.content.length > 0){
+            if (this.forward){
+                return this.content.shift()
+            } else {
+                return this.content.pop()
+            }
+        } else {
+            return false
+        }
+    }
+    push (s){
+        if (this.forward){
+            return this.content.unshift(s)
+        } else {
+            return this.content.push(s)
+        }
+    }
+    get string (){
+        return this.content.map(print_symb).join('')
+    }
+}
+
 class Tape {
-    constructor(init=''){
-        this.past = new InfStack('', false)
+    #biInfinite
+    constructor(init='', biInfinite=true){
+        this.#biInfinite = biInfinite
+        if (this.#biInfinite){
+            this.past = new InfStack('', false)
+        } else {
+            this.past = new Stack('', false)
+        }
         if (init.length > 0){
             this.current = init[0]
         } else {
@@ -88,11 +134,21 @@ class Tape {
         this.current = s
     }
 
+    testMove(direction){
+        if(this.#biInfinite || direction != "<"){
+            return true
+        } else {
+            return (! this.past.empty)
+        }   
+    }
+
     move(direction){
         switch(direction){
         case "-":
             break;
         case "<":
+            if (!this.#biInfinite)
+                if (this.past.empty) break;
             this.future.push(this.current)
             this.current = this.past.pop()
             break;
@@ -109,17 +165,22 @@ class Tape {
         return {
             past : this.past.string,
             present: print_symb(this.currentSymb),
-            future: this.future.string
+            future: this.future.string,
+            biInfinite:this.#biInfinite
         }
     }
 
     get repr (){
-        return `${this.past.string} >${print_symb(this.currentSymb)}< ${this.future.string}`
+        if (this.#biInfinite){
+            return `${this.past.string} >${print_symb(this.currentSymb)}< ${this.future.string}`
+        } else {
+            return `|-${this.past.string} >${print_symb(this.currentSymb)}< ${this.future.string}`
+        }
     }
 
     static from_object (obj){
         // console.log(Object.keys(obj))
-        let tape = new Tape()
+        let tape = new Tape('', obj.biInfinite)
         tape.past = new InfStack(obj.past,false)
         if (obj.present == ' '){
             tape.current = '_'
@@ -219,19 +280,22 @@ class Transition {
 }
 
 class Config {
-    constructor(q0, w, nb_tapes) {
-        if (nb_tapes < 1) {
+    constructor(q0, w, tapes) {
+        if (tapes.length < 1) {
             throw new TuringException(`Bad number of tapes : ${nb_tapes}`);
         }
         this.etat_courant = q0;
         this.inputword = w
-        
-        this.tapes = [new Tape(w)];
 
-        for (var i = 0; i < nb_tapes - 1; i ++) {
-            this.tapes.push(new Tape());
+        this.tapes = []
+
+        for (var i = 0; i < tapes.length; i++){
+            if (i == 0)
+                this.tapes.push(new Tape(w, tapes[i]));
+            else
+                this.tapes.push(new Tape('', tapes[i]));
         }
-
+       
     }
 
     get repr(){
@@ -289,13 +353,17 @@ class Config {
         this.etat_courant = q;
     }
 
-    reset(q0, w){
-        let nb_tapes = this.tapes.length
+    reset(q0, w, tapes){
+        // console.log(tapes)
         this.etat_courant = q0;
         this.inputword = w
-        this.tapes = [new Tape(w)];
-        for (var i = 0; i < nb_tapes - 1; i ++) {
-            this.tapes.push(new Tape());
+        let tape = new Tape()
+        for (var i = 0; i < tapes.length; i++) {
+            if (i == 0)
+                tape = new Tape(w, tapes[i])
+            else
+                tape = new Tape('', tapes[i])
+            this.tapes[i] = tape;
         }
         
     }
@@ -310,6 +378,8 @@ class Config {
             for(var i = 0; i<nb;i++){
                 if (tr.symbols_read[i] != curr[i]){
                     // alert(`difference found between ${[(tr.etat_read,tr.symbols_read),(cnf.etat, cnf.currentSymbs)]}, on tape ${i}`)
+                    return false
+                } else if (! this.tapes[i].testMove(tr.writes[i][1])){
                     return false
                 }
             }
@@ -354,8 +424,9 @@ class Config {
 }
 
 class TuringMachine {
-    constructor(nb, q0, qf, tr, output=0, name="", eager=false) {
-        this.nb_tapes = nb;
+    constructor(tapes, q0, qf, tr, output=0, name="", eager=false) {
+        this.nb_tapes = tapes.length;
+        this.tapes = tapes;
         this.init = q0;
         this.finalStates = qf;
         this.output = output
@@ -439,7 +510,7 @@ class TuringMachine {
 
 class Automaton extends TuringMachine{
     constructor(q0,qf,trans,name=""){
-        super (1,q0,qf,[],0,name,true)
+        super ([true],q0,qf,[],0,name,true)
         var tr_map = new Map();
         for (const t of trans){
             if (tr_map.has(t.in)){
@@ -474,7 +545,7 @@ function invDir(direction){
 
 class TuringEnv extends Config {
     constructor(tm, w) {
-        super(tm.init, w, tm.nb_tapes);
+        super(tm.init, w, tm.tapes);
         this.machine = tm;
         this.nb_steps = 0;
         this.accepted = tm.finalStates.includes(tm.init);
@@ -504,6 +575,8 @@ class TuringEnv extends Config {
                     default:
                         break;
                     }
+                    ok = ok && this.tapes[i].testMove(tr.writes[i][1])
+                        
                     i++
                 }
                 // console.log(ok)
@@ -594,6 +667,8 @@ class TuringEnv extends Config {
                     default:
                         break;
                     }
+                                        
+                    ok = ok && this.tapes[i].testMove(tr.writes[i][1])
                     i++
                 }
                 if (ok){
@@ -636,7 +711,7 @@ this.nb_steps=${this.nb_steps}`)
     reset(w){
         this.history = new Array();
         this.nb_steps = 0;
-        super.reset(this.machine.init, w);
+        super.reset(this.machine.init, w, this.machine.tapes);
         this.upd_accepted();
         this.timed_out = false;
     }

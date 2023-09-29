@@ -1,4 +1,9 @@
-
+class TapeSpec{
+    constructor(bi = true){
+        this.biInfinite = true
+    }
+}
+    
 class Error{
     #line = 0;
     #txt;
@@ -373,6 +378,8 @@ function formatPptElt(elt){
     case "final":
     case "sortie":
     case "output":
+    case "demi ruban":
+    case "half tape":
     case "name":
     case "nom":
     case "option":
@@ -415,6 +422,15 @@ function parseOptLn(line, spec){
                     spec.outputLn = line.index
                 }
                 break;
+            case "demi ruban":
+            case "half tape":
+                let valH = line.toElt()
+                formatIntElt(valH)
+                if (valH.ok) {
+                    spec.half_tapes.push(valH.value)
+                }
+                break;
+                
             case "name":
             case "nom":
                 let valN = line.toElt()

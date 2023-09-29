@@ -99,7 +99,8 @@ class TMParser {
             name: "",
             input_trans : false,
             ndet : false,
-            eager : false
+            eager : false,
+            half_tapes : new Array()
         }
         this.idx = 0
     }
@@ -113,7 +114,8 @@ class TMParser {
             name: "",
             input_trans : false,
             ndet : false,
-            eager : false
+            eager : false,
+            half_tapes : new Array()
         }
         this.idx = 0
     }
@@ -121,6 +123,7 @@ class TMParser {
 
     processLine(str){
         this.idx += 1
+        // console.log(`parsing ${this.idx}`)
         let line = new Line(this.idx, str)
         let ok = parseEmpty(line)
         if (!ok){
@@ -174,8 +177,17 @@ class TMParser {
 
     get value(){
         if (this.idx == 0){
+            let tapes = new Array()
+            for (var i = 1; i <= this.spec.nb; i++){
+                if (this.spec.half_tapes.includes(i)){
+                    tapes.push(false)
+                } else {
+                    tapes.push(true)
+                }
+            }
+            
             return {
-                machine : new TuringMachine(this.spec.nb,
+                machine : new TuringMachine(tapes,
                                             this.spec.q0,
                                             this.spec.qf,
                                             this.spec.trans,
@@ -257,15 +269,15 @@ class QuickParser {
                     break;
                 case "sortie":
                 case "output":
+                case "demi ruban":
+                case "half tape":
                     output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="int">${parts[2]}</mark>${output}`
                     break;
                 case "name":
                 case "nom":
-                    output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
-                    break;
                 case "option":
                     output = `<mark class="ppt">${parts[1]}</mark><mark class="colon">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
-                    break;
+                    break;   
                 default:
                     output = `<mark class="ppt err">${parts[1]}</mark><mark class="colon err">:</mark><mark class="plain-txt">${parts[2]}</mark>${output}`
                     err = true

@@ -178,7 +178,7 @@ class TapeVis{
     #stateElt
     #tapeElts
 
-    constructor(displayElt, nb){
+    constructor(displayElt, tapes){
         this.#display = displayElt
         let table = document.createElement("table")
         this.#display.appendChild(table)
@@ -186,7 +186,7 @@ class TapeVis{
         table.appendChild(this.#body)
         this.#body.className = "simulator-frame"
 
-        this.#tapeElts = new Array(nb)
+        this.#tapeElts = new Array()
         
         let rowHead = document.createElement("tr")
         rowHead.className = "head-row"
@@ -207,12 +207,12 @@ class TapeVis{
 
         rowHead.appendChild(document.createElement("td"))
 
-        for (var row, cell, i = 0; i < nb; i++){
-            this.#tapeElts[i] = this.addRow(i)
+        for (var row, cell, i = 0; i < tapes.length; i++){
+            this.#tapeElts.push(this.addRow(i,tapes[i]))
         }
     }
 
-    addRow(i){
+    addRow(i, biInf=true){
         var row, cell
         if(i > 0){
             row = document.createElement("tr")
@@ -223,12 +223,24 @@ class TapeVis{
         row = document.createElement("tr")
         // row.id = `tape-${i}`
         row.className = "tape"
+        if (! biInf) row.classList.add("half")
+
         this.#body.appendChild(row)
         cell = document.createElement("td")
-        // cell.id = `past-${i}`
         cell.className = "tape past-tape"
         row.appendChild(cell)
-        tapeRef.past = cell
+       
+        // cell.id = `past-${i}`
+        if (! biInf){
+            cell.classList.add("half");
+            let fill = document.createElement("span")
+            fill.className = "filler"
+            cell.appendChild(fill)
+            let past = document.createElement("span")
+            past.className = "content"
+            cell.appendChild(past)
+            tapeRef.past = past
+        } else tapeRef.past = cell;
         
         cell = document.createElement("td")
         // cell.id = `current-${i}`
@@ -250,9 +262,9 @@ class TapeVis{
         let nb = myenv.machine.nb_tapes
         for (const t of this.#body.querySelectorAll("tr.tape, tr.filler"))
             t.remove()
-        this.#tapeElts = new Array(nb)
+        this.#tapeElts = new Array()
         for (var row, cell, i = 0; i < nb; i++){
-            this.#tapeElts[i] = this.addRow(i)
+            this.#tapeElts.push(this.addRow(i,myenv.machine.tapes[i]))
         }
     }
     
@@ -261,15 +273,20 @@ class TapeVis{
             tapes = myenv.tapes
         
         this.#stateElt.innerHTML = etat
-        var content =  tapes.map(function (t) {return t.content})
 
         for (var i = 0; i < this.#tapeElts.length; i++){
-            this.#tapeElts[i].past.innerHTML =
-                formatTape(content[i].past)
+            if ((! myenv.machine.tapes[i]) && tapes[i].past.empty){
+                    this.#tapeElts[i].past.innerHTML = ""
+                    this.#tapeElts[i].past.classList.add("hidden")
+            } else {
+                this.#tapeElts[i].past.classList.remove("hidden")
+                this.#tapeElts[i].past.innerHTML =
+                    formatTape(tapes[i].content.past)
+            }
             this.#tapeElts[i].current.innerHTML =
-                formatSymb(content[i].present)
+                formatSymb(tapes[i].content.present)
             this.#tapeElts[i].future.innerHTML =
-                formatTape(content[i].future)
+                formatTape(tapes[i].content.future)
         }
     }
 
@@ -602,7 +619,7 @@ class Simulator{
         let tapeDiv = document.createElement("div")
         tapeDiv.className = "table-tape section"
         this.#mainDisplay.appendChild(tapeDiv)
-        this.#mytape = new tapeClass(tapeDiv, 1)
+        this.#mytape = new tapeClass(tapeDiv, [true])
         
         let graphDiv = document.createElement("div")
         graphDiv.className = "graph-visualizer section"
@@ -748,6 +765,9 @@ class Simulator{
         this.stop()
         this.#inputword = str
         this.#myenv.reset(this.#inputword)
+        // for(const t of this.#myenv.tapes){
+        //     console.log(t.repr)
+        // }
         this.#finished = this.#myenv.accepted
         this.#steps.innerHTML = this.#myenv.nb_steps
         this.#mytape.update(this.#myenv)

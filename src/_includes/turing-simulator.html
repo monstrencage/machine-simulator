@@ -63,10 +63,14 @@
 
   function compile (){
       let output = editor.value
+      // console.log('editor done')
       if (output){
           simulator.machine = output.machine
+          // console.log('machine done')
           simulator.ndet = output.ndet
+          // console.log('ndet done')
           simulator.load();
+          // console.log('load done')
       }
       editor.stopCompile()
   }
