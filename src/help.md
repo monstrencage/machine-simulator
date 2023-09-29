@@ -41,6 +41,7 @@ Les propriétés prises en charge (pour le moment) sont les suivantes :
 - `option` (optionnel) : permet de spécifier des options supplémentaires. Il est possible d'utiliser plusieurs déclarations d'option dans la même machine. Les options supportées pour le moment sont:
   - `non-det` : interprète la machine de manière non-déterministe. Quand plusieurs transitions sont disponibles, une pop-up demande à l'utilisateur de choisir laquelle exécuter. Quand la machine est bloquée, le simulateur retournera au choix le plus récent, et demandera à l'utilisateur de changer son choix. Ainsi la machine effectue un parcours en profondeur de l'arbre d'exécution, avec l'utilisateur comme oracle pour choisir l'ordre d'exploration à chaque noeud.
   - `eager` : modifie la condition d'acceptation de la machine. En l'absence de cette option, une machine s'arrète dès qu'elle visite un état acceptant, ou bien si elle est bloquée. Lorsque l'option `eager` est activée, la machine ne s'arrète que si elle est bloquée : le passage par un état acceptant ne suffit pas à accepter l'entrée s'il n'est que transitoire.
+- `half tape/demi ruban` (optionnel) : indique qu'un ruban n'est infini que d'un côté (indexé par les entier naturels et pas par les entiers relatifs). La valeur de cette propriété doit être un entier compris entre 1 et le nombre de rubans de la machine. Par exemple, pour une machine à trois rubans, les valeurs possibles sont 1, 2, et 3.
 
 ## Transitions
 Après l'en-tête, le compilateur cherche une liste de transitions.
