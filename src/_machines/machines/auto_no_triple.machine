@@ -1,0 +1,25 @@
+nom : Pas de triple lettre
+init : 0
+final : 0, 1a, 1b, 2a, 2b
+
+0,a,1a
+
+0,b,1b
+
+1a,a,2a
+
+1a,b,1b
+
+1b,a,1a
+
+1b,b,2b
+
+2a,a,puit
+
+2a,b,1b
+
+2b,a,1a
+
+2b,b,puit
+
+puit,[ab],puit

@@ -1,0 +1,19 @@
+nom : Commence par `ab` et finit par `bb` (det)
+init : 0
+final : 4
+
+0,a,1
+
+1,b,2
+
+2,a,3
+
+2,b,4
+
+3,a,3
+
+3,b,2
+
+4,a,3
+
+4,b,4

@@ -1,0 +1,12 @@
+nom : Motif bb (ndet)
+init : 0
+final : bb
+option: non-det
+
+0,[ab],0
+
+0,b,b
+
+b,b,bb
+
+bb,[ab],bb

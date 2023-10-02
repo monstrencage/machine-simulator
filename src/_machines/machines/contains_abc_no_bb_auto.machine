@@ -1,0 +1,28 @@
+nom        : Contient le sous-mot aab et finit par b
+initial    : e
+final      : abc, abc'
+
+
+e,a,a
+e,b,b
+e,c,e
+
+a,a,a
+a,b,ab
+a,c,e
+
+b,a,a
+b,b,bb
+b,c,e
+
+ab,a,a
+ab,b,bb
+ab,c,abc
+
+bb,[abc],bb
+
+abc,[ac],abc
+abc,b,abc'
+
+abc',[ac],abc
+abc',b,bb

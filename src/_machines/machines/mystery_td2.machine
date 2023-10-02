@@ -1,0 +1,40 @@
+nom        : Machine mystère
+initial    : q0
+final      : q6
+demi ruban : 1
+
+q0,_
+q1,_,>
+
+q1,a
+q2,x,>
+
+q1,y
+q5,y,>
+
+q1,_
+q6,_,-
+
+q2,[ay]
+q2,$1,>
+
+q2,b
+q3,y,>
+
+q3,[bz]
+q3,$1,>
+
+q3,c
+q4,z,<
+
+q4,[abyz]
+q4,$1,<
+
+q4,x
+q1,x,>
+
+q5,[yz]
+q5,$1,>
+
+q5,_
+q6,_,-

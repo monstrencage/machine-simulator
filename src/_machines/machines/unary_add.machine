@@ -1,0 +1,29 @@
+nom : Addition unaire
+initial : Ai
+final : A4
+demi ruban: 1
+sortie : 1
+
+Ai,_
+A0,_,>
+
+A0,a
+A0,a,>
+
+A0,b
+A1,a,>
+
+A1,a
+A1,a,>
+
+A1,_
+A2,_,<
+
+A2,a
+A3,_,<
+
+A3,a
+A3,a,<
+
+A3,_
+A4,_,-

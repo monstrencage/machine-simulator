@@ -1,0 +1,20 @@
+nom : Incrément binaire
+initial : Ii
+final : I2
+demi ruban: 1
+sortie : 1
+
+Ii,_
+I0,_,>
+
+I0,1
+I0,0,>
+
+I0,[0_]
+I1,1,<
+
+I1,0
+I1,0,<
+
+I1,_
+I2,_,-

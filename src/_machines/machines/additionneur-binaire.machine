@@ -1,7 +1,8 @@
-nom     : Add2 
-initial : i
-final   : ok
-sortie  : 1
+nom        : Add2 
+initial    : i
+final      : ok
+sortie     : 1
+demi ruban : 1
 
 // i
 i,_
@@ -216,7 +217,7 @@ copy(x=1),x,<
 cleanup(x=0),_
 rmx,_,<
 
-cleanup(x=1),[01]
+cleanup(x=1),[01x]
 cleanup(x=1),$1,>
 
 cleanup(x=1),_

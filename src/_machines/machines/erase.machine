@@ -1,0 +1,41 @@
+nom        : Efface le premier symbole
+initial    : i
+final      : ok
+sortie     : 1
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,[ab]
+1,?,>
+
+1,[ab]
+1,$1,>
+
+1,_
+2,_,<
+
+2,a
+2a,_,<
+
+2,b
+2b,_,<
+
+2a,a
+2a,a,<
+
+2a,b
+2b,a,<
+
+2a,?
+ok,a,<
+
+2b,a
+2a,b,<
+
+2b,b
+2b,b,<
+
+2b,?
+ok,b,<

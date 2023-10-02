@@ -1,0 +1,36 @@
+nom        : Contient le sous-mot aab et finit par b
+initial    : i
+final      : ok
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,a
+1,a,>
+
+0,b
+0,b,>
+
+1,a
+2,a,>
+
+1,b
+0,b,>
+
+2,a
+1,a,>
+
+2,b
+3,b,>
+
+3,[ab]
+3,$1,>
+
+3,_
+4,_,<
+
+4,b
+ok,b,>
+
+

@@ -1,0 +1,16 @@
+nom : Commence par `ab` et finit par `bb` (ndet)
+init : 0
+final : 4
+option : non-det
+
+0,a,1
+
+1,b,2
+
+1,b,3
+
+2,[ab],2
+
+2,b,3
+
+3,b,4

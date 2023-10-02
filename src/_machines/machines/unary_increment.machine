@@ -1,0 +1,20 @@
+nom : Incrément unaire
+initial : Ii
+final : I2
+demi ruban: 1
+sortie : 1
+
+Ii,_
+I0,_,>
+
+I0,a
+I0,a,>
+
+I0,_
+I1,a,<
+
+I1,a
+I1,a,<
+
+I1,_
+I2,_,-

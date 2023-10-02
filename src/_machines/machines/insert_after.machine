@@ -1,0 +1,20 @@
+nom        : Insère un a à droite
+initial    : i
+final      : ok
+sortie     : 1
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,[ab]
+0,$1,>
+
+0,_
+1,a,<
+
+1,[ab]
+1,$1,<
+
+1,_
+ok,_,-

@@ -1,0 +1,20 @@
+nom : Zéro unaire
+initial : Zi
+final : Z2
+demi ruban: 1
+sortie : 1
+
+Zi,_
+Z0,_,>
+
+Z0,a
+Z0,a,>
+
+Z0,_
+Z1,_,<
+
+Z1,a
+Z1,_,<
+
+Z1,_
+Z2,_,-

@@ -1,0 +1,23 @@
+nom : Zéro binaire
+initial : Zi
+final : Z3
+demi ruban: 1
+sortie : 1
+
+Zi,_
+Z0,_,>
+
+Z0,[01]
+Z0,$1,>
+
+Z0,_
+Z1,_,<
+
+Z1,[01]
+Z1,_,<
+
+Z1,_
+Z2,_,>
+
+Z2,_
+Z3,0,<

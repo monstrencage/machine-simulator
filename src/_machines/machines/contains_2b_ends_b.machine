@@ -1,0 +1,24 @@
+nom        : a&#42;ba&#42;b
+initial    : i
+final      : ok
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,a
+0,a,>
+
+0,b
+1,b,>
+
+1,a
+1,a,>
+
+1,b
+2,b,>
+
+2,_
+ok,-,>
+
+

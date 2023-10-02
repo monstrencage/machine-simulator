@@ -1,0 +1,26 @@
+nom        : Échanger les a et les b
+initial    : i
+final      : ok
+sortie     : 1
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,a
+0,b,>
+
+0,b
+0,a,>
+
+0,c
+0,c,>
+
+0,_
+1,_,<
+
+1,[abc]
+1,$1,<
+
+1,_
+ok,_,-

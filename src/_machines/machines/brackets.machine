@@ -1,0 +1,28 @@
+nom        : Mots bien parenthèsés
+initial    : i
+final      : ok
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,[a(]
+0,$1,>
+
+0,)
+1,a,<
+
+0,_
+2,_,<
+
+1,a
+1,a,<
+
+1,(
+0,a,>
+
+2,a
+2,_,<
+
+2,_
+ok,_,-

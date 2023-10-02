@@ -1,0 +1,11 @@
+nom : Nombre impair de a
+init : even
+final : odd
+
+even,a,odd
+
+even,b,even
+
+odd,a,even
+
+odd,b,odd

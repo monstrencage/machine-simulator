@@ -1,0 +1,39 @@
+nom        : Contient le sous-mot abc et mais pas bb
+initial    : i
+final      : ok
+demi ruban : 1
+option     : non-det
+
+i,_
+0,_,>
+
+0,[abc]
+0,$1,>
+
+0,a
+1,a,>
+
+1,b
+2,b,>
+
+2,c
+3,c,>
+
+3,[abc]
+3,$1,>
+
+3,_
+4,_,<
+
+4,[ac]
+4,_,<
+
+4,b
+5,_,<
+
+4,_
+ok,_,-
+
+5,[ac]
+4,_,<
+

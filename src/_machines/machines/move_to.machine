@@ -1,0 +1,14 @@
+nom        : Déplacer la tête de lecture
+initial    : i
+final      : ok
+sortie     : 1
+demi ruban : 1
+
+i,_
+q,_,>
+
+q,[ab]
+q,$1,>
+
+q,l
+ok,l,<

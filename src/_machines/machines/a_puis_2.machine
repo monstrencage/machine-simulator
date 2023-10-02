@@ -1,0 +1,37 @@
+nom        : Séquences exponentielles
+initial    : i
+final      : ok
+demi ruban : 1
+
+i,_
+0,_,>
+
+0,a
+1,A,>
+
+1,A
+1,A,>
+
+1,a
+2,a,<
+
+1,_
+ok,_,<
+
+2,A
+3,X,>
+
+2,_
+1,_,>
+
+3,A
+3,A,>
+
+3,a
+4,A,<
+
+4,A
+4,A,<
+
+4,X
+2,A,<
