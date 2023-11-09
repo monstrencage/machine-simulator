@@ -500,6 +500,59 @@ class navClass extends PopUp{
     }
 }
 
+class InputPopup extends PopUp{
+
+#inputElt
+    
+    constructor(elt, callback, w=""){
+        super(elt, true)
+        
+        this.title = "Spécifier le mot d'entrée"
+        this.status = "fas fa-question-circle"
+        
+        let inputFrame = document.createElement("div")
+        inputFrame.className = "input-popup"
+        this.content.appendChild(inputFrame)
+
+        this.#inputElt = document.createElement("input")
+        this.#inputElt.className = "input-field"
+        this.#inputElt.type = "text"
+        this.#inputElt.value = w
+        
+        inputFrame.appendChild(this.#inputElt)
+        
+        let btn = document.createElement("button")
+        btn.className = "btn btn--primary"
+        inputFrame.appendChild(btn)
+
+        let ico = document.createElement("i")
+        ico.className = "fa fa-arrow-right"
+        btn.appendChild(ico)
+
+        btn.onclick = (event) => {
+            this.close();
+            callback(this.#inputElt.value)
+        }
+
+        this.#inputElt.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                this.close();
+                callback(this.#inputElt.value)
+            } else if (event.key === 'Escape') {
+                this.close();
+            }
+        })
+
+    }
+
+    open(w){
+        this.#inputElt.value = w
+        super.open()
+        this.#inputElt.focus()
+    }
+    
+}
+
 class Simulator{
 #myenv = null
 #inputword = null
@@ -598,6 +651,9 @@ class Simulator{
                                     "fas fa-stop", true)
         stopBtn.onclick = this.stop.bind(this)
         
+        let inputBtn = new SimButton(btnPanel, "Réinitialisation",
+                                    "fas fa-undo", true)
+        
         // let lockBtn = new SimButton(btnPanel, "Débloquer les rubans",
         //                             "fas fa-lock", true)
         let sizeBtn = new SimButton(btnPanel, "Maximiser le simulateur",
@@ -630,9 +686,16 @@ class Simulator{
         let popupDiv = document.createElement("div")
         popupDiv.className = "hidden"
         this.#mainDisplay.appendChild(popupDiv)
-        
         this.#popup = new PopUp(popupDiv)
-
+        
+        let inPopupDiv = document.createElement("div")
+        inPopupDiv.className = "hidden"
+        this.#mainDisplay.appendChild(inPopupDiv)
+        let inputPopup = new InputPopup(inPopupDiv, this.loadWord.bind(this))
+        inputBtn.onclick = (event) => {
+            inputPopup.open(this.#inputword)
+        }
+ 
         this.#inputElts = inputElts
         this.#inputElts.inputField.addEventListener('keydown', event => {
             if (event.key === 'Enter') {
@@ -734,6 +797,16 @@ class Simulator{
         if (w.search(/\s/) < 0){
             this.inputword = w
             this.#inputElts.inputField.blur()
+        }else{
+            this.#popup.activate("Entrée incorrecte :",
+                                 "fas fa-times-circle",
+                                 "Le mot d'entrée ne peut pas contenir d'espaces. Utilisez '_' si vous souhaitez insérer des cases vides dans le mot d'entrée.")
+        }
+    }
+
+    loadWord(w){
+        if (w.search(/\s/) < 0){
+            this.inputword = w
         }else{
             this.#popup.activate("Entrée incorrecte :",
                                  "fas fa-times-circle",

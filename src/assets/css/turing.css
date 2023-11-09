@@ -66,6 +66,20 @@ div.pop-up{
     display: block
 }
 
+.input-popup {
+    width:100%;
+    position:relative
+}
+.input-popup button{
+    width:3em;
+    position:absolute;
+    right:0  
+}
+.input-popup input{
+    width:calc(100% - 4em);
+    margin: 0 1em 0 0;
+}
+
  /* editor & render */
 .render.section textarea.src{
     display:none
