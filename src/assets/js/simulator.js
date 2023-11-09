@@ -534,12 +534,20 @@ class InputPopup extends PopUp{
             callback(this.#inputElt.value)
         }
 
-        this.#inputElt.addEventListener('keydown', event => {
-            if (event.key === 'Enter') {
-                this.close();
-                callback(this.#inputElt.value)
-            } else if (event.key === 'Escape') {
-                this.close();
+        document.addEventListener('keydown', event => {
+            if (! this.hidden){
+                if (event.key === 'Enter') {
+                    event.preventDefault()
+                    event.stopPropagation() 
+                    event.stopImmediatePropagation() 
+                    this.close();
+                    callback(this.#inputElt.value)
+                } else if (event.key === 'Escape') {
+                    event.preventDefault()
+                    event.stopPropagation() 
+                    event.stopImmediatePropagation() 
+                    this.close();
+                }
             }
         })
 
@@ -561,6 +569,7 @@ class Simulator{
     
 #mainDisplay
 #popup
+#inPopup
 #graph
 #steps
 #mytape
@@ -691,15 +700,19 @@ class Simulator{
         let inPopupDiv = document.createElement("div")
         inPopupDiv.className = "hidden"
         this.#mainDisplay.appendChild(inPopupDiv)
-        let inputPopup = new InputPopup(inPopupDiv, this.loadWord.bind(this))
+        
+        this.#inPopup = new InputPopup(inPopupDiv, this.loadWord.bind(this))
         inputBtn.onclick = (event) => {
-            inputPopup.open(this.#inputword)
+            this.#inPopup.open(this.#inputword)
         }
  
         this.#inputElts = inputElts
         this.#inputElts.inputField.addEventListener('keydown', event => {
             if (event.key === 'Enter') {
+                event.preventDefault()
+                event.stopPropagation() 
                 this.load()
+                this.focus()
             }
         })
         this.#inputElts.inputBtn.addEventListener('keydown', event => {
@@ -716,7 +729,8 @@ class Simulator{
         document.addEventListener(
             'keydown', event => {
                 let elt = document.activeElement
-                if (! elt.classList.contains("input-field")){
+                if ( this.#inPopup.hidden &&
+                     ! elt.classList.contains("input-field")){
                     if (event.key === 'Enter') {
                         event.preventDefault()
                         if (!this.#navElt.hidden){
@@ -836,6 +850,7 @@ class Simulator{
 
     set inputword(str){
         this.stop()
+        this.#inputElts.inputField.value = str
         this.#inputword = str
         this.#myenv.reset(this.#inputword)
         // for(const t of this.#myenv.tapes){
@@ -895,7 +910,7 @@ class Simulator{
     }
 
     get active(){
-        return (this.#popup.hidden && this.#navElt.hidden)
+        return (this.#popup.hidden && this.#inPopup.hidden && this.#navElt.hidden)
     }
 
     toggleRun(){
