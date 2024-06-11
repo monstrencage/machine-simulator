@@ -1,0 +1,28 @@
+name   : q1.1 
+init   : q0
+accept : q0,q2,q4
+
+// q0 : a pair, dernière lettre =/= b, pas vu bb
+// q1 : a impair, dernière lettre a, pas vu bb
+// q2 : a pair, dernière lettre b, pas vu bb
+// q3 : a impair, dernière lettre b, pas vu bb
+// q4 : a pair, déjà vu bb
+// q5 : a impair, déjà vu bb
+
+q0,a,q1
+q0,b,q2
+
+q1,a,q0
+q1,b,q3
+
+q2,a,q1
+q2,b,q4
+
+q3,a,q0
+q3,b,q5
+
+q4,a,q5
+q4,b,q4
+
+q5,a,q4
+q5,b,q5
