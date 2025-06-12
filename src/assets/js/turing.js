@@ -24,14 +24,14 @@ function print_symb(s){
 function prtset(s){
     let out = "{ "
     let init = true
-    for (const i of s){
+    s.forEach((i)=>{
         if (init){
             init = false
         } else {
             out += ', '
         }
         out += i
-    }
+    })
     return (out+" }")
 }
 
@@ -197,20 +197,23 @@ function printTapeContent(cnt){
      return `${cnt.past} >${cnt.present}< ${cnt.future}`
 }
 
+function printWSymb(w){
+    switch (w.type){
+        case "symb":
+            return w.value
+            break;
+        case "ref":
+            return `\$${w.value}`
+            break;
+    }
+}
+
 function printWrites(wrts){
     let sw = Array(wrts.length),
         mw = Array(wrts.length)
     for (const i of wrts.keys()){
         mw[i] = wrts[i][1]
-        switch (wrts[i][0].type){
-        case "symb":
-            sw[i] = wrts[i][0].value
-            break;
-        case "ref":
-            sw[i] = `\$${wrts[i][0].value}`
-            break;
-        }
-        
+        sw[i] = printWSymb(wrts[i][0])
     }
     return `${sw},${mw}`
 }
@@ -222,22 +225,26 @@ function printSet(s){
     }
     return res
 }
-    
+
+function printRead(c){
+    let sr = ""
+    switch (c.type){
+        case "symb":
+            sr = `${c.value}`
+            break;
+        case "range":
+            sr = `[${printSet(c.value)}]`
+            break;
+        default:
+            sr = `${c.type}:${c.value}`
+            break;
+    }
+    return sr
+}
 function printReads(reads){
     let sr = Array()
     for (const c of reads){
-        switch (c.type){
-        case "symb":
-            sr.push(`${c.value}`)
-            break;
-        case "range":
-            sr.push(`[${printSet(c.value)}]`)
-            break;
-        default: 
-            sr.push(`${c.type}:${c.value}`)
-            break;
-        }
-        
+        sr.push(printRead(c))
     }
     return sr.join(",")
 }
@@ -260,7 +267,11 @@ class Transition {
     static fromAuto(t){
         return new Transition(t.id,t.src,t.in,t.out,[t.symb],[[t.symb,'>']])
     }
-    
+
+    static fromMealy(t){
+        return new Transition(t.id,t.src,t.in,t.out,[t.symb1,{type:"symb",value:"_"}],[[t.symb1,'>'],[t.symb2,'>']])
+    }
+
     get testString(){
         return printReads(this.symbols_read)
     }
@@ -275,6 +286,10 @@ class Transition {
 
     automatonToString(){
         return `${this.etat_read} -- ${this.testString} --> ${this.etat_write}`
+    }
+
+    mealyToString(){
+        return `${this.etat_read} -[${printRead(this.symbols_read[0])}/${printWSymb(this.writes[1][0])}]-> ${this.etat_write}`
     }
 
 }
@@ -530,6 +545,85 @@ class Automaton extends TuringMachine{
 
 }
 
+class Mealy extends TuringMachine{
+    constructor(q0,trans,name=""){
+        let qf = new Set([q0])
+        trans.forEach((t)=>{qf.add(t.in);qf.add(t.out)})
+        let qfl = new Array()
+        qf.forEach((q)=>qfl.push(q))
+
+        super ([true,true],q0,qfl,[],2,name,true)
+        var tr_map = new Map();
+        for (const t of trans){
+            if (tr_map.has(t.in)){
+                tr_map.get(t.in).push(Transition.fromMealy(t))
+            }else{
+                tr_map.set(t.in, new Array(Transition.fromMealy(t)))
+            }
+        }
+        this.transitions = tr_map
+    }
+
+    get in_alphabet(){
+        var A = new Set()
+        this.transList.forEach((t) => {
+            var c = t.symbols_read[0]
+            switch (c.type){
+                case "symb":
+                    A.add(c.value)
+                    break;
+                case "range":
+                    A.union(c.value)
+                    break;
+                default:
+                    break;
+            }
+        })
+        return A
+    }
+
+    get out_alphabet(){
+        var A = new Set()
+        this.transList.forEach((t) => {
+            t.writes.forEach((c) => {
+                switch (c[0].type){
+                    case "symb":
+                        A.add(c[0].value)
+                        break;
+                    case "ref":
+                        // console.log(t.toString())
+                        // console.log(c[0].value)
+                        // console.log("pof: "+t.symbols_read+" "+c[0].value)
+                        var s = t.symbols_read[c[0].value - 1]
+                        // console.log(s)
+                        switch (s.type){
+                            case "symb":
+                                A.add(s.value)
+                                break;
+                            case "range":
+                                A.union(s.value)
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            })
+        })
+        console.log(A)
+        return A
+    }
+
+    get summary(){
+        let trans_list = this.transList.map(tr => tr.mealyToString()).join(",<br/>  ")
+        let etat_list = this.states
+        return `${etat_list.size} états : ${prtset(this.states).replaceAll('<','&lt').replaceAll('<','&gt')}<br/>transitions : {<br/>  ${trans_list}<br/> }<br/>état initial : ${this.init.replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet d'entrée : ${prtset(this.in_alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}<br/> alphabet de sortie : ${prtset(this.out_alphabet).replaceAll('<','&lt').replaceAll('<','&gt')}`
+    }
+
+}
+
 function invDir(direction){
     switch (direction){
     case '>' :
@@ -730,5 +824,29 @@ this.nb_steps=${this.nb_steps}`)
                 `<br>Sortie : ${output.past}${output.present}${output.future}`
         }
         return msg
+    }
+}
+
+class MealyEnv extends TuringEnv {
+    constructor(tm, w) {
+        super(tm, w);
+        this.accepted = tm.finalStates.includes(tm.init) && w.length == 0;
+        this.countdown = w.length
+    }
+    reset(w){
+        this.countdown = w.length
+        super.reset(w)
+    }
+    do_step(t, mark=false,tried =[]){
+        this.countdown -= 1
+        super.do_step(t,mark,tried)
+    }
+    back(){
+        this.countdown += 1
+        super.back()
+    }
+    upd_accepted() {
+        var res = this.machine.finalStates.includes(this.etat) && (this.countdown == 0)
+        this.accepted = res;
     }
 }

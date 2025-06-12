@@ -3,6 +3,8 @@ main:
     url: "/"
   - title: "Automates"
     url: "/automate/"
+  - title: "Mealy"
+    url: "/mealy/"
   - title: "Exemples"
     url: "/machines/"
   - title: "Aide"

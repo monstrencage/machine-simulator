@@ -589,6 +589,7 @@ class Simulator{
 #finished = false
 #forwards = true
 #ndet = false
+#finalTransitions = true
     
     constructor(mainDisplay,
                 inputElts,
@@ -598,7 +599,7 @@ class Simulator{
                 envClass){
 
         this.#envClass = envClass
-        
+        this.#finalTransitions = graphClass.finalTransitions
         this.#mainDisplay = document.getElementById(mainDisplay)
         this.#tmName = document.getElementById(tmName)
 
@@ -924,7 +925,7 @@ class Simulator{
     highlight_current(){
         var eid
         let nid = `q_${this.#myenv.etat}`
-        if (this.#finished && this.#myenv.accepted){
+        if (this.#finished && this.#myenv.accepted && this.#finalTransitions){
             eid = `e_${this.#myenv.etat}_final`
         } else if (this.#myenv.history.length > 0){
             eid = this.#myenv.history[this.#myenv.history.length - 1].trans.id

@@ -1,0 +1,84 @@
+<div id="editor" class="section editor machine-src">
+  <h1><i class="fa fa-edit"></i> Éditeur</h1>
+  <div class="src panel" id="editor-panel">
+    <pre class="src-display" id="editor-display"></pre>
+    <textarea id='src' wrap='off' spellcheck='false' class="input-field visible">{% if include.init-machine %}{{ include.init-machine }}{% endif %}
+    </textarea>
+  </div>
+  <div class="compilation-msg panel" id="compilation-panel">
+    <h3 style="margin-top:0">Messages de sortie du compilateur</h3>
+    <p class="compilation-msg"></p>
+  </div>
+  <div class="control-panel panel" id="editor-control-panel">
+  </div><!-- -->
+</div>
+
+<div id="simulator" class="section">
+  <h1><i class="fas fa-robot"></i> Simulateur<div class="tm-name" id="tm-name"></div></h1>
+  <div class="input-panel panel section">
+    {% if include.init-word %}
+    <input class="input-field" type='text' id='input-str' value='{{include.init-word}}'/>
+    {% else %}
+    <input class="input-field" type='text' id='input-str'/>
+    {% endif %}
+    <button id="load-btn" class="btn btn--primary txt"><i class="fa fa-undo"></i> Charger mot d'entrée</button>
+  </div>
+  <div class="section simulator-panel" id="simulator-panel" >
+    
+  </div>
+</div>
+
+<script>
+  // window.onload = function (){
+  if (window.location.href.search(/[?]loadMachine$/) > -1){
+      let machineField = document.querySelector("#editor .input-field")
+      let inputWordField = document.querySelector("#simulator .input-field")
+      machineField.value = localStorage.getItem("machine-simulator.machine")
+      inputWordField.value = localStorage.getItem("machine-simulator.input-value")
+      // }
+  }
+  
+  let editorElt = new EditorElt("editor-panel",
+                                'compilation-panel',
+                                "editor-control-panel")
+  
+  let editor = new Editor(editorElt, MealyParser, QuickMealyParser)
+
+  let inputElts = {
+      inputField : document.getElementById("input-str"),
+      inputBtn : document.getElementById("load-btn")
+
+  }
+  const simulator = new Simulator("simulator-panel",
+                                  inputElts,
+                                  GraphMealy,
+                                  "tm-name",
+                                  TapeVis,
+                                  MealyEnv)
+
+  function launchCompile(){
+      editor.startCompile()
+      setTimeout(compile, 20)
+  }
+
+  function compile (){
+      let output = editor.value
+      // console.log('editor done')
+      if (output){
+          simulator.machine = output.machine
+          // console.log('machine done')
+          simulator.ndet = output.ndet
+          // console.log('ndet done')
+          simulator.load();
+          // console.log('load done')
+      }
+      editor.stopCompile()
+  }
+
+
+  editorElt.outputBtn.onclick = launchCompile
+
+  launchCompile()
+  
+
+</script>

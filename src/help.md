@@ -145,6 +145,23 @@ p,a,q
 ```
 où `p` et `q` sont des états, et `a` est soit un symbole, soit une plage comme expliqué [plus haut](#spec:plage).
 
+## Spécification de machines de Mealy
+{: #spec:mealy }
+
+Les machines de Mealy acceptés par le [simulateur](/mealy/) sont spécifiés de manière similaire, avec néanmoins quelques différences.
+
+### En-tête
+
+Les options `sortie/output` et `option: eager` ne sont pas disponibles pour les machines de Mealy, pas plus que l'option `half tape/demi ruban`. Les machines de Mealy n'ayant pas d'états finaux, l'option `accept/final` ne doit pas être utilisée non plus.
+
+### Transitions
+
+Les transitions s'écrivent en une seule ligne:
+```
+p,a/b,q
+```
+où `p` et `q` sont des états, et `a` est soit un symbole, soit une plage comme expliqué [plus haut](#spec:plage), et `b` est soit un symbole, soit la référence au symbole d'entrée `$1`.
+
 
 # Simulateur
 
