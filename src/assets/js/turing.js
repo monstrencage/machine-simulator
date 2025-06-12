@@ -612,7 +612,6 @@ class Mealy extends TuringMachine{
                 }
             })
         })
-        console.log(A)
         return A
     }
 
@@ -709,7 +708,7 @@ class TuringEnv extends Config {
     }
 
     backtrack(){
-        console.log('backtracking...')
+        // console.log('backtracking...')
         while (this.history.length > 0){
             let c = this.history.pop()
             // console.log(`${c.marked} trans no ${c.trans.id} - ${c.trans.toString()}`)

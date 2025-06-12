@@ -842,11 +842,11 @@ class Simulator{
 
     set ndet(nd){
         this.#ndet = nd
-        if (nd){
-            console.log("non deterministic machine")
-        } else {
-            console.log("deterministic machine")
-        }
+        // if (nd){
+        //     console.log("non deterministic machine")
+        // } else {
+        //     console.log("deterministic machine")
+        // }
     }
 
     set inputword(str){
