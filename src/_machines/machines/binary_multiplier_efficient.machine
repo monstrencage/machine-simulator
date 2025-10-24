@@ -1,0 +1,171 @@
+nom     : Multiplieur binaire
+initial : start
+final   : done
+sortie  : 1
+
+// on commence par copier le premier nombre sur le second ruban
+// (en l'effaçant du premier)
+start,[01],_,_
+start,_,$1,_,>,>,-
+
+// puis on copie le deuxième sur le troisième ruban
+// (toujours en effaçant)
+start,|,_,_
+copy2,_,_,_,>,-,-
+
+copy2,[01],_,_
+copy2,_,_,$1,>,-,>
+
+// on rembobine les deuxième et troisième rubans
+copy2,_,_,_
+rewind,_,_,_,-,<,<
+
+rewind,_,[01],[01]
+rewind,_,$2,$3,-,<,<
+
+rewind,_,_,[01]
+rewind,_,_,$3,-,-,<
+
+rewind,_,[01],_
+rewind,_,$2,_,-,<,-
+
+// alors, on commence la boucle principale, représentée par l'état mult
+// on initialise le premier ruban avec une marque |
+// pendant la boucle ce ruban contiendra deux de nombres séparés par la marque.
+rewind,_,_,_
+mult,|,_,_,-,>,-
+
+// si le bit de poids faible du deuxième ruban est 0
+// → on décale la marque d'un bit vers la droite
+mult,|,0,_
+move_mark,x,_,_,>,-,-
+
+move_mark,[0_],_,_
+move_mark0,|,_,_,<,-,-
+
+move_mark,1,_,_
+move_mark1,|,_,_,<,-,-
+
+move_mark0,x,_,_
+mult,0,_,_,>,>,-
+
+move_mark1,x,_,_
+mult,1,_,_,>,>,-
+
+// si au contraire le bit de poids faible du second ruban est 1
+// → on ajoute au nombre à droite de la marque le contenu du troisième ruban
+mult,|,1,_
+add,|,_,_,>,-,>
+
+add,0,_,0
+add,0,_,0,>,-,>
+
+add,0,_,_
+add,0,_,_,>,-,-
+
+add,_,_,0
+add,0,_,0,>,-,>
+
+add,1,_,0
+add,1,_,0,>,-,>
+add,0,_,1
+add,1,_,1,>,-,>
+
+add,1,_,_
+add,1,_,_,>,-,-
+
+add,_,_,1
+add,1,_,1,>,-,>
+
+add,1,_,1
+add(ret),0,_,1,>,-,>
+
+add(ret),0,_,0
+add,1,_,0,>,-,>
+
+add(ret),0,_,_
+add,1,_,_,>,-,-
+
+add(ret),_,_,0
+add,1,_,0,>,-,>
+
+add(ret),1,_,0
+add(ret),0,_,0,>,-,>
+
+add(ret),0,_,1
+add(ret),0,_,1,>,-,>
+
+add(ret),1,_,_
+add(ret),0,_,_,>,-,-
+
+add(ret),_,_,1
+add(ret),0,_,1,>,-,>
+
+add(ret),1,_,1
+add(ret),1,_,1,>,-,>
+
+// à la fin de l'addition, on rembobine les premier et troisième rubans
+add,_,_,_
+rewind2,_,_,_,<,-,<
+
+add(ret),_,_,_
+rewind2,1,_,_,<,-,<
+
+rewind2,[01],_,[01]
+rewind2,$1,_,$3,<,-,<
+
+rewind2,|,_,[01]
+rewind2,|,_,$3,-,-,<
+
+rewind2,[01],_,_
+rewind2,$1,_,_,<,-,-
+
+// ensuite, on décale la marque | d'un cran, et on retourne à la boucle principale
+rewind2,|,_,_
+move_mark,x,_,_,>,-,-
+
+// quand le calcul est fini, on rembobine le premier ruban, et on nettoie le troisième, par hygiène
+mult,|,_,_
+cleanup0,x,_,_,>,-,-
+
+cleanup0,[01],_,_
+cleanup0,$1,_,_,>,-,-
+
+cleanup0,_,_,_
+cleanup1,_,_,_,<,-,-
+
+cleanup1,0,_,_
+cleanup20,_,_,_,<,-,-
+
+cleanup1,1,_,_
+cleanup21,_,_,_,<,-,-
+
+cleanup1,x,_,_
+cleanup3,_,_,_,<,-,>
+
+cleanup20,0,_,_
+cleanup20,0,_,_,<,-,-
+
+cleanup20,1,_,_
+cleanup21,0,_,_,<,-,-
+
+cleanup20,x,_,_
+cleanup3,0,_,_,<,-,>
+
+cleanup21,0,_,_
+cleanup20,1,_,_,<,-,-
+
+cleanup21,1,_,_
+cleanup21,1,_,_,<,-,-
+
+cleanup21,x,_,_
+cleanup3,1,_,_,<,-,>
+
+cleanup3,[01],_,[01_]
+cleanup3,$1,_,_,<,-,>
+
+cleanup3,_,_,[01]
+cleanup3,_,_,_,-,-,>
+
+cleanup3,_,_,_
+done,_,_,_,>,-,-
